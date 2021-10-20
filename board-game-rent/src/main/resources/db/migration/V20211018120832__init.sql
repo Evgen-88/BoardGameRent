@@ -110,5 +110,3 @@ CREATE TABLE IF NOT EXISTS 'purchase' (
 );
 
 COMMIT;
-
-COMMIT;
