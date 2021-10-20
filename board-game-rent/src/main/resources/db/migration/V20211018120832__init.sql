@@ -108,3 +108,7 @@ CREATE TABLE IF NOT EXISTS 'purchase' (
             		ON DELETE NO ACTION
             		ON UPDATE NO ACTION
 );
+
+COMMIT;
+
+COMMIT;
