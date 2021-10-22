@@ -53,13 +53,9 @@ CREATE TABLE IF NOT EXISTS 'rent' (
     CONSTRAINT 'rent_board_game_fk'
         FOREIGN KEY ('board_game_id')
             REFERENCES 'board_game' ('id')
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION,
     CONSTRAINT 'rent_order_fk'
         FOREIGN KEY ('order_id')
             REFERENCES 'order' ('id')
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION
 );
 
 CREATE TABLE IF NOT EXISTS 'order' (
@@ -72,8 +68,6 @@ CREATE TABLE IF NOT EXISTS 'order' (
     CONSTRAINT 'order_user_fk'
         FOREIGN KEY ('user_id')
             REFERENCES 'user' ('id')
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION
 );
 
 CREATE TABLE IF NOT EXISTS 'accessory' (
@@ -94,14 +88,10 @@ CREATE TABLE IF NOT EXISTS 'purchase' (
 	PRIMARY KEY ('id'),
     CONSTRAINT 'purchase_accessory_fk'
         FOREIGN KEY ('accessory_id')
-            REFERENCES 'accessory' ('id')
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION,
+            REFERENCES 'accessory' ('id'),
     CONSTRAINT 'purchase_order_fk'
         FOREIGN KEY ('order_id')
             REFERENCES 'order' ('id')
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION
 );
 
 COMMIT;
