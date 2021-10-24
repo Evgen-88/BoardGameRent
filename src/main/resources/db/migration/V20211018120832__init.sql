@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS 'rent' (
             REFERENCES 'orders' ('id')
 );
 
-CREATE TABLE IF NOT EXISTS 'c' (
+CREATE TABLE IF NOT EXISTS 'orders' (
 	'id'			BIGINT									NOT NULL AUTO_INCREMENT,
 	'user_id'		BIGINT									NOT NULL,
 	'total_price'	BIGINT 									NOT NULL,
