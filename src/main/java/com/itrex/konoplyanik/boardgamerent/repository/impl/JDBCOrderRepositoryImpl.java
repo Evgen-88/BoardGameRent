@@ -30,6 +30,8 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 	private static final String DELETE_ORDER_QUERY = "DELETE FROM orders WHERE id=?";
 	private static final String SELECT_BY_USER_QUERY = "SELECT * FROM orders WHERE user_id=?";
 	private static final String DELETE_ORDER_BY_USER_QUERY = "DELETE FROM orders WHERE user_id=?";
+	private static final String DELETE_RENT_BY_ORDER_QUERY = "DELETE FROM rent WHERE order_id=?";
+	private static final String DELETE_PURCHASE_BY_ORDER_QUERY = "DELETE FROM purchase WHERE order_id=?";
 	
 	private final DataSource dataSource;
 
@@ -122,9 +124,14 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public boolean delete(Long id) throws RepositoryException {
-		try(Connection con = dataSource.getConnection();PreparedStatement preparedStatement = con.prepareStatement(DELETE_ORDER_QUERY)) {
-			preparedStatement.setLong(1, id);
-			return preparedStatement.executeUpdate() == 1;
+		try(Connection con = dataSource.getConnection()) {
+			con.setAutoCommit(false);
+			deleteRentFromOrder(con, id);
+			deletePurchaseFromOrder(con, id);
+			try(PreparedStatement preparedStatement = con.prepareStatement(DELETE_ORDER_QUERY)) {
+				preparedStatement.setLong(1, id);
+				return preparedStatement.executeUpdate() == 1;
+			}
 		} catch(SQLException ex) {
 			throw new RepositoryException("Exception: delete: " + ex);
 		}
@@ -156,6 +163,24 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 					}
 				}
 			}
+		}
+	}
+	
+	private void deleteRentFromOrder(Connection con, Long orderId) throws RepositoryException {
+		try(PreparedStatement preparedStatement = con.prepareStatement(DELETE_RENT_BY_ORDER_QUERY)) {
+			preparedStatement.setLong(1, orderId);
+			preparedStatement.execute();
+		} catch(SQLException ex) {
+			throw new RepositoryException("Exception: deleteRents: " + ex);
+		}
+	}
+	
+	private void deletePurchaseFromOrder(Connection con, Long orderId) throws RepositoryException {
+		try(PreparedStatement preparedStatement = con.prepareStatement(DELETE_PURCHASE_BY_ORDER_QUERY)) {
+			preparedStatement.setLong(1, orderId);
+			preparedStatement.execute();
+		} catch(SQLException ex) {
+			throw new RepositoryException("Exception: deletePurchases: " + ex);
 		}
 	}
 
