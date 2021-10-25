@@ -19,14 +19,14 @@ public class JDBCRentRepositoryImpl implements RentRepository {
 	private static final String ID_COLUMN = "id";
 	private static final String BOARD_GAME_ID_COLUMN = "board_game_id";
 	private static final String ORDER_ID_COLUMN = "order_id";
-	private static final String FROM_COLUMN = "from";
-	private static final String TO_COLUMN = "to";
+	private static final String RENT_FROM_COLUMN = "rent_from";
+	private static final String RENT_TO_COLUMN = "rent_to";
 	private static final String PRICE_COLUMN = "price";
 	
-	private static final String INSERT_RENT_QUERY = "INSERT INTO rent(board_game_id, order_id, from, to, price) VALUES (?, ?, ?, ?, ?)";
+	private static final String INSERT_RENT_QUERY = "INSERT INTO rent(board_game_id, order_id, rent_from, rent_to, price) VALUES (?, ?, ?, ?, ?)";
 	private static final String SELECT_ALL_QUERY = "SELECT	* FROM rent";
 	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM rent WHERE id=?";
-	private static final String UPDATE_RENT_QUERY = "UPDATE rent SET board_game_id=?, order_id=?, from=?, to=?, price=? WHERE id=?";
+	private static final String UPDATE_RENT_QUERY = "UPDATE rent SET board_game_id=?, order_id=?, rent_from=?, rent_to=?, price=? WHERE id=?";
 	private static final String DELETE_RENT_QUERY = "DELETE	FROM rent WHERE id=?";
 	private static final String SELECT_BY_ORDER_QUERY = "SELECT * FROM rent WHERE order_id=?";
 	private static final String DELETE_RENT_BY_ORDER_QUERY = "DELETE FROM rent WHERE order_id=?";
@@ -136,8 +136,8 @@ public class JDBCRentRepositoryImpl implements RentRepository {
 		rent.setId(resultSet.getLong(ID_COLUMN));
 		rent.setBoardGameId(resultSet.getLong(BOARD_GAME_ID_COLUMN));
 		rent.setOrderId(resultSet.getLong(ORDER_ID_COLUMN));
-		rent.setFrom(resultSet.getDate(FROM_COLUMN).toLocalDate());
-		rent.setTo(resultSet.getDate(TO_COLUMN).toLocalDate());
+		rent.setFrom(resultSet.getDate(RENT_FROM_COLUMN).toLocalDate());
+		rent.setTo(resultSet.getDate(RENT_TO_COLUMN).toLocalDate());
 		rent.setPrice(resultSet.getInt(PRICE_COLUMN));
 		return rent;
 	}

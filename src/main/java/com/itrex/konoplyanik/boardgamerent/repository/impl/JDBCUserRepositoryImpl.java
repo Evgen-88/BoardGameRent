@@ -22,13 +22,16 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 	private static final String PHONE_COLUMN = "phone";
 	private static final String EMAIL_COLUMN = "email";
 
+	private static final String USER_ID_COLUMN = "user_id";
+
 	private static final String INSERT_USER_QUERY = "INSERT INTO users(login, password, name, phone, email) VALUES (?, ?, ?, ?, ?)";
 	private static final String SELECT_ALL_QUERY = "SELECT	* FROM users";
-	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM users WHERE id=?";
+	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM users WHERE id=";
 	private static final String UPDATE_USER_QUERY = "UPDATE users SET login=?, password=?, name=?, phone=?, email=? WHERE id=?";
 	private static final String DELETE_USER_QUERY = "DELETE	FROM users WHERE id=?";
-	private static final String SELECT_USERS_BY_ROLE_QUERY = "SELECT users_user_role_link.user_id, users.login, users.password, users.name, users.phone, users.email FROM users_user_role_link LEFT JOIN users ON users_user_role_link.role_id=users.id WHERE users_user_role_link.role_id=?";
-	
+	private static final String SELECT_USERS_BY_ROLE_QUERY = "SELECT uurl.user_id, u.login, u.password, u.name, u.phone, u.email FROM users_user_role_link AS uurl LEFT JOIN users AS u ON uurl.user_id=u.id WHERE uurl.role_id=";
+	private static final String DELETE_USER_LINK_QUERY = "DELETE FROM users_user_role_link WHERE user_id=?";
+
 	private final DataSource dataSource;
 
 	public JDBCUserRepositoryImpl(DataSource dataSource) {
@@ -42,9 +45,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_ALL_QUERY)) {
 			while (resultSet.next()) {
-				User user = new User();
-				user = getUser(resultSet, user);
-				users.add(user);
+				users.add(getUser(resultSet));
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findAll: " + ex);
@@ -54,17 +55,17 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 
 	@Override
 	public User findById(Long id) throws RepositoryException {
-		User user = new User();
 		try (Connection con = dataSource.getConnection();
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_BY_ID_QUERY + id)) {
 			if (resultSet.next()) {
-				user = getUser(resultSet, user);
+				return getUser(resultSet);
+			} else {
+				throw new RepositoryException("EXCEPTION: user not found");
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
 		}
-		return user;
 	}
 
 	@Override
@@ -121,15 +122,29 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 
 	@Override
 	public boolean delete(Long id) throws RepositoryException {
-		try(Connection con = dataSource.getConnection();PreparedStatement preparedStatement = con.prepareStatement(DELETE_USER_QUERY)) {
-			preparedStatement.setLong(1, id);
-			return preparedStatement.executeUpdate() == 1;
-		} catch(SQLException ex) {
+		try (Connection con = dataSource.getConnection()) {
+			con.setAutoCommit(false);
+			try {
+				deleteRolesFromUser(con, id);
+				new JDBCOrderRepositoryImpl(dataSource).deleteOrdersByUser(id);
+				try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_USER_QUERY)) {
+					preparedStatement.setLong(1, id);
+					return preparedStatement.executeUpdate() == 1;
+				}
+				//con.commit();
+			} catch (SQLException ex) {
+				con.rollback();
+				throw new RepositoryException("Exception: delete: " + ex);
+			} finally {
+				con.setAutoCommit(true);
+			}
+		} catch (SQLException ex) {
 			throw new RepositoryException("Exception: delete: " + ex);
 		}
 	}
 
-	private User getUser(ResultSet resultSet, User user) throws SQLException {
+	private User getUser(ResultSet resultSet) throws SQLException {
+		User user = new User();
 		user.setId(resultSet.getLong(ID_COLUMN));
 		user.setLogin(resultSet.getString(LOGIN_COLUMN));
 		user.setPassword(resultSet.getString(PASSWORD_COLUMN));
@@ -159,16 +174,28 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 			}
 		}
 	}
-	
+
+	private void deleteRolesFromUser(Connection con, Long userId) throws SQLException {
+		try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_USER_LINK_QUERY)) {
+			preparedStatement.setLong(1, userId);
+			preparedStatement.executeUpdate();
+		}
+	}
+
 	@Override
-	public List<User> findUsersByRole(Long id) throws RepositoryException {
+	public List<User> findUsersByRole(Long roleId) throws RepositoryException {
 		List<User> users = new ArrayList<>();
 		try (Connection con = dataSource.getConnection();
 				Statement stm = con.createStatement();
-				ResultSet resultSet = stm.executeQuery(SELECT_USERS_BY_ROLE_QUERY)) {
+				ResultSet resultSet = stm.executeQuery(SELECT_USERS_BY_ROLE_QUERY + roleId)) {
 			while (resultSet.next()) {
 				User user = new User();
-				user = getUser(resultSet, user);
+				user.setId(resultSet.getLong(USER_ID_COLUMN));
+				user.setLogin(resultSet.getString(LOGIN_COLUMN));
+				user.setPassword(resultSet.getString(PASSWORD_COLUMN));
+				user.setName(resultSet.getString(NAME_COLUMN));
+				user.setPhone(resultSet.getInt(PHONE_COLUMN));
+				user.setEmail(resultSet.getString(EMAIL_COLUMN));
 				users.add(user);
 			}
 		} catch (SQLException ex) {

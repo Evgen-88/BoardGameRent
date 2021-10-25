@@ -20,19 +20,20 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 	private static final String ID_COLUMN = "id";
 	private static final String USER_ID_COLUMN = "board_game_id";
 	private static final String TOTAL_PRICE_COLUMN = "total_price";
-	private static final String DATE_COLUMN = "date";
+	private static final String ORDER_DATE_COLUMN = "date";
 	private static final String STATUS_COLUMN = "status";
-	
-	private static final String INSERT_ORDER_QUERY = "INSERT INTO orders(board_game_id, total_price, date, status) VALUES (?, ?, ?, ?)";
+
+	private static final String INSERT_ORDER_QUERY = "INSERT INTO orders(board_game_id, total_price, order_date, status) VALUES (?, ?, ?, ?)";
 	private static final String SELECT_ALL_QUERY = "SELECT	* FROM orders";
-	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM orders WHERE id=?";
-	private static final String UPDATE_ORDER_QUERY = "UPDATE orders SET board_game_id=?, total_price=?, date=?, status=? WHERE id=?";
+	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM orders WHERE id=";
+	private static final String UPDATE_ORDER_QUERY = "UPDATE orders SET board_game_id=?, total_price=?, order_date=?, status=? WHERE id=?";
 	private static final String DELETE_ORDER_QUERY = "DELETE FROM orders WHERE id=?";
 	private static final String SELECT_BY_USER_QUERY = "SELECT * FROM orders WHERE user_id=?";
 	private static final String DELETE_ORDER_BY_USER_QUERY = "DELETE FROM orders WHERE user_id=?";
 	private static final String DELETE_RENT_BY_ORDER_QUERY = "DELETE FROM rent WHERE order_id=?";
 	private static final String DELETE_PURCHASE_BY_ORDER_QUERY = "DELETE FROM purchase WHERE order_id=?";
-	
+	private static final String SELECT_ID_BY_USER_QUERY = "SELECT id FROM orders WHERE user_id=";
+
 	private final DataSource dataSource;
 
 	public JDBCOrderRepositoryImpl(DataSource dataSource) {
@@ -124,24 +125,32 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public boolean delete(Long id) throws RepositoryException {
-		try(Connection con = dataSource.getConnection()) {
+		try (Connection con = dataSource.getConnection()) {
 			con.setAutoCommit(false);
-			deleteRentFromOrder(con, id);
-			deletePurchaseFromOrder(con, id);
-			try(PreparedStatement preparedStatement = con.prepareStatement(DELETE_ORDER_QUERY)) {
-				preparedStatement.setLong(1, id);
-				return preparedStatement.executeUpdate() == 1;
+			try {
+				deleteRentFromOrder(con, id);
+				deletePurchaseFromOrder(con, id);
+				try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_ORDER_QUERY)) {
+					preparedStatement.setLong(1, id);
+					return preparedStatement.executeUpdate() == 1;
+				}
+				// con.commit();
+			} catch (SQLException ex) {
+				con.rollback();
+				throw new RepositoryException("Exception: delete: " + ex);
+			} finally {
+				con.setAutoCommit(true);
 			}
-		} catch(SQLException ex) {
+		} catch (SQLException ex) {
 			throw new RepositoryException("Exception: delete: " + ex);
 		}
 	}
-	
+
 	private Order getOrder(ResultSet resultSet, Order order) throws SQLException {
 		order.setId(resultSet.getLong(ID_COLUMN));
 		order.setUserId(resultSet.getLong(USER_ID_COLUMN));
 		order.setTotalPrice(resultSet.getInt(TOTAL_PRICE_COLUMN));
-		order.setDate(resultSet.getDate(DATE_COLUMN).toLocalDate());
+		order.setDate(resultSet.getDate(ORDER_DATE_COLUMN).toLocalDate());
 		order.setStatus(Status.valueOf(resultSet.getString(STATUS_COLUMN)));
 		return order;
 	}
@@ -165,21 +174,21 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 			}
 		}
 	}
-	
+
 	private void deleteRentFromOrder(Connection con, Long orderId) throws RepositoryException {
-		try(PreparedStatement preparedStatement = con.prepareStatement(DELETE_RENT_BY_ORDER_QUERY)) {
+		try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_RENT_BY_ORDER_QUERY)) {
 			preparedStatement.setLong(1, orderId);
 			preparedStatement.execute();
-		} catch(SQLException ex) {
+		} catch (SQLException ex) {
 			throw new RepositoryException("Exception: deleteRents: " + ex);
 		}
 	}
-	
+
 	private void deletePurchaseFromOrder(Connection con, Long orderId) throws RepositoryException {
-		try(PreparedStatement preparedStatement = con.prepareStatement(DELETE_PURCHASE_BY_ORDER_QUERY)) {
+		try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_PURCHASE_BY_ORDER_QUERY)) {
 			preparedStatement.setLong(1, orderId);
 			preparedStatement.execute();
-		} catch(SQLException ex) {
+		} catch (SQLException ex) {
 			throw new RepositoryException("Exception: deletePurchases: " + ex);
 		}
 	}
@@ -203,10 +212,19 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public boolean deleteOrdersByUser(Long userId) throws RepositoryException {
-		try(Connection con = dataSource.getConnection();PreparedStatement preparedStatement = con.prepareStatement(DELETE_ORDER_BY_USER_QUERY)) {
-			preparedStatement.setLong(1, userId);
-			return preparedStatement.executeUpdate() == 1;
-		} catch(SQLException ex) {
+		try (Connection con = dataSource.getConnection()) {
+			try (Statement stm = con.createStatement();
+					ResultSet resultSet = stm.executeQuery(SELECT_ID_BY_USER_QUERY + userId)) {
+				while (resultSet.next()) {
+					deleteRentFromOrder(con, resultSet.getLong(ID_COLUMN));
+					deletePurchaseFromOrder(con, resultSet.getLong(ID_COLUMN));
+				}
+			}
+			try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_ORDER_BY_USER_QUERY)) {
+				preparedStatement.setLong(1, userId);
+				return preparedStatement.executeUpdate() == 1;
+			}
+		} catch (SQLException ex) {
 			throw new RepositoryException("Exception: delete: " + ex);
 		}
 	}

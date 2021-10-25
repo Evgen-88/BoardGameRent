@@ -22,7 +22,7 @@ public class JDBCAccessoryRepositoryImpl implements AccessoryRepository {
 
 	private static final String INSERT_ACCESSORY_QUERY = "INSERT INTO accessory(name, price, quantity) VALUES (?, ?, ?)";
 	private static final String SELECT_ALL_QUERY = "SELECT	* FROM accessory";
-	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM accessory WHERE id=?";
+	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM accessory WHERE id=";
 	private static final String UPDATE_ACCESSORY_QUERY = "UPDATE accessory SET name=?, price=?, quantity=? WHERE id=?";
 	private static final String DELETE_ACCESSORY_QUERY = "DELETE FROM accessory WHERE id=?";
 
@@ -39,9 +39,7 @@ public class JDBCAccessoryRepositoryImpl implements AccessoryRepository {
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_ALL_QUERY)) {
 			while (resultSet.next()) {
-				Accessory accessory = new Accessory();
-				accessory = getAccessory(resultSet, accessory);
-				accessories.add(accessory);
+				accessories.add(getAccessory(resultSet));
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findAll: " + ex);
@@ -56,7 +54,7 @@ public class JDBCAccessoryRepositoryImpl implements AccessoryRepository {
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_BY_ID_QUERY + id)) {
 			if (resultSet.next()) {
-				accessory = getAccessory(resultSet, accessory);
+				accessory = getAccessory(resultSet);
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
@@ -124,7 +122,8 @@ public class JDBCAccessoryRepositoryImpl implements AccessoryRepository {
 		}
 	}
 
-	private Accessory getAccessory(ResultSet resultSet, Accessory accessory) throws SQLException {
+	private Accessory getAccessory(ResultSet resultSet) throws SQLException {
+		Accessory accessory = new Accessory();
 		accessory.setId(resultSet.getLong(ID_COLUMN));
 		accessory.setName(resultSet.getString(NAME_COLUMN));
 		accessory.setPrice(resultSet.getInt(PRICE_COLUMN));
