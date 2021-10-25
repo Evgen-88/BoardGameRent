@@ -52,11 +52,11 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
 			add(new User(7L, "serg", "serg", "Сергей", 7777777, "serg@mail"));
 		}};
 		//when
-		List<User> actual = new ArrayList<>() {{
+		List<User> users = new ArrayList<>() {{
 			add(new User("dima", "dima", "Дмитрий", 6666666, "dima@mail"));
 			add(new User("serg", "serg", "Сергей", 7777777, "serg@mail"));
 		}};
-		repository.addAll(actual);
+		List<User> actual = repository.addAll(users);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -64,10 +64,10 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
 	@Test
 	public void add_validData_shouldAddUser() {
 		//given
-		User expected = new User(8L, "vasya", "vasya", "Василий", 8888888, "vasya@mail");
+		User expected = new User(6L, "vasya", "vasya", "Василий", 8888888, "vasya@mail");
+		User user = new User("vasya", "vasya", "Василий", 8888888, "vasya@mail");
 		//when
-		User actual = new User("vasya", "vasya", "Василий", 8888888, "vasya@mail");
-		repository.add(actual);
+		User actual = repository.add(user);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -75,15 +75,15 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
 	@Test
 	public void update_validData_shouldUpdateUser() {
 		//given
-		User actual = users.get(0);
+		User user = users.get(0);
 		User expected = new User(1L, "1ivan", "1ivan", "Ваня", 1111112, "1ivan@mail");
 		//when
-		actual.setLogin("1ivan");
-		actual.setPassword("1ivan");
-		actual.setName("Ваня");
-		actual.setPhone(1111112);
-		actual.setEmail("1ivan@mail");
-		repository.update(actual);
+		user.setLogin("1ivan");
+		user.setPassword("1ivan");
+		user.setName("Ваня");
+		user.setPhone(1111112);
+		user.setEmail("1ivan@mail");
+		User actual = repository.update(user);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -91,7 +91,7 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
 	@Test
 	public void delete_validData_shouldDeleteUser() {
 		//given
-		User user = users.get(0);
+		User user = users.get(1);
 		//when
 		boolean actual = repository.delete(user.getId());
 		//then

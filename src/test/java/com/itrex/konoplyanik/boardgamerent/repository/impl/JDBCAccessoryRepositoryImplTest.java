@@ -37,7 +37,7 @@ public class JDBCAccessoryRepositoryImplTest extends BaseRepositoryTest {
 		//given
 		Accessory expected = accessories.get(0);
 		//when
-		Accessory actual = repository.findById(expected.getId());
+		Accessory actual = repository.findById(1L);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -49,12 +49,13 @@ public class JDBCAccessoryRepositoryImplTest extends BaseRepositoryTest {
 			add(new Accessory(4L, "Кубик D6", 6, 52));
 			add(new Accessory(5L, "Кубик D20", 8, 34));
 		}};
-		//when
-		List<Accessory> actual = new ArrayList<>() {{
+		
+		List<Accessory> accessories = new ArrayList<>() {{
 			add(new Accessory("Кубик D6", 6, 52));
 			add(new Accessory("Кубик D20", 8, 34));
 		}};
-		repository.addAll(actual);
+		//when
+		List<Accessory> actual = repository.addAll(accessories);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -62,10 +63,10 @@ public class JDBCAccessoryRepositoryImplTest extends BaseRepositoryTest {
 	@Test
 	public void add_validData_shouldAddAccessory() {
 		//given
-		Accessory expected = new Accessory(5L, "Dicetray", 24, 8);
+		Accessory expected = new Accessory(4L, "Dicetray", 24, 8);
+		Accessory accessory = new Accessory("Dicetray", 24, 8);
 		//when
-		Accessory actual = new Accessory("Dicetray", 24, 8);
-		repository.add(actual);
+		Accessory actual = repository.add(accessory);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -73,13 +74,13 @@ public class JDBCAccessoryRepositoryImplTest extends BaseRepositoryTest {
 	@Test
 	public void update_validData_shouldUpdateAccessory() {
 		//given
-		Accessory actual = accessories.get(0);
+		Accessory accessory = accessories.get(0);
 		Accessory expected = new Accessory(1L, "Протекторы для карт 68х92", 14, 21);
 		//when
-		actual.setName("Протекторы для карт 68х92");
-		actual.setPrice(14);
-		actual.setQuantity(21);
-		repository.update(actual);
+		accessory.setName("Протекторы для карт 68х92");
+		accessory.setPrice(14);
+		accessory.setQuantity(21);
+		Accessory actual = repository.update(accessory);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
