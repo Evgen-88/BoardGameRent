@@ -122,6 +122,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 
 	@Override
 	public boolean delete(Long id) throws RepositoryException {
+		boolean isDeleted = false;
 		try (Connection con = dataSource.getConnection()) {
 			con.setAutoCommit(false);
 			try {
@@ -129,9 +130,9 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 				new JDBCOrderRepositoryImpl(dataSource).deleteOrdersByUser(id);
 				try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_USER_QUERY)) {
 					preparedStatement.setLong(1, id);
-					return preparedStatement.executeUpdate() == 1;
+					isDeleted =  preparedStatement.executeUpdate() == 1;
 				}
-				//con.commit();
+				con.commit();
 			} catch (SQLException ex) {
 				con.rollback();
 				throw new RepositoryException("Exception: delete: " + ex);
@@ -141,6 +142,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 		} catch (SQLException ex) {
 			throw new RepositoryException("Exception: delete: " + ex);
 		}
+		return isDeleted;
 	}
 
 	private User getUser(ResultSet resultSet) throws SQLException {

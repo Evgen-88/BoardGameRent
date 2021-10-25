@@ -125,6 +125,7 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public boolean delete(Long id) throws RepositoryException {
+		boolean isDeleted = false;
 		try (Connection con = dataSource.getConnection()) {
 			con.setAutoCommit(false);
 			try {
@@ -132,9 +133,9 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 				deletePurchaseFromOrder(con, id);
 				try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_ORDER_QUERY)) {
 					preparedStatement.setLong(1, id);
-					return preparedStatement.executeUpdate() == 1;
+					isDeleted = preparedStatement.executeUpdate() == 1;
 				}
-				// con.commit();
+				con.commit();
 			} catch (SQLException ex) {
 				con.rollback();
 				throw new RepositoryException("Exception: delete: " + ex);
@@ -144,6 +145,7 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 		} catch (SQLException ex) {
 			throw new RepositoryException("Exception: delete: " + ex);
 		}
+		return isDeleted;
 	}
 
 	private Order getOrder(ResultSet resultSet, Order order) throws SQLException {
@@ -212,21 +214,32 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public boolean deleteOrdersByUser(Long userId) throws RepositoryException {
+		boolean isDeleted = false;
 		try (Connection con = dataSource.getConnection()) {
-			try (Statement stm = con.createStatement();
-					ResultSet resultSet = stm.executeQuery(SELECT_ID_BY_USER_QUERY + userId)) {
-				while (resultSet.next()) {
-					deleteRentFromOrder(con, resultSet.getLong(ID_COLUMN));
-					deletePurchaseFromOrder(con, resultSet.getLong(ID_COLUMN));
+			con.setAutoCommit(false);
+			try {
+				try (Statement stm = con.createStatement();
+						ResultSet resultSet = stm.executeQuery(SELECT_ID_BY_USER_QUERY + userId)) {
+					while (resultSet.next()) {
+						deleteRentFromOrder(con, resultSet.getLong(ID_COLUMN));
+						deletePurchaseFromOrder(con, resultSet.getLong(ID_COLUMN));
+					}
 				}
-			}
-			try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_ORDER_BY_USER_QUERY)) {
-				preparedStatement.setLong(1, userId);
-				return preparedStatement.executeUpdate() == 1;
+				try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_ORDER_BY_USER_QUERY)) {
+					preparedStatement.setLong(1, userId);
+					isDeleted = preparedStatement.executeUpdate() == 1;
+				}
+				con.commit();
+			} catch (SQLException ex) {
+				con.rollback();
+				throw new RepositoryException("Exception: deleteOrdersByUser: " + ex);
+			} finally {
+				con.setAutoCommit(true);
 			}
 		} catch (SQLException ex) {
-			throw new RepositoryException("Exception: delete: " + ex);
+			throw new RepositoryException("Exception: deleteOrdersByUser: " + ex);
 		}
+		return isDeleted;
 	}
 
 }
