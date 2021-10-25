@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS users_user_role_link
 CREATE TABLE IF NOT EXISTS orders
 (
 	id			BIGINT									NOT NULL AUTO_INCREMENT,
-	user_id		BIGINT									NOT NULL,
+	user_id		BIGINT									NULL,
 	total_price	BIGINT 									NOT NULL,
 	order_date	DATE									NOT NULL,
 	status		ENUM('booked', 'rejected', 'confirmed')	NOT NULL,
@@ -57,10 +57,10 @@ CREATE TABLE IF NOT EXISTS board_game
 CREATE TABLE IF NOT EXISTS rent
 (
 	id				BIGINT	NOT NULL AUTO_INCREMENT,
-	board_game_id	BIGINT	NOT NULL,
-	order_id		BIGINT	NOT NULL,
-	rent_from			DATE	NOT NULL,
-	rent_to				DATE	NOT NULL,
+	board_game_id	BIGINT	NULL,
+	order_id		BIGINT	NULL,
+	rent_from		DATE	NOT NULL,
+	rent_to			DATE	NOT NULL,
 	price			BIGINT 	NOT NULL,
 	PRIMARY KEY (id),
     CONSTRAINT rent_board_game_fk
@@ -84,8 +84,8 @@ CREATE TABLE IF NOT EXISTS accessory
 CREATE TABLE IF NOT EXISTS purchase
 (
 	id				BIGINT	NOT NULL AUTO_INCREMENT,
-	accessory_id	BIGINT	NOT NULL,
-	order_id		BIGINT	NOT NULL,
+	accessory_id	BIGINT	NULL,
+	order_id		BIGINT	NULL,
 	quantity		BIGINT	NOT NULL,
 	price			BIGINT 	NOT NULL,
 	PRIMARY KEY (id),

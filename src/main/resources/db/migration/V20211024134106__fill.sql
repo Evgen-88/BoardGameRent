@@ -12,17 +12,18 @@ VALUES  ('admin'),
 		
 INSERT INTO users_user_role_link(role_id, user_id)
 VALUES  (1, 1),
+		(3, 3),
 		(2, 3),
 		(3, 1),
 		(3, 4),
 		(3, 2),
 		(3, 5);
 		
-INSERT INTO orders(user_id, total_price, oorder_date, status)
+INSERT INTO orders(user_id, total_price, order_date, status)
 VALUES  (1, 45, '2021-10-23', 'confirmed'),
 		(4, 90, '2021-10-23', 'confirmed'),
 		(2, 126, '2021-10-23', 'confirmed'),
-		(5, 120, '2021-10-25', 'booked');
+		(4, 120, '2021-10-22', 'booked');
 		
 INSERT INTO board_game(name, rent_price, quantity)
 VALUES  ('Сквозь века', 45, 3),
@@ -42,7 +43,8 @@ VALUES  ('Протекторы для карт 65х87', 12, 24),
 		('Протекторы для карт 102х143', 18, 11);
 		
 INSERT INTO purchase(accessory_id, order_id, quantity, price)
-VALUES  (2, 3, 2, 26);
+VALUES  (2, 3, 2, 26),
+		(1, 2, 3, 36);
 
 COMMIT;
 
