@@ -104,6 +104,7 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
 		List<User>	expected = new ArrayList<>() {{
 			add(new User(1L, "ivan", "ivan", "Иван", 1111111, "ivan@mail"));
 			add(new User(2L, "alex", "alex", "Алекс", 2222222, "alex@mail"));
+			add(new User(3L, "kir", "kir", "Кирилл", 3333333, "kir@mail"));
 			add(new User(4L, "piter", "piter", "Петр", 4444444, "piter@mail"));
 			add(new User(5L, "vova", "vova", "Владимир", 5555555, "vova@mail"));
 		}};
