@@ -31,7 +31,9 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 	private static final String DELETE_USER_QUERY = "DELETE	FROM users WHERE id=?";
 	private static final String SELECT_USERS_BY_ROLE_QUERY = "SELECT uurl.user_id, u.login, u.password, u.name, u.phone, u.email FROM users_user_role_link AS uurl LEFT JOIN users AS u ON uurl.user_id=u.id WHERE uurl.role_id=";
 	private static final String DELETE_USER_LINK_QUERY = "DELETE FROM users_user_role_link WHERE user_id=?";
-
+	private static final String INSERT_CUSTOMER_ROLE_QUERY = "INSERT INTO users_user_role_link(role_id, user_id) VALUES (?, ?)";
+	private static final String DELETE_USER_FROM_ORDERS_QUERY = "UPDATE orders SET user_id=? WHERE user_id=?";
+	
 	private final DataSource dataSource;
 
 	public JDBCUserRepositoryImpl(DataSource dataSource) {
@@ -75,6 +77,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 			try {
 				for (User u : users) {
 					insertUser(con, u);
+					insertCustomerRole(con, u);
 				}
 				con.commit();
 			} catch (SQLException ex) {
@@ -92,7 +95,17 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 	@Override
 	public User add(User user) throws RepositoryException {
 		try (Connection con = dataSource.getConnection()) {
-			insertUser(con, user);
+			con.setAutoCommit(false);
+			try {
+				insertUser(con, user);
+				insertCustomerRole(con, user);
+				con.commit();
+			} catch (SQLException ex) {
+				con.rollback();
+				throw new RepositoryException("EXCEPTION: add: " + ex);
+			} finally {
+				con.setAutoCommit(true);
+			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: add: " + ex);
 		}
@@ -122,15 +135,15 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 
 	@Override
 	public boolean delete(Long id) throws RepositoryException {
-		boolean isDeleted = false;
+		boolean isDeleted;
 		try (Connection con = dataSource.getConnection()) {
 			con.setAutoCommit(false);
 			try {
 				deleteRolesFromUser(con, id);
-				new JDBCOrderRepositoryImpl(dataSource).deleteOrdersByUser(id);
+				deleteUserFromOrders(con, id);
 				try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_USER_QUERY)) {
 					preparedStatement.setLong(1, id);
-					isDeleted =  preparedStatement.executeUpdate() == 1;
+					isDeleted = preparedStatement.executeUpdate() == 1;
 				}
 				con.commit();
 			} catch (SQLException ex) {
@@ -177,9 +190,26 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 		}
 	}
 
+	private void insertCustomerRole(Connection con, User user) throws SQLException {
+		try (PreparedStatement preparedStatement = con.prepareStatement(INSERT_CUSTOMER_ROLE_QUERY)) {
+			preparedStatement.setLong(1, 3);
+			preparedStatement.setLong(2, user.getId());
+
+			preparedStatement.executeUpdate();
+		}
+	}
+
 	private void deleteRolesFromUser(Connection con, Long userId) throws SQLException {
 		try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_USER_LINK_QUERY)) {
 			preparedStatement.setLong(1, userId);
+			preparedStatement.executeUpdate();
+		}
+	}
+	
+	private void deleteUserFromOrders(Connection con, Long userId) throws SQLException {
+		try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_USER_FROM_ORDERS_QUERY)) {
+			preparedStatement.setObject(1, null);
+			preparedStatement.setLong(2, userId);
 			preparedStatement.executeUpdate();
 		}
 	}

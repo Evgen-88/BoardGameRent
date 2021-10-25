@@ -18,17 +18,17 @@ import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
 
 public class JDBCOrderRepositoryImpl implements OrderRepository {
 	private static final String ID_COLUMN = "id";
-	private static final String USER_ID_COLUMN = "board_game_id";
+	private static final String USER_ID_COLUMN = "user_id";
 	private static final String TOTAL_PRICE_COLUMN = "total_price";
-	private static final String ORDER_DATE_COLUMN = "date";
+	private static final String ORDER_DATE_COLUMN = "order_date";
 	private static final String STATUS_COLUMN = "status";
 
-	private static final String INSERT_ORDER_QUERY = "INSERT INTO orders(board_game_id, total_price, order_date, status) VALUES (?, ?, ?, ?)";
+	private static final String INSERT_ORDER_QUERY = "INSERT INTO orders(user_id, total_price, order_date, status) VALUES (?, ?, ?, ?)";
 	private static final String SELECT_ALL_QUERY = "SELECT	* FROM orders";
 	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM orders WHERE id=";
-	private static final String UPDATE_ORDER_QUERY = "UPDATE orders SET board_game_id=?, total_price=?, order_date=?, status=? WHERE id=?";
+	private static final String UPDATE_ORDER_QUERY = "UPDATE orders SET user_id=?, total_price=?, order_date=?, status=? WHERE id=?";
 	private static final String DELETE_ORDER_QUERY = "DELETE FROM orders WHERE id=?";
-	private static final String SELECT_BY_USER_QUERY = "SELECT * FROM orders WHERE user_id=?";
+	private static final String SELECT_BY_USER_QUERY = "SELECT * FROM orders WHERE user_id=";
 	private static final String DELETE_ORDER_BY_USER_QUERY = "DELETE FROM orders WHERE user_id=?";
 	private static final String DELETE_RENT_BY_ORDER_QUERY = "DELETE FROM rent WHERE order_id=?";
 	private static final String DELETE_PURCHASE_BY_ORDER_QUERY = "DELETE FROM purchase WHERE order_id=?";
@@ -48,7 +48,7 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 				ResultSet resultSet = stm.executeQuery(SELECT_ALL_QUERY)) {
 			while (resultSet.next()) {
 				Order order = new Order();
-				order = getOrder(resultSet, order);
+				order = getOrder(resultSet);
 				orders.add(order);
 			}
 		} catch (SQLException ex) {
@@ -59,17 +59,17 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public Order findById(Long id) throws RepositoryException {
-		Order order = new Order();
 		try (Connection con = dataSource.getConnection();
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_BY_ID_QUERY + id)) {
 			if (resultSet.next()) {
-				order = getOrder(resultSet, order);
+				return getOrder(resultSet);
+			} else {
+				throw new RepositoryException("EXCEPTION: order not found");
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
 		}
-		return order;
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 			preparedStatement.setLong(1, order.getUserId());
 			preparedStatement.setInt(2, order.getTotalPrice());
 			preparedStatement.setDate(3, Date.valueOf(order.getDate()));
-			preparedStatement.setString(4, order.getDate().toString());
+			preparedStatement.setString(4, order.getStatus().toString());
 			preparedStatement.setLong(5, order.getId());
 
 			if (preparedStatement.executeUpdate() > 0) {
@@ -125,7 +125,7 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public boolean delete(Long id) throws RepositoryException {
-		boolean isDeleted = false;
+		boolean isDeleted;
 		try (Connection con = dataSource.getConnection()) {
 			con.setAutoCommit(false);
 			try {
@@ -148,7 +148,8 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 		return isDeleted;
 	}
 
-	private Order getOrder(ResultSet resultSet, Order order) throws SQLException {
+	private Order getOrder(ResultSet resultSet) throws SQLException {
+		Order order = new Order();
 		order.setId(resultSet.getLong(ID_COLUMN));
 		order.setUserId(resultSet.getLong(USER_ID_COLUMN));
 		order.setTotalPrice(resultSet.getInt(TOTAL_PRICE_COLUMN));
@@ -163,7 +164,7 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 			preparedStatement.setLong(1, order.getUserId());
 			preparedStatement.setInt(2, order.getTotalPrice());
 			preparedStatement.setDate(3, Date.valueOf(order.getDate()));
-			preparedStatement.setString(4, order.getDate().toString());
+			preparedStatement.setString(4, order.getStatus().toString());
 
 			final int effectiveRow = preparedStatement.executeUpdate();
 
@@ -180,7 +181,7 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 	private void deleteRentFromOrder(Connection con, Long orderId) throws RepositoryException {
 		try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_RENT_BY_ORDER_QUERY)) {
 			preparedStatement.setLong(1, orderId);
-			preparedStatement.execute();
+			preparedStatement.executeUpdate();
 		} catch (SQLException ex) {
 			throw new RepositoryException("Exception: deleteRents: " + ex);
 		}
@@ -189,7 +190,7 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 	private void deletePurchaseFromOrder(Connection con, Long orderId) throws RepositoryException {
 		try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_PURCHASE_BY_ORDER_QUERY)) {
 			preparedStatement.setLong(1, orderId);
-			preparedStatement.execute();
+			preparedStatement.executeUpdate();
 		} catch (SQLException ex) {
 			throw new RepositoryException("Exception: deletePurchases: " + ex);
 		}
@@ -202,9 +203,7 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_BY_USER_QUERY + userId)) {
 			while (resultSet.next()) {
-				Order order = new Order();
-				order = getOrder(resultSet, order);
-				orders.add(order);
+				orders.add(getOrder(resultSet));
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findAll: " + ex);
@@ -214,7 +213,7 @@ public class JDBCOrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public boolean deleteOrdersByUser(Long userId) throws RepositoryException {
-		boolean isDeleted = false;
+		boolean isDeleted;
 		try (Connection con = dataSource.getConnection()) {
 			con.setAutoCommit(false);
 			try {

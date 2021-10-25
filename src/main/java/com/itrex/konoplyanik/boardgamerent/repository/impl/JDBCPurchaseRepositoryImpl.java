@@ -23,10 +23,10 @@ public class JDBCPurchaseRepositoryImpl implements PurchaseRepository {
 	
 	private static final String INSERT_PURCHASE_QUERY = "INSERT INTO purchase(accessory_id, order_id, quantity, price) VALUES (?, ?, ?, ?)";
 	private static final String SELECT_ALL_QUERY = "SELECT	* FROM purchase";
-	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM purchase WHERE id=?";
+	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM purchase WHERE id=";
 	private static final String UPDATE_PURCHASE_QUERY = "UPDATE purchase SET accessory_id=?, order_id=?, quantity=?, price=? WHERE id=?";
 	private static final String DELETE_PURCHASE_QUERY = "DELETE	FROM purchase WHERE id=?";
-	private static final String SELECT_BY_ORDER_QUERY = "SELECT * FROM purchase WHERE order_id=?";
+	private static final String SELECT_BY_ORDER_QUERY = "SELECT * FROM purchase WHERE order_id=";
 	private static final String DELETE_PURCHASE_BY_ORDER_QUERY = "DELETE FROM purchase WHERE order_id=?";
 	
 
@@ -43,9 +43,7 @@ public class JDBCPurchaseRepositoryImpl implements PurchaseRepository {
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_ALL_QUERY)) {
 			while (resultSet.next()) {
-				Purchase purchase = new Purchase();
-				purchase = getPurchase(resultSet, purchase);
-				purchases.add(purchase);
+				purchases.add(getPurchase(resultSet));
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findAll: " + ex);
@@ -55,17 +53,17 @@ public class JDBCPurchaseRepositoryImpl implements PurchaseRepository {
 
 	@Override
 	public Purchase findById(Long id) throws RepositoryException {
-		Purchase purchase = new Purchase();
 		try (Connection con = dataSource.getConnection();
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_BY_ID_QUERY + id)) {
 			if (resultSet.next()) {
-				purchase = getPurchase(resultSet, purchase);
+				return getPurchase(resultSet);
+			} else {
+				throw new RepositoryException("EXCEPTION: user not found");
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
 		}
-		return purchase;
 	}
 
 	@Override
@@ -129,7 +127,8 @@ public class JDBCPurchaseRepositoryImpl implements PurchaseRepository {
 		}
 	}
 	
-	private Purchase getPurchase(ResultSet resultSet, Purchase purchase) throws SQLException {
+	private Purchase getPurchase(ResultSet resultSet) throws SQLException {
+		Purchase purchase = new Purchase();
 		purchase.setId(resultSet.getLong(ID_COLUMN));
 		purchase.setAccessoryId(resultSet.getLong(ACCESSORY_ID_COLUMN));
 		purchase.setOrderId(resultSet.getLong(ORDER_ID_COLUMN));
@@ -165,9 +164,7 @@ public class JDBCPurchaseRepositoryImpl implements PurchaseRepository {
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_BY_ORDER_QUERY + orderId)) {
 			while (resultSet.next()) {
-				Purchase purchase = new Purchase();
-				purchase = getPurchase(resultSet, purchase);
-				purchases.add(purchase);
+				purchases.add(getPurchase(resultSet));
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findPurchasesByOrder: " + ex);

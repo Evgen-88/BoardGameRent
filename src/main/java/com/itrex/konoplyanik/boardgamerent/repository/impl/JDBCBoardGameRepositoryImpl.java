@@ -22,9 +22,10 @@ public class JDBCBoardGameRepositoryImpl implements BoardGameRepository {
 
 	private static final String INSERT_BOARD_GAME_QUERY = "INSERT INTO board_game(name, rent_price, quantity) VALUES (?, ?, ?)";
 	private static final String SELECT_ALL_QUERY = "SELECT	* FROM board_game";
-	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM board_game WHERE id=?";
+	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM board_game WHERE id=";
 	private static final String UPDATE_BOARD_GAME_QUERY = "UPDATE board_game SET name=?, rent_price=?, quantity=? WHERE id=?";
 	private static final String DELETE_BOARD_GAME_QUERY = "DELETE FROM board_game WHERE id=?";
+	private static final String DELETE_BOARD_GAME_FROM_RENT_QUERY = "DELETE FROM rent WHERE board_game_id=?";
 
 	private final DataSource dataSource;
 
@@ -39,9 +40,7 @@ public class JDBCBoardGameRepositoryImpl implements BoardGameRepository {
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_ALL_QUERY)) {
 			while (resultSet.next()) {
-				BoardGame boardGame = new BoardGame();
-				boardGame = getBoardGame(resultSet, boardGame);
-				boardGames.add(boardGame);
+				boardGames.add(getBoardGame(resultSet));
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findAll: " + ex);
@@ -51,17 +50,17 @@ public class JDBCBoardGameRepositoryImpl implements BoardGameRepository {
 
 	@Override
 	public BoardGame findById(Long id) throws RepositoryException {
-		BoardGame boardGame = new BoardGame();
 		try (Connection con = dataSource.getConnection();
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_BY_ID_QUERY + id)) {
 			if (resultSet.next()) {
-				boardGame = getBoardGame(resultSet, boardGame);
+				return getBoardGame(resultSet);
+			} else {
+				throw new RepositoryException("EXCEPTION: board game not found");
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
 		}
-		return boardGame;
 	}
 
 	@Override
@@ -116,15 +115,28 @@ public class JDBCBoardGameRepositoryImpl implements BoardGameRepository {
 
 	@Override
 	public boolean delete(Long id) throws RepositoryException {
-		try(Connection con = dataSource.getConnection();PreparedStatement preparedStatement = con.prepareStatement(DELETE_BOARD_GAME_QUERY)) {
-			preparedStatement.setLong(1, id);
-			return preparedStatement.executeUpdate() == 1;
-		} catch(SQLException ex) {
+		boolean isDeleted;
+		try (Connection con = dataSource.getConnection()) {
+			con.setAutoCommit(false);
+			try {
+				deleteBoardGameFromRent(con, id);
+				try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_BOARD_GAME_QUERY)) {
+					preparedStatement.setLong(1, id);
+					isDeleted = preparedStatement.executeUpdate() == 1;
+				}
+				con.commit();
+			} catch (SQLException ex) {
+				con.rollback();
+				throw new RepositoryException("Exception: delete: " + ex);
+			}
+		} catch (SQLException ex) {
 			throw new RepositoryException("Exception: delete: " + ex);
 		}
+		return isDeleted;
 	}
 
-	private BoardGame getBoardGame(ResultSet resultSet, BoardGame boardGame) throws SQLException {
+	private BoardGame getBoardGame(ResultSet resultSet) throws SQLException {
+		BoardGame boardGame = new BoardGame();
 		boardGame.setId(resultSet.getLong(ID_COLUMN));
 		boardGame.setName(resultSet.getString(NAME_COLUMN));
 		boardGame.setRentPrice(resultSet.getInt(RENT_PRICE_COLUMN));
@@ -148,6 +160,15 @@ public class JDBCBoardGameRepositoryImpl implements BoardGameRepository {
 					}
 				}
 			}
+		}
+	}
+
+	private void deleteBoardGameFromRent(Connection con, Long boardGameId) throws RepositoryException {
+		try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_BOARD_GAME_FROM_RENT_QUERY)) {
+			preparedStatement.setObject(1, boardGameId);
+			preparedStatement.executeUpdate();
+		} catch (SQLException ex) {
+			throw new RepositoryException("Exception: deleteRents: " + ex);
 		}
 	}
 

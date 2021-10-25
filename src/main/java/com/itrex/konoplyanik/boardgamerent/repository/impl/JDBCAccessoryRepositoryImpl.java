@@ -25,6 +25,7 @@ public class JDBCAccessoryRepositoryImpl implements AccessoryRepository {
 	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM accessory WHERE id=";
 	private static final String UPDATE_ACCESSORY_QUERY = "UPDATE accessory SET name=?, price=?, quantity=? WHERE id=?";
 	private static final String DELETE_ACCESSORY_QUERY = "DELETE FROM accessory WHERE id=?";
+	private static final String DELETE_ACCESSORY_FROM_PURCHASE_QUERY = "DELETE FROM purchase WHERE accessory_id=?";
 
 	private final DataSource dataSource;
 
@@ -114,12 +115,24 @@ public class JDBCAccessoryRepositoryImpl implements AccessoryRepository {
 
 	@Override
 	public boolean delete(Long id) throws RepositoryException {
-		try(Connection con = dataSource.getConnection();PreparedStatement preparedStatement = con.prepareStatement(DELETE_ACCESSORY_QUERY)) {
-			preparedStatement.setLong(1, id);
-			return preparedStatement.executeUpdate() == 1;
-		} catch(SQLException ex) {
+		boolean isDeleted;
+		try (Connection con = dataSource.getConnection()) {
+			con.setAutoCommit(false);
+			try {
+				deleteAccessoryFromPurchase(con, id);
+				try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_ACCESSORY_QUERY)) {
+					preparedStatement.setLong(1, id);
+					isDeleted = preparedStatement.executeUpdate() == 1;
+				}
+				con.commit();
+			} catch (SQLException ex) {
+				con.rollback();
+				throw new RepositoryException("Exception: delete: " + ex);
+			}
+		} catch (SQLException ex) {
 			throw new RepositoryException("Exception: delete: " + ex);
 		}
+		return isDeleted;
 	}
 
 	private Accessory getAccessory(ResultSet resultSet) throws SQLException {
@@ -147,6 +160,15 @@ public class JDBCAccessoryRepositoryImpl implements AccessoryRepository {
 					}
 				}
 			}
+		}
+	}
+
+	private void deleteAccessoryFromPurchase(Connection con, Long accessoryId) throws RepositoryException {
+		try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_ACCESSORY_FROM_PURCHASE_QUERY)) {
+			preparedStatement.setObject(1, accessoryId);
+			preparedStatement.executeUpdate();
+		} catch (SQLException ex) {
+			throw new RepositoryException("Exception: deleteRents: " + ex);
 		}
 	}
 

@@ -25,10 +25,10 @@ public class JDBCRentRepositoryImpl implements RentRepository {
 	
 	private static final String INSERT_RENT_QUERY = "INSERT INTO rent(board_game_id, order_id, rent_from, rent_to, price) VALUES (?, ?, ?, ?, ?)";
 	private static final String SELECT_ALL_QUERY = "SELECT	* FROM rent";
-	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM rent WHERE id=?";
+	private static final String SELECT_BY_ID_QUERY = "SELECT * FROM rent WHERE id=";
 	private static final String UPDATE_RENT_QUERY = "UPDATE rent SET board_game_id=?, order_id=?, rent_from=?, rent_to=?, price=? WHERE id=?";
 	private static final String DELETE_RENT_QUERY = "DELETE	FROM rent WHERE id=?";
-	private static final String SELECT_BY_ORDER_QUERY = "SELECT * FROM rent WHERE order_id=?";
+	private static final String SELECT_BY_ORDER_QUERY = "SELECT * FROM rent WHERE order_id=";
 	private static final String DELETE_RENT_BY_ORDER_QUERY = "DELETE FROM rent WHERE order_id=?";
 	
 
@@ -45,9 +45,7 @@ public class JDBCRentRepositoryImpl implements RentRepository {
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_ALL_QUERY)) {
 			while (resultSet.next()) {
-				Rent rent = new Rent();
-				rent = getRent(resultSet, rent);
-				rents.add(rent);
+				rents.add(getRent(resultSet));
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findAll: " + ex);
@@ -57,17 +55,17 @@ public class JDBCRentRepositoryImpl implements RentRepository {
 
 	@Override
 	public Rent findById(Long id) throws RepositoryException {
-		Rent rent = new Rent();
 		try (Connection con = dataSource.getConnection();
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_BY_ID_QUERY + id)) {
 			if (resultSet.next()) {
-				rent = getRent(resultSet, rent);
+				return getRent(resultSet);
+			} else {
+				throw new RepositoryException("EXCEPTION: rent not found");
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
 		}
-		return rent;
 	}
 
 	@Override
@@ -132,7 +130,8 @@ public class JDBCRentRepositoryImpl implements RentRepository {
 		}
 	}
 	
-	private Rent getRent(ResultSet resultSet, Rent rent) throws SQLException {
+	private Rent getRent(ResultSet resultSet) throws SQLException {
+		Rent rent = new Rent();
 		rent.setId(resultSet.getLong(ID_COLUMN));
 		rent.setBoardGameId(resultSet.getLong(BOARD_GAME_ID_COLUMN));
 		rent.setOrderId(resultSet.getLong(ORDER_ID_COLUMN));
@@ -170,9 +169,7 @@ public class JDBCRentRepositoryImpl implements RentRepository {
 				Statement stm = con.createStatement();
 				ResultSet resultSet = stm.executeQuery(SELECT_BY_ORDER_QUERY + orderId)) {
 			while (resultSet.next()) {
-				Rent rent = new Rent();
-				rent = getRent(resultSet, rent);
-				rents.add(rent);
+				rents.add(getRent(resultSet));
 			}
 		} catch (SQLException ex) {
 			throw new RepositoryException("EXCEPTION: findRentsByOrder: " + ex);
