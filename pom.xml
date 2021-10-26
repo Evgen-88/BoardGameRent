@@ -2,14 +2,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itrex.konoplyanik</groupId>
   <artifactId>board-game-rent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <flyway.url>jdbc:h2:mem:boardgamerent;DB_CLOSE_DELAY=-1</flyway.url>
-    <flyway.schemas>boardgamerent</flyway.schemas>
+    <flyway.url>jdbc:h2:mem:board-game-rent;DB_CLOSE_DELAY=-1</flyway.url>
+    <flyway.schemas>board-game-rent</flyway.schemas>
     <flyway.user>evgen</flyway.user>
     <flyway.password>evgen</flyway.password>
   </properties>
@@ -24,6 +24,12 @@
     	<groupId>org.flywaydb</groupId>
     	<artifactId>flyway-core</artifactId>
     	<version>8.0.1</version>
+	</dependency>
+	<dependency>
+    	<groupId>junit</groupId>
+    	<artifactId>junit</artifactId>
+    	<version>4.12</version>
+    	<scope>test</scope>
 	</dependency>
   </dependencies>
   
