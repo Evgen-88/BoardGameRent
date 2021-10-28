@@ -8,8 +8,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <flyway.url>jdbc:h2:mem:board-game-rent;DB_CLOSE_DELAY=-1</flyway.url>
-    <flyway.schemas>board-game-rent</flyway.schemas>
+    <flyway.url>jdbc:h2:mem:boardgamerent;DB_CLOSE_DELAY=-1</flyway.url>
+    <flyway.schemas>boardgamerent</flyway.schemas>
     <flyway.user>evgen</flyway.user>
     <flyway.password>evgen</flyway.password>
   </properties>
