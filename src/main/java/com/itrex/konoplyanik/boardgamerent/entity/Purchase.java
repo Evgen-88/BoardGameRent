@@ -1,12 +1,43 @@
 package com.itrex.konoplyanik.boardgamerent.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "purchase", schema = "boardgamerent")
 public class Purchase {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
+	
+	@Column(name = "accessory_id", insertable = false, updatable = false)
 	private Long accessoryId;
+	
+	@Column(name = "order_id", insertable = false, updatable = false)
 	private Long orderId;
+	
+	@Column(name = "quantity")
 	private Integer quantity;
+	
+	@Column(name = "price")
 	private Integer price;
+	
+	@OneToOne
+	@JoinColumn(name = "accessory_id")
+	private Accessory accessory;
+	
+	@ManyToOne
+	@JoinColumn
+	private Order order;
 	
 	public Purchase() {
 	}
@@ -22,6 +53,13 @@ public class Purchase {
 		this.id = id;
 		this.accessoryId = accessoryId;
 		this.orderId = orderId;
+		this.quantity = quantity;
+		this.price = price;
+	}
+	
+	public Purchase(Accessory accessory, Order order, Integer quantity, Integer price) {
+		this.accessory = accessory;
+		this.order = order;
 		this.quantity = quantity;
 		this.price = price;
 	}

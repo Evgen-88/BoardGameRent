@@ -1,11 +1,33 @@
 package com.itrex.konoplyanik.boardgamerent.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "board_game", schema = "boardgamerent")
 public class BoardGame {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
+	
+	@Column(name = "name")
 	private String name;
+	
+	@Column(name = "rent_price")
 	private Integer rentPrice;
+	
+	@Column(name = "quantity")
 	private Integer quantity;
+	
+	@OneToOne(mappedBy = "boardGame")
+	private Rent rent;
 	
 	public BoardGame() {
 	}

@@ -1,14 +1,54 @@
 package com.itrex.konoplyanik.boardgamerent.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+@Entity
+@Table(name = "orders", schema = "boardgamerent")
 public class Order {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
+	
+	@Column(name = "user_id", insertable = false, updatable = false)
 	private Long userId;
+	
+	@Column(name = "total_price")
 	private Integer totalPrice;
+	
+	@Column(name = "order_date")
 	private LocalDate date;
+	
+	@Column(name = "status")
+	@Enumerated(EnumType.STRING)
 	private Status status;
+	
+	@OneToMany(mappedBy = "order")
+	private List<Purchase> purchases;
+	
+	@OneToMany(mappedBy = "order")
+	private List<Rent> rents;
+	
+	@ManyToOne
+	@JoinColumn(name = "orders")
+	private User user;
 	
 	public Order() {
 	}
@@ -23,6 +63,13 @@ public class Order {
 	public Order(Long id, Long userId, Integer totalPrice, LocalDate date, Status status) {
 		this.id = id;
 		this.userId = userId;
+		this.totalPrice = totalPrice;
+		this.date = date;
+		this.status = status;
+	}
+	
+	public Order(User user, Integer totalPrice, LocalDate date, Status status) {
+		this.user = user;
 		this.totalPrice = totalPrice;
 		this.date = date;
 		this.status = status;
@@ -59,6 +106,22 @@ public class Order {
 		this.status = status;
 	}
 	
+	public List<Purchase> getPurchases() {
+		return purchases;
+	}
+
+	public void setPurchases(List<Purchase> purchases) {
+		this.purchases = purchases;
+	}
+
+	public List<Rent> getRents() {
+		return rents;
+	}
+
+	public void setRents(List<Rent> rents) {
+		this.rents = rents;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

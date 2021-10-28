@@ -1,13 +1,50 @@
 package com.itrex.konoplyanik.boardgamerent.entity;
 
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "users", schema = "boardgamerent")
 public class User {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
+	
+	@Column(name = "login")
 	private String login;
+	
+	@Column(name = "password")
 	private String password;
+	
+	@Column(name = "name")
 	private String name;
+	
+	@Column(name = "phone")
 	private Integer phone;
+	
+	@Column(name = "email")
 	private String email;
+	
+	@OneToMany(mappedBy = "user")
+	private List<Order> orders;
+	
+	@ManyToMany
+	@JoinTable(name = "users_user_role_link",
+			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+	private List<Role> roles;
 	
 	public User() {
 	}
@@ -66,6 +103,22 @@ public class User {
 		this.email = email;
 	}
 	
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

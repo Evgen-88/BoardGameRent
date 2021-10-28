@@ -2,14 +2,47 @@ package com.itrex.konoplyanik.boardgamerent.entity;
 
 import java.time.LocalDate;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "rent", schema = "boardgamerent")
 public class Rent {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
+	
+	@Column(name = "board_game_id", insertable = false, updatable = false)
 	private Long boardGameId;
+	
+	@Column(name = "order_id", insertable = false, updatable = false)
 	private Long orderId;
+	
+	@Column(name = "rent_from")
 	private LocalDate from;
+	
+	@Column(name = "rent_to")
 	private LocalDate to;
+	
+	@Column(name = "price")
 	private Integer price;
+	
+	@OneToOne
+	@JoinColumn(name = "board_game_id")
+	private BoardGame boardGame;
+	
+	@ManyToOne
+	@JoinColumn(name = "order")
+	private Order order;
 	
 	public Rent() {
 	}
@@ -26,6 +59,14 @@ public class Rent {
 		this.id = id;
 		this.boardGameId = boardGameId;
 		this.orderId = orderId;
+		this.from = from;
+		this.to = to;
+		this.price = price;
+	}
+	
+	public Rent(BoardGame boardGame, Order order, LocalDate from, LocalDate to, Integer price) {
+		this.boardGame = boardGame;
+		this.order = order;
 		this.from = from;
 		this.to = to;
 		this.price = price;
