@@ -1,15 +1,17 @@
 package com.itrex.konoplyanik.boardgamerent.entity;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "accessory", schema = "boardgamerent")
+@Table(name = "accessory")
 public class Accessory {
 
 	@Id
@@ -26,8 +28,8 @@ public class Accessory {
 	@Column(name = "quantity")
 	private Integer quantity;
 	
-	@OneToOne(mappedBy = "accessory")
-	private Purchase purchase;
+	@OneToMany(mappedBy = "accessory")
+	private Set<Purchase> purchases;
 	
 	public Accessory() {
 	}
@@ -70,6 +72,14 @@ public class Accessory {
 		this.quantity = quantity;
 	}
 	
+	public Set<Purchase> getPurchases() {
+		return purchases;
+	}
+
+	public void setPurchases(Set<Purchase> purchases) {
+		this.purchases = purchases;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

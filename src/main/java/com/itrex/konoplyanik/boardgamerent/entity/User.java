@@ -1,6 +1,6 @@
 package com.itrex.konoplyanik.boardgamerent.entity;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "users", schema = "boardgamerent")
+@Table(name = "users")
 public class User {
 	
 	@Id
@@ -38,13 +38,13 @@ public class User {
 	private String email;
 	
 	@OneToMany(mappedBy = "user")
-	private List<Order> orders;
+	private Set<Order> orders;
 	
 	@ManyToMany
 	@JoinTable(name = "users_user_role_link",
 			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-	private List<Role> roles;
+	private Set<Role> roles;
 	
 	public User() {
 	}
@@ -103,19 +103,19 @@ public class User {
 		this.email = email;
 	}
 	
-	public List<Order> getOrders() {
+	public Set<Order> getOrders() {
 		return orders;
 	}
 
-	public void setOrders(List<Order> orders) {
+	public void setOrders(Set<Order> orders) {
 		this.orders = orders;
 	}
 
-	public List<Role> getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<Role> roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
 

@@ -7,11 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "purchase", schema = "boardgamerent")
+@Table(name = "purchase")
 public class Purchase {
 
 	@Id
@@ -31,12 +30,12 @@ public class Purchase {
 	@Column(name = "price")
 	private Integer price;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "accessory_id")
 	private Accessory accessory;
 	
 	@ManyToOne
-	@JoinColumn
+	@JoinColumn(name = "order_id")
 	private Order order;
 	
 	public Purchase() {
@@ -95,6 +94,22 @@ public class Purchase {
 		this.price = price;
 	}
 	
+	public Accessory getAccessory() {
+		return accessory;
+	}
+
+	public void setAccessory(Accessory accessory) {
+		this.accessory = accessory;
+	}
+
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -1,7 +1,7 @@
 package com.itrex.konoplyanik.boardgamerent.entity;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,11 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 @Entity
-@Table(name = "orders", schema = "boardgamerent")
+@Table(name = "orders")
 public class Order {
 	
 	@Id
@@ -41,13 +38,13 @@ public class Order {
 	private Status status;
 	
 	@OneToMany(mappedBy = "order")
-	private List<Purchase> purchases;
+	private Set<Purchase> purchases;
 	
 	@OneToMany(mappedBy = "order")
-	private List<Rent> rents;
+	private Set<Rent> rents;
 	
 	@ManyToOne
-	@JoinColumn(name = "orders")
+	@JoinColumn(name = "user_id")
 	private User user;
 	
 	public Order() {
@@ -106,20 +103,28 @@ public class Order {
 		this.status = status;
 	}
 	
-	public List<Purchase> getPurchases() {
+	public Set<Purchase> getPurchases() {
 		return purchases;
 	}
 
-	public void setPurchases(List<Purchase> purchases) {
+	public void setPurchases(Set<Purchase> purchases) {
 		this.purchases = purchases;
 	}
 
-	public List<Rent> getRents() {
+	public Set<Rent> getRents() {
 		return rents;
 	}
 
-	public void setRents(List<Rent> rents) {
+	public void setRents(Set<Rent> rents) {
 		this.rents = rents;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	@Override

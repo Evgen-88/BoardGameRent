@@ -1,6 +1,6 @@
 package com.itrex.konoplyanik.boardgamerent.entity;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +11,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "user_role", schema = "boardgamerent")
+@Table(name = "user_role")
 public class Role {
 	
 	@Id
@@ -23,7 +23,7 @@ public class Role {
 	private String name;
 	
 	@ManyToMany(mappedBy = "roles")
-	private List<User> users;
+	private Set<User> users;
 	
 	public Role() {
 	}
@@ -50,11 +50,11 @@ public class Role {
 		this.name = name;
 	}
 	
-	public List<User> getUsers() {
+	public Set<User> getUsers() {
 		return users;
 	}
 
-	public void setUsers(List<User> users) {
+	public void setUsers(Set<User> users) {
 		this.users = users;
 	}
 
