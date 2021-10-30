@@ -33,7 +33,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 	private static final String DELETE_USER_LINK_QUERY = "DELETE FROM users_user_role_link WHERE user_id=?";
 	private static final String INSERT_CUSTOMER_ROLE_QUERY = "INSERT INTO users_user_role_link(role_id, user_id) VALUES (?, ?)";
 	private static final String DELETE_USER_FROM_ORDERS_QUERY = "UPDATE orders SET user_id=? WHERE user_id=?";
-	
+
 	private final DataSource dataSource;
 
 	public JDBCUserRepositoryImpl(DataSource dataSource) {
@@ -71,13 +71,13 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 	}
 
 	@Override
-	public List<User> addAll(List<User> users) throws RepositoryException {
+	public List<User> addAll(List<User> users, Long... roleIds) throws RepositoryException {
 		try (Connection con = dataSource.getConnection()) {
 			con.setAutoCommit(false);
 			try {
-				for (User u : users) {
-					insertUser(con, u);
-					insertCustomerRole(con, u);
+				for (User user : users) {
+					insertUser(con, user);
+					insertRoles(con, user, roleIds);
 				}
 				con.commit();
 			} catch (SQLException ex) {
@@ -93,12 +93,12 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 	}
 
 	@Override
-	public User add(User user) throws RepositoryException {
+	public User add(User user, Long... roleIds) throws RepositoryException {
 		try (Connection con = dataSource.getConnection()) {
 			con.setAutoCommit(false);
 			try {
 				insertUser(con, user);
-				insertCustomerRole(con, user);
+				insertRoles(con, user, roleIds);
 				con.commit();
 			} catch (SQLException ex) {
 				con.rollback();
@@ -190,12 +190,14 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 		}
 	}
 
-	private void insertCustomerRole(Connection con, User user) throws SQLException {
-		try (PreparedStatement preparedStatement = con.prepareStatement(INSERT_CUSTOMER_ROLE_QUERY)) {
-			preparedStatement.setLong(1, 3);
-			preparedStatement.setLong(2, user.getId());
+	private void insertRoles(Connection con, User user, Long... roleIds) throws SQLException {
+		for (Long roleId : roleIds) {
+			try (PreparedStatement preparedStatement = con.prepareStatement(INSERT_CUSTOMER_ROLE_QUERY)) {
+				preparedStatement.setLong(1, roleId);
+				preparedStatement.setLong(2, user.getId());
 
-			preparedStatement.executeUpdate();
+				preparedStatement.executeUpdate();
+			}
 		}
 	}
 
@@ -205,7 +207,7 @@ public class JDBCUserRepositoryImpl implements UserRepository {
 			preparedStatement.executeUpdate();
 		}
 	}
-	
+
 	private void deleteUserFromOrders(Connection con, Long userId) throws SQLException {
 		try (PreparedStatement preparedStatement = con.prepareStatement(DELETE_USER_FROM_ORDERS_QUERY)) {
 			preparedStatement.setObject(1, null);

@@ -1,6 +1,7 @@
 package com.itrex.konoplyanik.boardgamerent.repository.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -20,7 +21,7 @@ public class HibernateOrderRepositoryImpl implements OrderRepository {
 	private static final String TOTAL_PRICE_COLUMN = "totalPrice";
 	private static final String DATE_COLUMN = "date";
 	private static final String STATUS_COLUMN = "status";
-	
+
 	private static final String SELECT_ALL_QUERY = "from Order o";
 	private static final String UPDATE_QUERY = "update Order set userId = :userId, "
 			+ "totalPrice = :totalPrice, date = :date, status = :status where id = :id";
@@ -30,7 +31,7 @@ public class HibernateOrderRepositoryImpl implements OrderRepository {
 	public HibernateOrderRepositoryImpl(Session session) {
 		this.session = session;
 	}
-	
+
 	@Override
 	public List<Order> findAll() throws RepositoryException {
 		try {
@@ -52,11 +53,14 @@ public class HibernateOrderRepositoryImpl implements OrderRepository {
 	@Override
 	public List<Order> addAll(List<Order> orders) throws RepositoryException {
 		try {
-			for (Order o : orders) {
-				session.save(o);
+			session.getTransaction().begin();
+			for (Order order : orders) {
+				session.save(order);
 			}
+			session.getTransaction().commit();
 			return orders;
 		} catch (Exception ex) {
+			session.getTransaction().rollback();
 			throw new RepositoryException("EXCEPTION: addAll: " + ex);
 		}
 	}
@@ -64,9 +68,12 @@ public class HibernateOrderRepositoryImpl implements OrderRepository {
 	@Override
 	public Order add(Order order) throws RepositoryException {
 		try {
+			session.getTransaction().begin();
 			session.save(order);
+			session.getTransaction().commit();
 			return order;
 		} catch (Exception ex) {
+			session.getTransaction().rollback();
 			throw new RepositoryException("EXCEPTION: add: " + ex);
 		}
 	}
@@ -91,12 +98,13 @@ public class HibernateOrderRepositoryImpl implements OrderRepository {
 		try {
 			session.getTransaction().begin();
 			Order order = session.find(Order.class, id);
-			for(Rent r : order.getRents()) {
-				session.remove(r);
+			for (Rent rent : order.getRents()) {
+				session.remove(rent);
 			}
-			for(Purchase p : order.getPurchases()) {
-				session.remove(p);
+			for (Purchase purchase : order.getPurchases()) {
+				session.remove(purchase);
 			}
+			session.find(User.class, order.getUserId()).getOrders().remove(order);
 			session.remove(order);
 			session.getTransaction().commit();
 			return true;
@@ -110,11 +118,7 @@ public class HibernateOrderRepositoryImpl implements OrderRepository {
 	public List<Order> findOrdersByUser(Long userId) throws RepositoryException {
 		try {
 			User user = session.get(User.class, userId);
-			if(user != null) {
-				return user.getOrders();
-			} else {
-				return new ArrayList<>();
-			}
+			return new ArrayList<>(user.getOrders());
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findPurchasesByOrder: " + ex);
 		}
@@ -122,34 +126,27 @@ public class HibernateOrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public boolean deleteOrdersByUser(Long userId) throws RepositoryException {
-		boolean isDeleted = false;
 		try {
 			session.getTransaction().begin();
 			User user = session.get(User.class, userId);
-			if(user != null) {
-				OrderRepository or = new HibernateOrderRepositoryImpl(session);
-				for(Order o : user.getOrders()) {
-					or.delete(o.getId());
-				}
-				user.setOrders(new ArrayList<>());
-				isDeleted = true;
-			} else {
-				isDeleted = false;
+			for (Order order : user.getOrders()) {
+				order.setUser(null);
 			}
+			user.setOrders(new HashSet<>());
 			session.getTransaction().commit();
+			return true;
 		} catch (Exception ex) {
 			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: findAll: " + ex);
+			throw new RepositoryException("EXCEPTION: deleteOrdersByUser: " + ex);
 		}
-		return isDeleted;
 	}
-	
+
 	private void insertOrder(Query query, Order order) {
-		query.setParameter(ID_COLUMN, order.getId());
 		query.setParameter(USER_ID_COLUMN, order.getUserId());
 		query.setParameter(TOTAL_PRICE_COLUMN, order.getTotalPrice());
 		query.setParameter(DATE_COLUMN, order.getDate());
 		query.setParameter(STATUS_COLUMN, order.getStatus());
+		query.setParameter(ID_COLUMN, order.getId());
 	}
 
 }

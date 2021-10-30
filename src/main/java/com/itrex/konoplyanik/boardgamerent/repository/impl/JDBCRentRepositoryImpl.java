@@ -106,8 +106,8 @@ public class JDBCRentRepositoryImpl implements RentRepository {
 						Statement.RETURN_GENERATED_KEYS)) {
 			preparedStatement.setLong(1, rent.getBoardGameId());
 			preparedStatement.setLong(2, rent.getOrderId());
-			preparedStatement.setDate(3, Date.valueOf(rent.getFrom()));
-			preparedStatement.setDate(4, Date.valueOf(rent.getTo()));
+			preparedStatement.setDate(3, Date.valueOf(rent.getRentFrom()));
+			preparedStatement.setDate(4, Date.valueOf(rent.getRentTo()));
 			preparedStatement.setInt(5, rent.getPrice());
 			preparedStatement.setLong(6, rent.getId());
 
@@ -135,8 +135,8 @@ public class JDBCRentRepositoryImpl implements RentRepository {
 		rent.setId(resultSet.getLong(ID_COLUMN));
 		rent.setBoardGameId(resultSet.getLong(BOARD_GAME_ID_COLUMN));
 		rent.setOrderId(resultSet.getLong(ORDER_ID_COLUMN));
-		rent.setFrom(resultSet.getDate(RENT_FROM_COLUMN).toLocalDate());
-		rent.setTo(resultSet.getDate(RENT_TO_COLUMN).toLocalDate());
+		rent.setRentFrom(resultSet.getDate(RENT_FROM_COLUMN).toLocalDate());
+		rent.setRentTo(resultSet.getDate(RENT_TO_COLUMN).toLocalDate());
 		rent.setPrice(resultSet.getInt(PRICE_COLUMN));
 		return rent;
 	}
@@ -146,8 +146,8 @@ public class JDBCRentRepositoryImpl implements RentRepository {
 				Statement.RETURN_GENERATED_KEYS)) {
 			preparedStatement.setLong(1, rent.getBoardGameId());
 			preparedStatement.setLong(2, rent.getOrderId());
-			preparedStatement.setDate(3, Date.valueOf(rent.getFrom()));
-			preparedStatement.setDate(4, Date.valueOf(rent.getTo()));
+			preparedStatement.setDate(3, Date.valueOf(rent.getRentFrom()));
+			preparedStatement.setDate(4, Date.valueOf(rent.getRentTo()));
 			preparedStatement.setInt(5, rent.getPrice());
 
 			final int effectiveRow = preparedStatement.executeUpdate();

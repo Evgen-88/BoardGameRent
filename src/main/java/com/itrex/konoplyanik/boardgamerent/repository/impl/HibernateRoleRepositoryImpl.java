@@ -2,6 +2,7 @@ package com.itrex.konoplyanik.boardgamerent.repository.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Query;
 
@@ -17,7 +18,7 @@ public class HibernateRoleRepositoryImpl implements RoleRepository {
 	private static final String NAME_COLUMN = "name";
 
 	private static final String SELECT_ALL_QUERY = "from Role r";
-	private static final String UPDATE_QUERY = "update Role set name = :name, where id = :id";
+	private static final String UPDATE_QUERY = "update Role set name = :name where id = :id";
 
 	private final Session session;
 
@@ -46,11 +47,14 @@ public class HibernateRoleRepositoryImpl implements RoleRepository {
 	@Override
 	public List<Role> addAll(List<Role> roles) throws RepositoryException {
 		try {
+			session.getTransaction().begin();
 			for (Role role : roles) {
 				session.save(role);
 			}
+			session.getTransaction().commit();
 			return roles;
 		} catch (Exception ex) {
+			session.getTransaction().rollback();
 			throw new RepositoryException("EXCEPTION: addAll: " + ex);
 		}
 	}
@@ -58,9 +62,12 @@ public class HibernateRoleRepositoryImpl implements RoleRepository {
 	@Override
 	public Role add(Role role) throws RepositoryException {
 		try {
+			session.getTransaction().begin();
 			session.save(role);
+			session.getTransaction().commit();
 			return role;
 		} catch (Exception ex) {
+			session.getTransaction().rollback();
 			throw new RepositoryException("EXCEPTION: add: " + ex);
 		}
 	}
@@ -86,7 +93,9 @@ public class HibernateRoleRepositoryImpl implements RoleRepository {
 			session.getTransaction().begin();
 			Role role = session.find(Role.class, id);
 			for (User user : role.getUsers()) {
-				session.remove(user);
+				Set<Role> roles = user.getRoles();
+				roles.remove(role);
+				user.setRoles(roles);
 			}
 			session.remove(role);
 			session.getTransaction().commit();
@@ -101,7 +110,7 @@ public class HibernateRoleRepositoryImpl implements RoleRepository {
 	public List<Role> findRolesByUser(Long userId) throws RepositoryException {
 		try {
 			User user = session.find(User.class, userId);
-			return user.getRoles();
+			return new ArrayList<>(user.getRoles());
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findRolesByUser: " + ex);
 		}
@@ -109,31 +118,24 @@ public class HibernateRoleRepositoryImpl implements RoleRepository {
 
 	@Override
 	public boolean deleteRoleFromUser(Long roleId, Long userId) throws RepositoryException {
-		boolean isDeleted = false;
 		try {
 			session.getTransaction().begin();
 			User user = session.find(User.class, userId);
-			if (user != null) {
-				for (Role role : user.getRoles()) {
-					if (role.getId() == roleId) {
-						session.remove(role);
-					}
-				}
-				isDeleted = true;
-			} else {
-				isDeleted = false;
-			}
+			Role role = session.find(Role.class, roleId);
+			Set<Role> roles = user.getRoles();
+			roles.remove(role);
+			user.setRoles(roles);
 			session.getTransaction().commit();
+			return true;
 		} catch (Exception ex) {
 			session.getTransaction().rollback();
 			throw new RepositoryException("EXCEPTION: findRolesByUser: " + ex);
 		}
-		return isDeleted;
 	}
 
 	private void insertRole(Query query, Role role) {
-		query.setParameter(ID_COLUMN, role.getId());
 		query.setParameter(NAME_COLUMN, role.getName());
+		query.setParameter(ID_COLUMN, role.getId());
 	}
 
 }

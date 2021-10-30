@@ -1,6 +1,7 @@
 package com.itrex.konoplyanik.boardgamerent.repository.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -49,21 +50,27 @@ public class HibernatePurchaseRepositoryImpl implements PurchaseRepository {
 	@Override
 	public List<Purchase> addAll(List<Purchase> purchases) throws RepositoryException {
 		try {
-			for (Purchase p : purchases) {
-				session.save(p);
+			session.getTransaction().begin();
+			for (Purchase purchase : purchases) {
+				session.save(purchase);
 			}
+			session.getTransaction().commit();
 			return purchases;
 		} catch (Exception ex) {
+			session.getTransaction().rollback();
 			throw new RepositoryException("EXCEPTION: addAll: " + ex);
 		}
 	}
 
 	@Override
-	public Purchase add(Purchase purchases) throws RepositoryException {
+	public Purchase add(Purchase purchase) throws RepositoryException {
 		try {
-			session.save(purchases);
-			return purchases;
+			session.getTransaction().begin();
+			session.save(purchase);
+			session.getTransaction().commit();
+			return purchase;
 		} catch (Exception ex) {
+			session.getTransaction().rollback();
 			throw new RepositoryException("EXCEPTION: add: " + ex);
 		}
 	}
@@ -103,7 +110,7 @@ public class HibernatePurchaseRepositoryImpl implements PurchaseRepository {
 		try {
 			Order order = session.get(Order.class, orderId);
 			if(order != null) {
-				return order.getPurchases();
+				return new ArrayList<>(order.getPurchases());
 			} else {
 				return new ArrayList<>();
 			}
@@ -119,7 +126,7 @@ public class HibernatePurchaseRepositoryImpl implements PurchaseRepository {
 			session.getTransaction().begin();
 			Order order = session.get(Order.class, orderId);
 			if(order != null) {
-				order.setPurchases(new ArrayList<>());
+				order.setPurchases(new HashSet<>());
 				isDeleted = true;
 			} else {
 				isDeleted = false;
@@ -133,11 +140,11 @@ public class HibernatePurchaseRepositoryImpl implements PurchaseRepository {
 	}
 	
 	private void insertPurchase(Query query, Purchase purchase) {
-		query.setParameter(ID_COLUMN, purchase.getId());
 		query.setParameter(ACCESSORY_ID_COLUMN, purchase.getAccessoryId());
 		query.setParameter(ORDER_ID_COLUMN, purchase.getOrderId());
 		query.setParameter(QUANTITY_COLUMN, purchase.getQuantity());
 		query.setParameter(PRICE_COLUMN, purchase.getPrice());
+		query.setParameter(ID_COLUMN, purchase.getId());
 	}
 
 }

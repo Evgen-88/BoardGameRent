@@ -1,6 +1,7 @@
 package com.itrex.konoplyanik.boardgamerent.repository.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -16,13 +17,13 @@ public class HibernateRentRepositoryImpl implements RentRepository {
 	private static final String ID_COLUMN = "id";
 	private static final String BOARD_GAME_ID_COLUMN = "boardGameId";
 	private static final String ORDER_ID_COLUMN = "orderId";
-	private static final String FROM_COLUMN = "from";
-	private static final String TO_COLUMN = "to";
+	private static final String RENT_FROM_COLUMN = "rentFrom";
+	private static final String RENT_TO_COLUMN = "rentTo";
 	private static final String PRICE_COLUMN = "price";
 	
 	private static final String SELECT_ALL_QUERY = "from Rent r";
 	private static final String UPDATE_QUERY = "update Rent set boardGameId = :boardGameId, "
-			+ "orderId = :orderId, from = :from, to = :to, price = :price where id = :id";
+			+ "orderId = :orderId, rentFrom = :rentFrom, rentTo = :rentTo, price = :price where id = :id";
 	
 	private final Session session;
 
@@ -51,11 +52,14 @@ public class HibernateRentRepositoryImpl implements RentRepository {
 	@Override
 	public List<Rent> addAll(List<Rent> rents) throws RepositoryException {
 		try {
-			for (Rent r : rents) {
-				session.save(r);
+			session.getTransaction().begin();
+			for (Rent rent : rents) {
+				session.save(rent);
 			}
+			session.getTransaction().commit();
 			return rents;
 		} catch (Exception ex) {
+			session.getTransaction().rollback();
 			throw new RepositoryException("EXCEPTION: addAll: " + ex);
 		}
 	}
@@ -63,9 +67,12 @@ public class HibernateRentRepositoryImpl implements RentRepository {
 	@Override
 	public Rent add(Rent rent) throws RepositoryException {
 		try {
+			session.getTransaction().begin();
 			session.save(rent);
+			session.getTransaction().commit();
 			return rent;
 		} catch (Exception ex) {
+			session.getTransaction().rollback();
 			throw new RepositoryException("EXCEPTION: add: " + ex);
 		}
 	}
@@ -105,7 +112,7 @@ public class HibernateRentRepositoryImpl implements RentRepository {
 		try {
 			Order order = session.get(Order.class, orderId);
 			if(order != null) {
-				return order.getRents();
+				return new ArrayList<>(order.getRents());
 			} else {
 				return new ArrayList<>();
 			}
@@ -121,7 +128,7 @@ public class HibernateRentRepositoryImpl implements RentRepository {
 			session.getTransaction().begin();
 			Order order = session.get(Order.class, orderId);
 			if(order != null) {
-				order.setRents(new ArrayList<>());
+				order.setRents(new HashSet<>());
 				isDeleted = true;
 			} else {
 				isDeleted = false;
@@ -135,12 +142,12 @@ public class HibernateRentRepositoryImpl implements RentRepository {
 	}
 	
 	private void insertRent(Query query, Rent rent) {
-		query.setParameter(ID_COLUMN, rent.getId());
 		query.setParameter(BOARD_GAME_ID_COLUMN, rent.getBoardGameId());
 		query.setParameter(ORDER_ID_COLUMN, rent.getOrderId());
-		query.setParameter(FROM_COLUMN, rent.getFrom());
-		query.setParameter(TO_COLUMN, rent.getTo());
+		query.setParameter(RENT_FROM_COLUMN, rent.getRentFrom());
+		query.setParameter(RENT_TO_COLUMN, rent.getRentTo());
 		query.setParameter(PRICE_COLUMN, rent.getPrice());
+		query.setParameter(ID_COLUMN, rent.getId());
 	}
 
 }
