@@ -9,8 +9,8 @@ public interface UserRepository {
 	
 	List<User> findAll() throws RepositoryException;
 	User findById(Long id) throws RepositoryException;
-	List<User> addAll(List<User> users) throws RepositoryException;
-	User add(User user) throws RepositoryException;
+	List<User> addAll(List<User> users, Long... roleIds) throws RepositoryException;
+	User add(User user, Long... roleIds) throws RepositoryException;
 	User update(User user) throws RepositoryException;
 	boolean delete(Long id) throws RepositoryException;
 	
