@@ -4,19 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.itrex.konoplyanik.boardgamerent.entity.User;
 import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
 
-public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
+public class HibernateUserRepositoryImplTest extends BaseRepositoryTest {
 	private final UserRepository repository;
 	private List<User> users;
-	
-	public JDBCUserRepositoryImplTest() {
+
+	public HibernateUserRepositoryImplTest() {
 		super();
-		repository = new JDBCUserRepositoryImpl(getConnectionPool());
+		repository = new HibernateUserRepositoryImpl(getSessionFactory().openSession());
+	}
+	
+	@Before
+	public void fill() {
 		users = new ArrayList<>() {{
 			add(new User(1L, "ivan", "ivan", "Иван", 1111111, "ivan@mail"));
 			add(new User(2L, "alex", "alex", "Алекс", 2222222, "alex@mail"));
@@ -102,16 +107,16 @@ public class JDBCUserRepositoryImplTest extends BaseRepositoryTest {
 	public void findUsersByRole_validData_shouldReturnAllUsersByRole() {
 		//given
 		List<User>	expected = new ArrayList<>() {{
-			add(new User(1L, "ivan", "ivan", "Иван", 1111111, "ivan@mail"));
-			add(new User(2L, "alex", "alex", "Алекс", 2222222, "alex@mail"));
-			add(new User(3L, "kir", "kir", "Кирилл", 3333333, "kir@mail"));
 			add(new User(4L, "piter", "piter", "Петр", 4444444, "piter@mail"));
+			add(new User(3L, "kir", "kir", "Кирилл", 3333333, "kir@mail"));
 			add(new User(5L, "vova", "vova", "Владимир", 5555555, "vova@mail"));
+			add(new User(2L, "alex", "alex", "Алекс", 2222222, "alex@mail"));
+			add(new User(1L, "ivan", "ivan", "Иван", 1111111, "ivan@mail"));
 		}};
 		//when
 		List<User>	actual = repository.findUsersByRole(3L);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
-	
+
 }

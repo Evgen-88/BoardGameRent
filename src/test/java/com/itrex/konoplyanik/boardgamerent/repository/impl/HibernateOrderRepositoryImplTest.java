@@ -2,9 +2,11 @@ package com.itrex.konoplyanik.boardgamerent.repository.impl;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.itrex.konoplyanik.boardgamerent.entity.Order;
@@ -12,21 +14,25 @@ import com.itrex.konoplyanik.boardgamerent.entity.Status;
 import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
 
-public class JDBCOrderRepositoryImplTest extends BaseRepositoryTest {
+public class HibernateOrderRepositoryImplTest extends BaseRepositoryTest {
 	private final OrderRepository repository;
 	private List<Order> orders;
 
-	public JDBCOrderRepositoryImplTest() {
+	public HibernateOrderRepositoryImplTest() {
 		super();
-		repository = new JDBCOrderRepositoryImpl(getConnectionPool());
-		orders = new ArrayList<>() {{
-				add(new Order(1L, 1L, 45, LocalDate.of(2021, 10, 23), Status.confirmed));
-				add(new Order(2L, 4L, 90, LocalDate.of(2021, 10, 23), Status.confirmed));
-				add(new Order(3L, 2L, 126, LocalDate.of(2021, 10, 23), Status.confirmed));
-				add(new Order(4L, 4L, 120, LocalDate.of(2021, 10, 22), Status.booked));
-			}};
+		repository = new HibernateOrderRepositoryImpl(getSessionFactory().openSession());
 	}
-
+	
+	@Before
+	public void fill() {
+		orders = new ArrayList<>() {{
+			add(new Order(1L, 1L, 45, LocalDate.of(2021, 10, 23), Status.confirmed));
+			add(new Order(2L, 4L, 90, LocalDate.of(2021, 10, 23), Status.confirmed));
+			add(new Order(3L, 2L, 126, LocalDate.of(2021, 10, 23), Status.confirmed));
+			add(new Order(4L, 4L, 120, LocalDate.of(2021, 10, 22), Status.booked));
+		}};
+	}
+	
 	@Test
 	public void findAll_validData_shouldReturnAllOrder() {
 		// given && when
@@ -106,12 +112,10 @@ public class JDBCOrderRepositoryImplTest extends BaseRepositoryTest {
 	@Test
 	public void findOrdersByUser_validData_shouldAddAllOrders() {
 		// given
-		List<Order> expected = new ArrayList<>() {
-			{
-				add(new Order(2L, 4L, 90, LocalDate.of(2021, 10, 23), Status.confirmed));
-				add(new Order(4L, 4L, 120, LocalDate.of(2021, 10, 22), Status.booked));
-			}
-		};
+		List<Order> expected = new ArrayList<>() {{
+			add(new Order(4L, 4L, 120, LocalDate.of(2021, 10, 22), Status.booked));
+			add(new Order(2L, 4L, 90, LocalDate.of(2021, 10, 23), Status.confirmed));
+		}};
 		// when
 		List<Order> actual = repository.findOrdersByUser(4L);
 		// then

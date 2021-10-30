@@ -5,19 +5,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.itrex.konoplyanik.boardgamerent.entity.Rent;
 import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 
-public class JDBCRentRepositoryImplTest extends BaseRepositoryTest {
+public class HibernateRentRepositoryImplTest extends BaseRepositoryTest {
 	private final RentRepository repository;
 	private List<Rent> rents;
-	
-	public JDBCRentRepositoryImplTest() {
+
+	public HibernateRentRepositoryImplTest() {
 		super();
-		repository = new JDBCRentRepositoryImpl(getConnectionPool());
+		repository = new HibernateRentRepositoryImpl(getSessionFactory().openSession());
+	}
+	
+	@Before
+	public void fill() {
 		rents = new ArrayList<>() {{
 			add(new Rent(1L, 1L, 1L, LocalDate.of(2021, 10, 23), LocalDate.of(2021, 10, 24), 45));
 			add(new Rent(2L, 1L, 2L, LocalDate.of(2021, 10, 23), LocalDate.of(2021, 10, 25), 90));

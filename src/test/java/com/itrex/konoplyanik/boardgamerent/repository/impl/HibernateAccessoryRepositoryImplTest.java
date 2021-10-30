@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.itrex.konoplyanik.boardgamerent.entity.Accessory;
@@ -17,6 +18,10 @@ public class HibernateAccessoryRepositoryImplTest extends BaseRepositoryTest {
 	public HibernateAccessoryRepositoryImplTest() {
 		super();
 		repository = new HibernateAccessoryRepositoryImpl(getSessionFactory().openSession());
+	}
+	
+	@Before
+	public void fill() {
 		accessories = new ArrayList<>() {{
 			add(new Accessory(1L, "Протекторы для карт 65х87", 12, 24));
 			add(new Accessory(2L, "Протекторы для карт 48х64", 13, 20));
