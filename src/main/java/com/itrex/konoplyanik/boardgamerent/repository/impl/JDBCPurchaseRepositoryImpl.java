@@ -173,7 +173,7 @@ public class JDBCPurchaseRepositoryImpl implements PurchaseRepository {
 	}
 
 	@Override
-	public boolean deletePurchaseFromOrder(Long orderId) throws RepositoryException {
+	public boolean deletePurchasesFromOrder(Long orderId) throws RepositoryException {
 		try(Connection con = dataSource.getConnection();PreparedStatement preparedStatement = con.prepareStatement(DELETE_PURCHASE_BY_ORDER_QUERY)) {
 			preparedStatement.setLong(1, orderId);
 			return preparedStatement.executeUpdate() == 1;

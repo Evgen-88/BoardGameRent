@@ -109,34 +109,24 @@ public class HibernatePurchaseRepositoryImpl implements PurchaseRepository {
 	public List<Purchase> findPurchasesByOrder(Long orderId) throws RepositoryException {
 		try {
 			Order order = session.get(Order.class, orderId);
-			if(order != null) {
-				return new ArrayList<>(order.getPurchases());
-			} else {
-				return new ArrayList<>();
-			}
+			return new ArrayList<>(order.getPurchases());
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findPurchasesByOrder: " + ex);
 		}
 	}
 
 	@Override
-	public boolean deletePurchaseFromOrder(Long orderId) throws RepositoryException {
-		boolean isDeleted = false;
+	public boolean deletePurchasesFromOrder(Long orderId) throws RepositoryException {
 		try {
 			session.getTransaction().begin();
 			Order order = session.get(Order.class, orderId);
-			if(order != null) {
-				order.setPurchases(new HashSet<>());
-				isDeleted = true;
-			} else {
-				isDeleted = false;
-			}
+			order.setPurchases(new HashSet<>());
 			session.getTransaction().commit();
+			return true;
 		} catch (Exception ex) {
 			session.getTransaction().rollback();
 			throw new RepositoryException("EXCEPTION: findAll: " + ex);
 		}
-		return isDeleted;
 	}
 	
 	private void insertPurchase(Query query, Purchase purchase) {

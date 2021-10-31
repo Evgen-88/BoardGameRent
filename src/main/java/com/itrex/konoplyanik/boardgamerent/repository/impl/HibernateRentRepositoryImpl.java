@@ -111,34 +111,24 @@ public class HibernateRentRepositoryImpl implements RentRepository {
 	public List<Rent> findRentsByOrder(Long orderId) throws RepositoryException {
 		try {
 			Order order = session.get(Order.class, orderId);
-			if(order != null) {
-				return new ArrayList<>(order.getRents());
-			} else {
-				return new ArrayList<>();
-			}
+			return new ArrayList<>(order.getRents());
 		} catch (Exception ex) {
-			throw new RepositoryException("EXCEPTION: findPurchasesByOrder: " + ex);
+			throw new RepositoryException("EXCEPTION: findRentsByOrder: " + ex);
 		}
 	}
 
 	@Override
-	public boolean deleteRentFromOrder(Long orderId) throws RepositoryException {
-		boolean isDeleted = false;
+	public boolean deleteRentsFromOrder(Long orderId) throws RepositoryException {
 		try {
 			session.getTransaction().begin();
 			Order order = session.get(Order.class, orderId);
-			if(order != null) {
-				order.setRents(new HashSet<>());
-				isDeleted = true;
-			} else {
-				isDeleted = false;
-			}
+			order.setRents(new HashSet<>());
 			session.getTransaction().commit();
+			return true;
 		} catch (Exception ex) {
 			session.getTransaction().rollback();
 			throw new RepositoryException("EXCEPTION: findAll: " + ex);
 		}
-		return isDeleted;
 	}
 	
 	private void insertRent(Query query, Rent rent) {

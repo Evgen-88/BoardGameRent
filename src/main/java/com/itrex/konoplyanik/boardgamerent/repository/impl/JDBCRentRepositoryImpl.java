@@ -178,7 +178,7 @@ public class JDBCRentRepositoryImpl implements RentRepository {
 	}
 
 	@Override
-	public boolean deleteRentFromOrder(Long orderId) throws RepositoryException {
+	public boolean deleteRentsFromOrder(Long orderId) throws RepositoryException {
 		try(Connection con = dataSource.getConnection();PreparedStatement preparedStatement = con.prepareStatement(DELETE_RENT_BY_ORDER_QUERY)) {
 			preparedStatement.setLong(1, orderId);
 			return preparedStatement.executeUpdate() == 1;
