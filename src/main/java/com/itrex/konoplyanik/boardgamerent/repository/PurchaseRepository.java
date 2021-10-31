@@ -15,6 +15,6 @@ public interface PurchaseRepository {
 	boolean delete(Long id) throws RepositoryException;
 	
 	List<Purchase> findPurchasesByOrder(Long orderId) throws RepositoryException;
-	boolean deletePurchaseFromOrder(Long orderId) throws RepositoryException;
+	boolean deletePurchasesFromOrder(Long orderId) throws RepositoryException;
 	
 }

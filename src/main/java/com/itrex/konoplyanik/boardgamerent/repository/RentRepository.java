@@ -15,5 +15,5 @@ public interface RentRepository {
 	boolean delete(Long id) throws RepositoryException;
 	
 	List<Rent> findRentsByOrder(Long orderId) throws RepositoryException;
-	boolean deleteRentFromOrder(Long orderId) throws RepositoryException;
+	boolean deleteRentsFromOrder(Long orderId) throws RepositoryException;
 }
