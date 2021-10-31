@@ -8,7 +8,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itrex.konoplyanik.boardgamerent.entity.Order;
 import com.itrex.konoplyanik.boardgamerent.entity.Rent;
+import com.itrex.konoplyanik.boardgamerent.entity.Status;
 import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 
@@ -116,13 +118,14 @@ public class HibernateRentRepositoryImplTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void deleteRentFromOrder_shouldDeleteRent() {
+	public void deleteRentsFromOrder_shouldDeleteRent() {
 		//given
-		Rent rent = rents.get(1);
+		Order order = new Order(3L, 2L, 126, LocalDate.of(2021, 10, 23), Status.confirmed);
 		//when
-		boolean actual = repository.delete(rent.getId());
+		boolean actual = repository.deleteRentsFromOrder(order.getId());
 		//then
 		Assert.assertTrue(actual);
+		Assert.assertEquals(new ArrayList<>(), repository.findRentsByOrder(order.getId()));
 	}
 
 }

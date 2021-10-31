@@ -1,5 +1,6 @@
 package com.itrex.konoplyanik.boardgamerent.repository.impl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itrex.konoplyanik.boardgamerent.entity.Order;
 import com.itrex.konoplyanik.boardgamerent.entity.Purchase;
+import com.itrex.konoplyanik.boardgamerent.entity.Status;
+import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
 
@@ -112,13 +116,14 @@ public class HibernatePurchaseRepositoryImplTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void deletePurchaseFromOrder_shouldDeletePurchase() {
+	public void deletePurchasesFromOrder_shouldDeletePurchase() {
 		//given
-		Purchase purchase = purchases.get(1);
+		Order order = new Order(3L, 2L, 126, LocalDate.of(2021, 10, 23), Status.confirmed);
 		//when
-		boolean actual = repository.delete(purchase.getId());
+		boolean actual = repository.deletePurchasesFromOrder(order.getId());
 		//then
 		Assert.assertTrue(actual);
+		Assert.assertEquals(new ArrayList<>(), repository.findPurchasesByOrder(order.getId()));
 	}
 
 }
