@@ -122,6 +122,9 @@ public class HibernateRentRepositoryImpl implements RentRepository {
 		try {
 			session.getTransaction().begin();
 			Order order = session.get(Order.class, orderId);
+			for(Rent rent : order.getRents()) {
+				session.remove(rent);
+			}
 			order.setRents(new HashSet<>());
 			session.getTransaction().commit();
 			return true;

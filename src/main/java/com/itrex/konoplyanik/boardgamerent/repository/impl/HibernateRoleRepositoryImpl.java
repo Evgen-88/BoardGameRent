@@ -95,7 +95,6 @@ public class HibernateRoleRepositoryImpl implements RoleRepository {
 			for (User user : role.getUsers()) {
 				Set<Role> roles = user.getRoles();
 				roles.remove(role);
-				user.setRoles(roles);
 			}
 			session.remove(role);
 			session.getTransaction().commit();
@@ -122,9 +121,7 @@ public class HibernateRoleRepositoryImpl implements RoleRepository {
 			session.getTransaction().begin();
 			User user = session.find(User.class, userId);
 			Role role = session.find(Role.class, roleId);
-			Set<Role> roles = user.getRoles();
-			roles.remove(role);
-			user.setRoles(roles);
+			user.getRoles().remove(role);
 			session.getTransaction().commit();
 			return true;
 		} catch (Exception ex) {
