@@ -95,7 +95,6 @@ public class HibernatePurchaseRepositoryImpl implements PurchaseRepository {
 		try {
 			session.getTransaction().begin();
 			Purchase purchase = session.find(Purchase.class, id);
-			session.get(Order.class,purchase.getOrderId()).getPurchases().remove(purchase);
 			session.remove(purchase);
 			session.getTransaction().commit();
 			return true;

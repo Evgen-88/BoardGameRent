@@ -97,7 +97,6 @@ public class HibernateRentRepositoryImpl implements RentRepository {
 		try {
 			session.getTransaction().begin();
 			Rent rent = session.find(Rent.class, id);
-			session.get(Order.class,rent.getOrderId()).getRents().remove(rent);
 			session.remove(rent);
 			session.getTransaction().commit();
 			return true;
