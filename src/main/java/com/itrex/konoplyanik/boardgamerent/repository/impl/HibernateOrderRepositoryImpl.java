@@ -1,7 +1,6 @@
 package com.itrex.konoplyanik.boardgamerent.repository.impl;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -132,7 +131,6 @@ public class HibernateOrderRepositoryImpl implements OrderRepository {
 			for (Order order : user.getOrders()) {
 				order.setUser(null);
 			}
-			user.setOrders(new HashSet<>());
 			session.getTransaction().commit();
 			return true;
 		} catch (Exception ex) {
