@@ -1,25 +1,21 @@
 package com.itrex.konoplyanik.boardgamerent.repository;
 
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
-
-import static com.itrex.konoplyanik.boardgamerent.properties.Properties.*;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import com.itrex.konoplyanik.boardgamerent.config.ApplicationContextConfiguration;
 import com.itrex.konoplyanik.boardgamerent.service.FlywayService;
-import com.itrex.konoplyanik.boardgamerent.util.HibernateUtil;
 
 public abstract class BaseRepositoryTest {
 	
+	private final ApplicationContext applicationContext;
 	private final FlywayService flywayService;
-	private final JdbcConnectionPool connectionPool;
-	private final SessionFactory sessionfactory;
 	
 	public BaseRepositoryTest() {
-		flywayService = new FlywayService();
-		connectionPool = JdbcConnectionPool.create(H2_URL, H2_USER, H2_PASSWORD);
-		sessionfactory = HibernateUtil.getSessionFactory();
+		applicationContext = new AnnotationConfigApplicationContext(ApplicationContextConfiguration.class);
+		flywayService = applicationContext.getBean(FlywayService.class);
 	}
 	
 	@Before
@@ -32,12 +28,9 @@ public abstract class BaseRepositoryTest {
         flywayService.clean();
     }
 
-    public JdbcConnectionPool getConnectionPool() {
-        return connectionPool;
+    @Autowired
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
-    
-    public SessionFactory getSessionFactory() {
-        return sessionfactory;
-    }
-	
+
 }
