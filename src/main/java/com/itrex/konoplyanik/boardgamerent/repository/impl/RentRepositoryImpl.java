@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import com.itrex.konoplyanik.boardgamerent.entity.Order;
@@ -26,8 +27,8 @@ public class RentRepositoryImpl implements RentRepository {
 	
 	private final Session session;
 
-	public RentRepositoryImpl(Session session) {
-		this.session = session;
+	public RentRepositoryImpl(SessionFactory sessionFactory) {
+		this.session = sessionFactory.openSession();
 	}
 
 	@Override

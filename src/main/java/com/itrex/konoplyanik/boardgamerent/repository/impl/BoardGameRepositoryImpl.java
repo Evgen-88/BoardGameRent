@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.Query;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import com.itrex.konoplyanik.boardgamerent.entity.BoardGame;
@@ -26,8 +27,8 @@ public class BoardGameRepositoryImpl implements BoardGameRepository {
 
 	private final Session session;
 
-	public BoardGameRepositoryImpl(Session session) {
-		this.session = session;
+	public BoardGameRepositoryImpl(SessionFactory sessionFactory) {
+		this.session = sessionFactory.openSession();
 	}
 
 	@Override

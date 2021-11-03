@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.persistence.Query;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import com.itrex.konoplyanik.boardgamerent.entity.Order;
@@ -33,8 +34,8 @@ public class UserRepositoryImpl implements UserRepository {
 
 	private final Session session;
 
-	public UserRepositoryImpl(Session session) {
-		this.session = session;
+	public UserRepositoryImpl(SessionFactory sessionFactory) {
+		this.session = sessionFactory.openSession();
 	}
 
 	@Override

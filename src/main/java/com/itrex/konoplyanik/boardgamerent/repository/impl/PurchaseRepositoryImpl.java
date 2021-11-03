@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import com.itrex.konoplyanik.boardgamerent.entity.Order;
@@ -24,8 +25,8 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
 
 	private final Session session;
 
-	public PurchaseRepositoryImpl(Session session) {
-		this.session = session;
+	public PurchaseRepositoryImpl(SessionFactory sessionFactory) {
+		this.session = sessionFactory.openSession();
 	}
 	
 	@Override

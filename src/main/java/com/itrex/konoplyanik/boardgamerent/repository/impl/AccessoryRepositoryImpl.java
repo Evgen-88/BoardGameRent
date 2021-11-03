@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import com.itrex.konoplyanik.boardgamerent.entity.Accessory;
@@ -25,8 +26,8 @@ public class AccessoryRepositoryImpl implements AccessoryRepository {
 
 	private Session session;
 
-	public AccessoryRepositoryImpl(Session session) {
-		this.session = session;
+	public AccessoryRepositoryImpl(SessionFactory sessionFactory) {
+		this.session = sessionFactory.openSession();
 	}
 
 	@Override
