@@ -32,15 +32,15 @@ public class UserRepositoryImpl implements UserRepository {
 	private static final String UPDATE_QUERY = "update User set login = :login, "
 			+ "password = :password, name = :name, phone = :phone, email = :email where id = :id";
 
-	private final Session session;
+	private final SessionFactory sessionFactory;
 
 	public UserRepositoryImpl(SessionFactory sessionFactory) {
-		this.session = sessionFactory.openSession();
+		this.sessionFactory = sessionFactory;
 	}
 
 	@Override
 	public List<User> findAll() throws RepositoryException {
-		try {
+		try (Session session = sessionFactory.openSession()) {
 			return session.createQuery(SELECT_ALL_QUERY, User.class).list();
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findAll: " + ex);
@@ -49,7 +49,7 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public User findById(Long id) throws RepositoryException {
-		try {
+		try (Session session = sessionFactory.openSession()) {
 			return session.get(User.class, id);
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
@@ -58,81 +58,91 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public List<User> addAll(List<User> users, Long... roleIds) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			for (User user : users) {
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				for (User user : users) {
+					Set<Role> roles = new HashSet<>();
+					for (Long roleId : roleIds) {
+						roles.add(session.find(Role.class, roleId));
+					}
+					user.setRoles(roles);
+					session.save(user);
+				}
+				session.getTransaction().commit();
+				return users;
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: addAll: " + ex);
+			}
+		}
+	}
+
+	@Override
+	public User add(User user, Long... roleIds) throws RepositoryException {
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
 				Set<Role> roles = new HashSet<>();
 				for (Long roleId : roleIds) {
 					roles.add(session.find(Role.class, roleId));
 				}
 				user.setRoles(roles);
 				session.save(user);
+				session.getTransaction().commit();
+				return user;
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: add: " + ex);
 			}
-			session.getTransaction().commit();
-			return users;
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: addAll: " + ex);
-		}
-	}
-
-	@Override
-	public User add(User user, Long... roleIds) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			Set<Role> roles = new HashSet<>();
-			for (Long roleId : roleIds) {
-				roles.add(session.find(Role.class, roleId));
-			}
-			user.setRoles(roles);
-			session.save(user);
-			session.getTransaction().commit();
-			return user;
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: add: " + ex);
 		}
 	}
 
 	@Override
 	public User update(User user) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			Query query = session.createQuery(UPDATE_QUERY);
-			insertUser(query, user);
-			query.executeUpdate();
-			session.getTransaction().commit();
-			return session.get(User.class, user.getId());
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: update: " + ex);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				Query query = session.createQuery(UPDATE_QUERY);
+				insertUser(query, user);
+				query.executeUpdate();
+				session.getTransaction().commit();
+				return session.get(User.class, user.getId());
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: update: " + ex);
+			}
 		}
 	}
 
 	@Override
 	public boolean delete(Long id) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			User user = session.find(User.class, id);
-			for(Order order : user.getOrders()) {
-				deleteOrders(order);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				User user = session.find(User.class, id);
+				for (Order order : user.getOrders()) {
+					deleteOrders(session, order);
+				}
+				session.remove(user);
+				session.getTransaction().commit();
+				return true;
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: delete: " + ex);
 			}
-			session.remove(user);
-			session.getTransaction().commit();
-			return true;
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: delete: " + ex);
 		}
 	}
 
 	@Override
 	public List<User> findUsersByRole(Long id) throws RepositoryException {
-		try {
-			Role role = session.find(Role.class, id);
-			return new ArrayList<>(role.getUsers());
-		} catch (Exception ex) {
-			throw new RepositoryException("EXCEPTION: findUsersByRole: " + ex);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				Role role = session.find(Role.class, id);
+				return new ArrayList<>(role.getUsers());
+			} catch (Exception ex) {
+				throw new RepositoryException("EXCEPTION: findUsersByRole: " + ex);
+			}
 		}
 	}
 
@@ -144,8 +154,8 @@ public class UserRepositoryImpl implements UserRepository {
 		query.setParameter(EMAIL_COLUMN, user.getEmail());
 		query.setParameter(ID_COLUMN, user.getId());
 	}
-	
-	private void deleteOrders(Order order) {
+
+	private void deleteOrders(Session session, Order order) {
 		for (Rent rent : order.getRents()) {
 			session.remove(rent);
 		}

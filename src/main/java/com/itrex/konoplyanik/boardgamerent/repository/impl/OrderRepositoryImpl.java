@@ -28,15 +28,15 @@ public class OrderRepositoryImpl implements OrderRepository {
 	private static final String UPDATE_QUERY = "update Order set userId = :userId, "
 			+ "totalPrice = :totalPrice, date = :date, status = :status where id = :id";
 
-	private final Session session;
+	private final SessionFactory sessionFactory;
 
 	public OrderRepositoryImpl(SessionFactory sessionFactory) {
-		this.session = sessionFactory.openSession();
+		this.sessionFactory = sessionFactory;
 	}
 
 	@Override
 	public List<Order> findAll() throws RepositoryException {
-		try {
+		try (Session session = sessionFactory.openSession()) {
 			return session.createQuery(SELECT_ALL_QUERY, Order.class).list();
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findAll: " + ex);
@@ -45,7 +45,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public Order findById(Long id) throws RepositoryException {
-		try {
+		try (Session session = sessionFactory.openSession()) {
 			return session.get(Order.class, id);
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
@@ -54,91 +54,103 @@ public class OrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public List<Order> addAll(List<Order> orders) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			for (Order order : orders) {
-				session.save(order);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				for (Order order : orders) {
+					session.save(order);
+				}
+				session.getTransaction().commit();
+				return orders;
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: addAll: " + ex);
 			}
-			session.getTransaction().commit();
-			return orders;
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: addAll: " + ex);
 		}
 	}
 
 	@Override
 	public Order add(Order order) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			session.save(order);
-			session.getTransaction().commit();
-			return order;
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: add: " + ex);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				session.save(order);
+				session.getTransaction().commit();
+				return order;
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: add: " + ex);
+			}
 		}
 	}
 
 	@Override
 	public Order update(Order order) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			Query query = session.createQuery(UPDATE_QUERY);
-			insertOrder(query, order);
-			query.executeUpdate();
-			session.getTransaction().commit();
-			return session.get(Order.class, order.getId());
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: update: " + ex);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				Query query = session.createQuery(UPDATE_QUERY);
+				insertOrder(query, order);
+				query.executeUpdate();
+				session.getTransaction().commit();
+				return session.get(Order.class, order.getId());
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: update: " + ex);
+			}
 		}
 	}
 
 	@Override
 	public boolean delete(Long id) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			Order order = session.find(Order.class, id);
-			for (Rent rent : order.getRents()) {
-				session.remove(rent);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				Order order = session.find(Order.class, id);
+				for (Rent rent : order.getRents()) {
+					session.remove(rent);
+				}
+				for (Purchase purchase : order.getPurchases()) {
+					session.remove(purchase);
+				}
+				session.find(User.class, order.getUserId()).getOrders().remove(order);
+				session.remove(order);
+				session.getTransaction().commit();
+				return true;
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: delete: " + ex);
 			}
-			for (Purchase purchase : order.getPurchases()) {
-				session.remove(purchase);
-			}
-			session.find(User.class, order.getUserId()).getOrders().remove(order);
-			session.remove(order);
-			session.getTransaction().commit();
-			return true;
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: delete: " + ex);
 		}
 	}
 
 	@Override
 	public List<Order> findOrdersByUser(Long userId) throws RepositoryException {
-		try {
-			User user = session.get(User.class, userId);
-			return new ArrayList<>(user.getOrders());
-		} catch (Exception ex) {
-			throw new RepositoryException("EXCEPTION: findPurchasesByOrder: " + ex);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				User user = session.get(User.class, userId);
+				return new ArrayList<>(user.getOrders());
+			} catch (Exception ex) {
+				throw new RepositoryException("EXCEPTION: findPurchasesByOrder: " + ex);
+			}
 		}
 	}
 
 	@Override
 	public boolean deleteOrdersByUser(Long userId) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			User user = session.get(User.class, userId);
-			for (Order order : user.getOrders()) {
-				order.setUser(null);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				User user = session.get(User.class, userId);
+				for (Order order : user.getOrders()) {
+					order.setUser(null);
+				}
+				session.getTransaction().commit();
+				return true;
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: deleteOrdersByUser: " + ex);
 			}
-			session.getTransaction().commit();
-			return true;
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: deleteOrdersByUser: " + ex);
 		}
 	}
 

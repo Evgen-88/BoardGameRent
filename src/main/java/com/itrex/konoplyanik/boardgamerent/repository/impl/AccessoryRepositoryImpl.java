@@ -24,15 +24,15 @@ public class AccessoryRepositoryImpl implements AccessoryRepository {
 	private static final String UPDATE_QUERY = "update Accessory set name = :name, "
 			+ "price = :price, quantity = :quantity where id = :id";
 
-	private Session session;
+	private SessionFactory sessionFactory;
 
 	public AccessoryRepositoryImpl(SessionFactory sessionFactory) {
-		this.session = sessionFactory.openSession();
+		this.sessionFactory = sessionFactory;
 	}
 
 	@Override
 	public List<Accessory> findAll() throws RepositoryException {
-		try {
+		try (Session session = sessionFactory.openSession()) {
 			return session.createQuery(SELECT_ALL_QUERY, Accessory.class).list();
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findAll: " + ex);
@@ -41,7 +41,7 @@ public class AccessoryRepositoryImpl implements AccessoryRepository {
 
 	@Override
 	public Accessory findById(Long id) throws RepositoryException {
-		try {
+		try (Session session = sessionFactory.openSession()) {
 			return session.get(Accessory.class, id);
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
@@ -50,63 +50,72 @@ public class AccessoryRepositoryImpl implements AccessoryRepository {
 
 	@Override
 	public List<Accessory> addAll(List<Accessory> accessories) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			for (Accessory accessory : accessories) {
-				session.save(accessory);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				for (Accessory accessory : accessories) {
+					session.save(accessory);
+				}
+				session.getTransaction().commit();
+				return accessories;
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: addAll: " + ex);
 			}
-			session.getTransaction().commit();
-			return accessories;
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: addAll: " + ex);
 		}
 	}
 
 	@Override
 	public Accessory add(Accessory accessory) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			session.save(accessory);
-			session.getTransaction().commit();
-			return accessory;
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: add: " + ex);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				session.save(accessory);
+				session.getTransaction().commit();
+				return accessory;
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: add: " + ex);
+			}
 		}
 	}
 
 	@Override
 	public Accessory update(Accessory accessory) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			Query query = session.createQuery(UPDATE_QUERY);
-			insertAccessory(query, accessory);
-			query.executeUpdate();
-			session.getTransaction().commit();
-			return session.get(Accessory.class, accessory.getId());
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: update: " + ex);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				Query query = session.createQuery(UPDATE_QUERY);
+				insertAccessory(query, accessory);
+				query.executeUpdate();
+				session.getTransaction().commit();
+				return session.get(Accessory.class, accessory.getId());
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: update: " + ex);
+			}
 		}
 	}
 
 	@Override
 	public boolean delete(Long id) throws RepositoryException {
-		try {
-			session.getTransaction().begin();
-			Accessory accessory = session.find(Accessory.class, id);
-			Set<Purchase> purchases = accessory.getPurchases();
-			for(Purchase purchase : purchases) {
-				session.remove(purchase);
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				Accessory accessory = session.find(Accessory.class, id);
+				Set<Purchase> purchases = accessory.getPurchases();
+				for (Purchase purchase : purchases) {
+					session.remove(purchase);
+				}
+				session.remove(accessory);
+				session.getTransaction().commit();
+				return true;
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: delete: " + ex);
 			}
-			session.remove(accessory);
-			session.getTransaction().commit();
-			return true;
-		} catch (Exception ex) {
-			session.getTransaction().rollback();
-			throw new RepositoryException("EXCEPTION: delete: " + ex);
 		}
+
 	}
 
 	private void insertAccessory(Query query, Accessory accessory) {
