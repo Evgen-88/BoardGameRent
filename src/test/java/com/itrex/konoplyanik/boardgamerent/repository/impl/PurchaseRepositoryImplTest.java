@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itrex.konoplyanik.boardgamerent.entity.Order;
 import com.itrex.konoplyanik.boardgamerent.entity.Purchase;
@@ -15,14 +16,12 @@ import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
 
 public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
-	private final PurchaseRepository repository;
+	
+	@Autowired
+	private PurchaseRepository repository;
+	
 	private List<Purchase> purchases;
 
-	public PurchaseRepositoryImplTest() {
-		super();
-		repository = getApplicationContext().getBean(PurchaseRepositoryImpl.class);
-	}
-	
 	@Before
 	public void fill() {
 		purchases = new ArrayList<>() {{

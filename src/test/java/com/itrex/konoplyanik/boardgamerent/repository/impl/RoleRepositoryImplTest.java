@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itrex.konoplyanik.boardgamerent.entity.Role;
 import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
@@ -13,14 +14,12 @@ import com.itrex.konoplyanik.boardgamerent.repository.RoleRepository;
 
 
 public class RoleRepositoryImplTest extends BaseRepositoryTest {
-	private final RoleRepository repository;
+	
+	@Autowired
+	private RoleRepository repository;
+	
 	private List<Role> roles;
 
-	public RoleRepositoryImplTest() {
-		super();
-		repository = getApplicationContext().getBean(RoleRepositoryImpl.class);
-	}
-	
 	@Before
 	public void fill() {
 		roles = new ArrayList<>() {{

@@ -6,19 +6,19 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.itrex.konoplyanik.boardgamerent.entity.Accessory;
 import com.itrex.konoplyanik.boardgamerent.repository.AccessoryRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 
 public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 	
-	private final AccessoryRepository repository;
+	@Autowired
+	private AccessoryRepository repository;
+	
 	private List<Accessory> accessories;
 	
-	public AccessoryRepositoryImplTest() {
-		super();
-		repository = getApplicationContext().getBean(AccessoryRepositoryImpl.class);
-	}
 	
 	@Before
 	public void fill() {

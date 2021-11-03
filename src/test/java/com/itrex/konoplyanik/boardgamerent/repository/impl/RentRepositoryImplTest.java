@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itrex.konoplyanik.boardgamerent.entity.Order;
 import com.itrex.konoplyanik.boardgamerent.entity.Rent;
@@ -15,14 +16,12 @@ import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 
 public class RentRepositoryImplTest extends BaseRepositoryTest {
-	private final RentRepository repository;
+	
+	@Autowired
+	private RentRepository repository;
+	
 	private List<Rent> rents;
 
-	public RentRepositoryImplTest() {
-		super();
-		repository = getApplicationContext().getBean(RentRepositoryImpl.class);
-	}
-	
 	@Before
 	public void fill() {
 		rents = new ArrayList<>() {{

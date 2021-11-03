@@ -6,20 +6,19 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itrex.konoplyanik.boardgamerent.entity.User;
 import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
 
 public class UserRepositoryImplTest extends BaseRepositoryTest {
-	private final UserRepository repository;
+	
+	@Autowired
+	private UserRepository repository;
+	
 	private List<User> users;
 
-	public UserRepositoryImplTest() {
-		super();
-		repository = getApplicationContext().getBean(UserRepositoryImpl.class);
-	}
-	
 	@Before
 	public void fill() {
 		users = new ArrayList<>() {{

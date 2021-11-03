@@ -6,20 +6,19 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itrex.konoplyanik.boardgamerent.entity.BoardGame;
 import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 import com.itrex.konoplyanik.boardgamerent.repository.BoardGameRepository;
 
 public class BoardGameRepositoryImplTest extends BaseRepositoryTest {
-	private final BoardGameRepository repository;
+	
+	@Autowired
+	private BoardGameRepository repository;
+	
 	private List<BoardGame> boardGames;
 
-	public BoardGameRepositoryImplTest() {
-		super();
-		repository = getApplicationContext().getBean(BoardGameRepositoryImpl.class);
-	}
-	
 	@Before
 	public void fill() {
 		boardGames = new ArrayList<>() {{

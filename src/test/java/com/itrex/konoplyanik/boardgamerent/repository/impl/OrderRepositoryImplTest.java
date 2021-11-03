@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itrex.konoplyanik.boardgamerent.entity.Order;
 import com.itrex.konoplyanik.boardgamerent.entity.Status;
@@ -14,14 +15,12 @@ import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
 
 public class OrderRepositoryImplTest extends BaseRepositoryTest {
-	private final OrderRepository repository;
+	
+	@Autowired
+	private OrderRepository repository;
+	
 	private List<Order> orders;
 
-	public OrderRepositoryImplTest() {
-		super();
-		repository = getApplicationContext().getBean(OrderRepositoryImpl.class);
-	}
-	
 	@Before
 	public void fill() {
 		orders = new ArrayList<>() {{
@@ -112,8 +111,8 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 	public void findOrdersByUser_validData_shouldAddAllOrders() {
 		// given
 		List<Order> expected = new ArrayList<>() {{
-			add(new Order(4L, 4L, 120, LocalDate.of(2021, 10, 22), Status.booked));
 			add(new Order(2L, 4L, 90, LocalDate.of(2021, 10, 23), Status.confirmed));
+			add(new Order(4L, 4L, 120, LocalDate.of(2021, 10, 22), Status.booked));
 		}};
 		// when
 		List<Order> actual = repository.findOrdersByUser(4L);
