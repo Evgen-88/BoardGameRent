@@ -111,8 +111,8 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 	public void findOrdersByUser_validData_shouldAddAllOrders() {
 		// given
 		List<Order> expected = new ArrayList<>() {{
-			add(new Order(2L, 4L, 90, LocalDate.of(2021, 10, 23), Status.confirmed));
 			add(new Order(4L, 4L, 120, LocalDate.of(2021, 10, 22), Status.booked));
+			add(new Order(2L, 4L, 90, LocalDate.of(2021, 10, 23), Status.confirmed));
 		}};
 		// when
 		List<Order> actual = repository.findOrdersByUser(4L);
