@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 @Configuration
-@ComponentScan("com.itrex.konoplyanik.boardgamerent")
+@ComponentScan("com.itrex.konoplyanik.boardgamerent.repository")
 public class ApplicationContextConfiguration {
 
 	@Bean
