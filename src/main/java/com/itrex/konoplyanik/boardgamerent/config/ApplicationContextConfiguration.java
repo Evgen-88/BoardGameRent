@@ -24,7 +24,6 @@ public class ApplicationContextConfiguration {
 	
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public Flyway flyway() {
 		Flyway flyway = Flyway.configure().dataSource(H2_URL, H2_USER, H2_PASSWORD).locations(MIGRATION_LOCATION)
 				.load();
