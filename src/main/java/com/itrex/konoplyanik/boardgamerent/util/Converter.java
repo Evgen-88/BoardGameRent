@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.itrex.konoplyanik.boardgamerent.dto.AccessoryDTO;
-import com.itrex.konoplyanik.boardgamerent.dto.AccessoryListDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.BoardGameDTO;
-import com.itrex.konoplyanik.boardgamerent.dto.BoardGameListDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.OrderDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.OrderListDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.PurchaseDTO;
@@ -36,21 +34,14 @@ public class Converter {
 	}
 
 	public static AccessoryDTO convertAccessoryToDTO(Accessory accessory) {
-		AccessoryDTO accessoryDTO = new AccessoryDTO();
-		accessoryDTO.setId(accessory.getId());
-		accessoryDTO.setName(accessory.getName());
-		accessoryDTO.setPrice(accessory.getPrice());
-		accessoryDTO.setQuantity(accessory.getQuantity());
-		return accessoryDTO;
+		return AccessoryDTO.builder()
+				.id(accessory.getId())
+				.name(accessory.getName())
+				.price(accessory.getPrice())
+				.quantity(accessory.getQuantity())
+				.build();
 	}
 	
-	public static AccessoryListDTO convertAccessoryToListDTO(Accessory accessory) {
-		AccessoryListDTO accessoryListDTO = new AccessoryListDTO();
-		accessoryListDTO.setId(accessory.getId());
-		accessoryListDTO.setName(accessory.getName());
-		return accessoryListDTO;
-	}
-
 	public static BoardGame convertBoardGameToEntity(BoardGameDTO boardGameDTO) {
 		BoardGame boardGame = new BoardGame();
 		boardGame.setId(boardGameDTO.getId());
@@ -61,26 +52,18 @@ public class Converter {
 	}
 
 	public static BoardGameDTO convertBoardGameToDTO(BoardGame boardGame) {
-		BoardGameDTO boardGameDTO = new BoardGameDTO();
-		boardGameDTO.setId(boardGame.getId());
-		boardGameDTO.setName(boardGame.getName());
-		boardGameDTO.setRentPrice(boardGame.getRentPrice());
-		boardGameDTO.setQuantity(boardGame.getQuantity());
-		boardGameDTO.setAvailableQuantity(boardGameDTO.getQuantity() - boardGame.getRents().size());
-		return boardGameDTO;
-	}
-	
-	public static BoardGameListDTO convertBoardGameToListDTO(BoardGame boardGame) {
-		BoardGameListDTO boardGameListDTO = new BoardGameListDTO();
-		boardGameListDTO.setId(boardGame.getId());
-		boardGameListDTO.setName(boardGame.getName());
-		return boardGameListDTO;
+		return BoardGameDTO.builder()
+				.id(boardGame.getId())
+				.name(boardGame.getName())
+				.rentPrice(boardGame.getRentPrice())
+				.quantity(boardGame.getQuantity())
+				.build();
 	}
 
 	public static Order convertOrderToEntity(OrderDTO orderDTO) {
 		Order order = new Order();
 		order.setId(orderDTO.getId());
-		order.setUserId(orderDTO.getUser().getId());
+		order.setUserId(orderDTO.getId());
 		order.setTotalPrice(orderDTO.getTotalPrice());
 		order.setDate(orderDTO.getDate());
 		order.setStatus(orderDTO.getStatus());
@@ -88,25 +71,26 @@ public class Converter {
 	}
 
 	public static OrderDTO convertOrderToDTO(Order order) {
-		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setId(order.getId());
-		orderDTO.setTotalPrice(order.getTotalPrice());
-		orderDTO.setDate(order.getDate());
-		orderDTO.setStatus(order.getStatus());
-		orderDTO.setPurchases(convertPurchasesToDTO(order.getPurchases()));
-		orderDTO.setRents(convertRentsToDTO(order.getRents()));
-		orderDTO.setUser(convertUserToDTO(order.getUser()));
-		return orderDTO;
+		
+		return OrderDTO.builder()
+				.id(order.getId())
+				.userId(order.getId())
+				.totalPrice(order.getTotalPrice())
+				.date(order.getDate())
+				.status(order.getStatus())
+				.purchases(convertPurchasesToDTO(order.getPurchases()))
+				.rents(convertRentsToDTO(order.getRents()))
+				.build();
 	}
 	
 	public static OrderListDTO convertOrderToListDTO(Order order) {
-		OrderListDTO orderListDTO = new OrderListDTO();
-		orderListDTO.setUserId(order.getUserId());
-		orderListDTO.setId(order.getId());
-		orderListDTO.setTotalPrice(order.getTotalPrice());
-		orderListDTO.setDate(order.getDate());
-		orderListDTO.setStatus(order.getStatus());
-		return orderListDTO;
+		return OrderListDTO.builder()
+				.userId(order.getUserId())
+				.id(order.getId())
+				.totalPrice(order.getTotalPrice())
+				.date(order.getDate())
+				.status(order.getStatus())
+				.build();
 	}
 
 	private static List<PurchaseDTO> convertPurchasesToDTO(Set<Purchase> purchases) {
@@ -128,7 +112,7 @@ public class Converter {
 	public static Purchase convertPurchaseToEntity(PurchaseDTO purchaseDTO) {
 		Purchase purchase = new Purchase();
 		purchase.setId(purchaseDTO.getId());
-		purchase.setAccessoryId(purchaseDTO.getAccessoryList().getId());
+		purchase.setAccessoryId(purchaseDTO.getAccessoryId());
 		purchase.setOrderId(purchaseDTO.getOrderId());
 		purchase.setQuantity(purchaseDTO.getQuantity());
 		purchase.setPrice(purchaseDTO.getPrice());
@@ -136,19 +120,20 @@ public class Converter {
 	}
 
 	public static PurchaseDTO convertPurchaseToDTO(Purchase purchase) {
-		PurchaseDTO purchaseDTO = new PurchaseDTO();
-		purchaseDTO.setId(purchase.getId());
-		purchaseDTO.setAccessoryList(convertAccessoryToListDTO(purchase.getAccessory()));
-		purchaseDTO.setOrderId(purchase.getOrderId());
-		purchaseDTO.setQuantity(purchase.getQuantity());
-		purchaseDTO.setPrice(purchase.getPrice());
-		return purchaseDTO;
+		return PurchaseDTO.builder()
+				.id(purchase.getId())
+				.orderId(purchase.getOrderId())
+				.quantity(purchase.getQuantity())
+				.price(purchase.getPrice())
+				.accessoryId(purchase.getAccessoryId())
+				.accessoryName(purchase.getAccessory().getName())
+				.build();
 	}
 
 	public static Rent convertRentToEntity(RentDTO rentDTO) {
 		Rent rent = new Rent();
 		rent.setId(rentDTO.getId());
-		rent.setBoardGameId(rentDTO.getBoardGameList().getId());
+		rent.setBoardGameId(rentDTO.getBoardGameId());
 		rent.setOrderId(rentDTO.getOrderId());
 		rent.setRentFrom(rentDTO.getRentFrom());
 		rent.setRentTo(rentDTO.getRentTo());
@@ -157,14 +142,15 @@ public class Converter {
 	}
 
 	public static RentDTO convertRentToDTO(Rent rent) {
-		RentDTO rentDTO = new RentDTO();
-		rentDTO.setId(rent.getId());
-		rentDTO.setBoardGameList(convertBoardGameToListDTO(rent.getBoardGame()));
-		rentDTO.setOrderId(rent.getOrderId());
-		rentDTO.setRentFrom(rent.getRentFrom());
-		rentDTO.setRentTo(rent.getRentTo());
-		rentDTO.setPrice(rent.getPrice());
-		return rentDTO;
+		return RentDTO.builder()
+				.id(rent.getId())
+				.orderId(rent.getOrderId())
+				.rentFrom(rent.getRentFrom())
+				.rentTo(rent.getRentTo())
+				.price(rent.getPrice())
+				.boardGameId(rent.getBoardGameId())
+				.boardGameName(rent.getBoardGame().getName())
+				.build();
 	}
 	
 	public static Role convertRoleToEntity(RoleDTO roleDTO) {
@@ -175,10 +161,10 @@ public class Converter {
 	}
 	
 	public static RoleDTO convertRoleToDTO(Role role) {
-		RoleDTO roleDTO = new RoleDTO();
-		roleDTO.setId(role.getId());
-		roleDTO.setName(role.getName());
-		return roleDTO;
+		return RoleDTO.builder()
+				.id(role.getId())
+				.name(role.getName())
+				.build();
 	}
 	
 	public static User convertUserToEntity(UserDTO userDTO) {
@@ -202,26 +188,26 @@ public class Converter {
 	}
 	
 	public static UserDTO convertUserToDTO(User user) {
-		UserDTO userDTO = new UserDTO();
-		userDTO.setId(user.getId());
-		userDTO.setLogin(user.getLogin());
-		userDTO.setPassword(user.getPassword());
-		userDTO.setName(user.getName());
-		userDTO.setPhone(user.getPhone());
-		userDTO.setEmail(user.getEmail());
-		userDTO.setRoles(convertRolesToDTO(user.getRoles()));
-		return userDTO;
+		return UserDTO.builder()
+				.id(user.getId())
+				.login(user.getLogin())
+				.password(user.getPassword())
+				.name(user.getName())
+				.phone(user.getPhone())
+				.email(user.getEmail())
+				.roles(convertRolesToDTO(user.getRoles()))
+				.build();
 	}
 	
 	public static UserListDTO convertUserToListDTO(User user) {
-		UserListDTO userListDTO = new UserListDTO();
-		userListDTO.setId(user.getId());
-		userListDTO.setLogin(user.getLogin());
-		userListDTO.setName(user.getName());
-		userListDTO.setPhone(user.getPhone());
-		userListDTO.setEmail(user.getEmail());
-		userListDTO.setRoles(convertRolesToDTO(user.getRoles()));
-		return userListDTO;
+		return UserListDTO.builder()
+				.id(user.getId())
+				.login(user.getLogin())
+				.name(user.getName())
+				.phone(user.getPhone())
+				.email(user.getEmail())
+				.roles(convertRolesToDTO(user.getRoles()))
+				.build();
 	}
 	
 	private static List<RoleDTO> convertRolesToDTO(Set<Role> roles) {
