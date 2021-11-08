@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.itrex.konoplyanik.boardgamerent.dto.PurchaseDTO;
+import com.itrex.konoplyanik.boardgamerent.entity.Order;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
+import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
 import com.itrex.konoplyanik.boardgamerent.service.PurchaseService;
 import com.itrex.konoplyanik.boardgamerent.util.Converter;
@@ -16,9 +18,12 @@ import com.itrex.konoplyanik.boardgamerent.util.Converter;
 public class PurchaseServiceImpl implements PurchaseService {
 
 	private final PurchaseRepository purchaseRepository;
+	private final OrderRepository orderRepository;
 	
-	public PurchaseServiceImpl(PurchaseRepository purchaseRepository) {
+	public PurchaseServiceImpl(PurchaseRepository purchaseRepository,
+			OrderRepository orderRepository) {
 		this.purchaseRepository = purchaseRepository;
+		this.orderRepository = orderRepository;
 	}
 
 	@Override
@@ -50,10 +55,15 @@ public class PurchaseServiceImpl implements PurchaseService {
 
 	@Override
 	public boolean delete(Long id) throws ServiceException {
+		Order order = orderRepository.findById(purchaseRepository.findById(id).getOrderId());
 		try {
 			return purchaseRepository.delete(id);
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: update: " + ex);
+		} finally {
+			if (order.getPurchases().size() == 0 && order.getRents().size() == 0) {
+				orderRepository.delete(order.getId());
+			}
 		}
 	}
 

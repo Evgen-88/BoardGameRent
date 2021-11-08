@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.itrex.konoplyanik.boardgamerent.dto.BoardGameDTO;
-import com.itrex.konoplyanik.boardgamerent.dto.BoardGameListDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.BoardGameRepository;
@@ -23,10 +22,10 @@ public class BoardGameServiceImpl implements BoardGameService {
 	}
 
 	@Override
-	public List<BoardGameListDTO> findAll() throws ServiceException {
+	public List<BoardGameDTO> findAll() throws ServiceException {
 		try {
 			return boardGameRepository.findAll().stream()
-					.map(boardGame -> Converter.convertBoardGameToListDTO(boardGame))
+					.map(boardGame -> Converter.convertBoardGameToDTO(boardGame))
 					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findAll: " + ex);
@@ -39,15 +38,6 @@ public class BoardGameServiceImpl implements BoardGameService {
 			return Converter.convertBoardGameToDTO(boardGameRepository.findById(id));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findById: " + ex);
-		}
-	}
-
-	@Override
-	public BoardGameListDTO findListById(Long id) throws ServiceException {
-		try {
-			return Converter.convertBoardGameToListDTO(boardGameRepository.findById(id));
-		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: findListById: " + ex);
 		}
 	}
 

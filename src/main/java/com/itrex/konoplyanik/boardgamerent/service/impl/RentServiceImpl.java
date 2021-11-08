@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.itrex.konoplyanik.boardgamerent.dto.RentDTO;
+import com.itrex.konoplyanik.boardgamerent.entity.Order;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
+import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 import com.itrex.konoplyanik.boardgamerent.service.RentService;
 import com.itrex.konoplyanik.boardgamerent.util.Converter;
@@ -16,9 +18,12 @@ import com.itrex.konoplyanik.boardgamerent.util.Converter;
 public class RentServiceImpl implements RentService {
 
 	private final RentRepository rentRepository;
+	private final OrderRepository orderRepository;
 	
-	public RentServiceImpl(RentRepository rentRepository) {
+	public RentServiceImpl(RentRepository rentRepository,
+			OrderRepository orderRepository) {
 		this.rentRepository = rentRepository;
+		this.orderRepository = orderRepository;
 	}
 
 	@Override
@@ -50,10 +55,15 @@ public class RentServiceImpl implements RentService {
 
 	@Override
 	public boolean delete(Long id) throws ServiceException {
+		Order order = orderRepository.findById(rentRepository.findById(id).getOrderId());
 		try {
 			return rentRepository.delete(id);
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: update: " + ex);
+		} finally {
+			if (order.getPurchases().size() == 0 && order.getRents().size() == 0) {
+				orderRepository.delete(order.getId());
+			}
 		}
 	}
 

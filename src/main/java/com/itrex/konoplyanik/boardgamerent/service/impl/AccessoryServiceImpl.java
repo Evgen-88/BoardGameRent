@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.itrex.konoplyanik.boardgamerent.dto.AccessoryDTO;
-import com.itrex.konoplyanik.boardgamerent.dto.AccessoryListDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.AccessoryRepository;
@@ -23,10 +22,10 @@ public class AccessoryServiceImpl implements AccessoryService {
 	}
 
 	@Override
-	public List<AccessoryListDTO> findAll() throws ServiceException {
+	public List<AccessoryDTO> findAll() throws ServiceException {
 		try {
 			return accessoryRepository.findAll().stream()
-					.map(accessory -> Converter.convertAccessoryToListDTO(accessory))
+					.map(accessory -> Converter.convertAccessoryToDTO(accessory))
 					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findAll: " + ex);
@@ -39,15 +38,6 @@ public class AccessoryServiceImpl implements AccessoryService {
 			return Converter.convertAccessoryToDTO(accessoryRepository.findById(id));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findById: " + ex);
-		}
-	}
-
-	@Override
-	public AccessoryListDTO findListById(Long id) throws ServiceException {
-		try {
-			return Converter.convertAccessoryToListDTO(accessoryRepository.findById(id));
-		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: findListById: " + ex);
 		}
 	}
 
