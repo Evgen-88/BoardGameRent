@@ -1,8 +1,7 @@
 package com.itrex.konoplyanik.boardgamerent.dto;
 
 import java.time.LocalDate;
-import java.util.Set;
-
+import java.util.List;
 import com.itrex.konoplyanik.boardgamerent.entity.Status;
 
 public class OrderDTO {
@@ -11,8 +10,8 @@ public class OrderDTO {
 	private Integer totalPrice;
 	private LocalDate date;
 	private Status status;
-	private Set<PurchaseDTO> purchases;
-	private Set<RentDTO> rents;
+	private List<PurchaseDTO> purchases;
+	private List<RentDTO> rents;
 	private UserDTO user;
 	
 	public Long getId() {
@@ -39,16 +38,16 @@ public class OrderDTO {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
-	public Set<PurchaseDTO> getPurchases() {
+	public List<PurchaseDTO> getPurchases() {
 		return purchases;
 	}
-	public void setPurchases(Set<PurchaseDTO> purchases) {
+	public void setPurchases(List<PurchaseDTO> purchases) {
 		this.purchases = purchases;
 	}
-	public Set<RentDTO> getRents() {
+	public List<RentDTO> getRents() {
 		return rents;
 	}
-	public void setRents(Set<RentDTO> rents) {
+	public void setRents(List<RentDTO> rents) {
 		this.rents = rents;
 	}
 	public UserDTO getUser() {

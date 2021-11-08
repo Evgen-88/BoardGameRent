@@ -2,11 +2,10 @@ package com.itrex.konoplyanik.boardgamerent.dto;
 
 import java.util.List;
 
-public class UserDTO {
+public class UserListDTO {
 
 	private Long id;
 	private String login;
-	private String password;
 	private String name;
 	private Integer phone;
 	private String email;
@@ -23,12 +22,6 @@ public class UserDTO {
 	}
 	public void setLogin(String login) {
 		this.login = login;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
 	}
 	public String getName() {
 		return name;
@@ -63,7 +56,6 @@ public class UserDTO {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((login == null) ? 0 : login.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((phone == null) ? 0 : phone.hashCode());
 		result = prime * result + ((roles == null) ? 0 : roles.hashCode());
 		return result;
@@ -77,7 +69,7 @@ public class UserDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UserDTO other = (UserDTO) obj;
+		UserListDTO other = (UserListDTO) obj;
 		if (email == null) {
 			if (other.email != null)
 				return false;
@@ -98,11 +90,6 @@ public class UserDTO {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (password == null) {
-			if (other.password != null)
-				return false;
-		} else if (!password.equals(other.password))
-			return false;
 		if (phone == null) {
 			if (other.phone != null)
 				return false;
@@ -118,8 +105,8 @@ public class UserDTO {
 	
 	@Override
 	public String toString() {
-		return "UserDTO [id=" + id + ", login=" + login + ", password=" + password + ", name=" + name + ", phone="
-				+ phone + ", email=" + email + ", roles=" + roles + "]";
+		return "UserListDTO [id=" + id + ", login=" + login + ", name=" + name + ", phone=" + phone + ", email=" + email
+				+ ", roles=" + roles + "]";
 	}
 	
 }
