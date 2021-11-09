@@ -21,9 +21,10 @@ public class UserDTO {
 
 	private Long id;
 	private String login;
-	private String password;
 	private String name;
 	private Integer phone;
 	private String email;
 	private List<RoleDTO> roles;
+	private List<OrderListDTO> orders;
+	
 }

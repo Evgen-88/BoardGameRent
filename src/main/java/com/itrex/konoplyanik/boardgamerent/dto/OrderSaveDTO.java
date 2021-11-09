@@ -18,12 +18,11 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Builder
-public class OrderListDTO {
+public class OrderSaveDTO {
 
 	private Long userId;
 	private Long id;
 	private Integer totalPrice;
 	private LocalDate date;
 	private Status status;
-	private UserBaseDTO user;
 }

@@ -21,11 +21,12 @@ import lombok.ToString;
 @Builder
 public class OrderDTO {
 
-	private Long id;
 	private Long userId;
+	private Long id;
 	private Integer totalPrice;
 	private LocalDate date;
 	private Status status;
+	private UserBaseDTO user;
 	private List<PurchaseDTO> purchases;
 	private List<RentDTO> rents;
 }

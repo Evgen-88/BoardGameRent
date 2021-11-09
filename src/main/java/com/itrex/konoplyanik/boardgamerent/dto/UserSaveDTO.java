@@ -1,7 +1,6 @@
 package com.itrex.konoplyanik.boardgamerent.dto;
 
-import java.time.LocalDate;
-import com.itrex.konoplyanik.boardgamerent.entity.Status;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,12 +17,13 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Builder
-public class OrderListDTO {
+public class UserSaveDTO {
 
-	private Long userId;
 	private Long id;
-	private Integer totalPrice;
-	private LocalDate date;
-	private Status status;
-	private UserBaseDTO user;
+	private String login;
+	private String password;
+	private String name;
+	private Integer phone;
+	private String email;
+	private List<RoleDTO> roles;
 }
