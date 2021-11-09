@@ -1,15 +1,13 @@
 package com.itrex.konoplyanik.boardgamerent.service.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
 
 import com.itrex.konoplyanik.boardgamerent.dto.RentDTO;
-import com.itrex.konoplyanik.boardgamerent.entity.Order;
+import com.itrex.konoplyanik.boardgamerent.dto.RentSaveDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
+import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 import com.itrex.konoplyanik.boardgamerent.service.RentService;
 import com.itrex.konoplyanik.boardgamerent.util.Converter;
@@ -18,11 +16,13 @@ import com.itrex.konoplyanik.boardgamerent.util.Converter;
 public class RentServiceImpl implements RentService {
 
 	private final RentRepository rentRepository;
+	private final PurchaseRepository purchaseRepository;
 	private final OrderRepository orderRepository;
 	
 	public RentServiceImpl(RentRepository rentRepository,
-			OrderRepository orderRepository) {
+			PurchaseRepository purchaseRepository, OrderRepository orderRepository) {
 		this.rentRepository = rentRepository;
+		this.purchaseRepository = purchaseRepository;
 		this.orderRepository = orderRepository;
 	}
 
@@ -36,18 +36,18 @@ public class RentServiceImpl implements RentService {
 	}
 
 	@Override
-	public RentDTO add(RentDTO rent) throws ServiceException {
+	public RentDTO add(RentSaveDTO rent) throws ServiceException {
 		try {
-			return Converter.convertRentToDTO(rentRepository.add(Converter.convertRentToEntity(rent)));
+			return Converter.convertRentToDTO(rentRepository.add(Converter.convertRentSaveToEntity(rent)));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: update: " + ex);
 		}
 	}
 
 	@Override
-	public RentDTO update(RentDTO rent) throws ServiceException {
+	public RentDTO update(RentSaveDTO rent) throws ServiceException {
 		try {
-			return Converter.convertRentToDTO(rentRepository.update(Converter.convertRentToEntity(rent)));
+			return Converter.convertRentToDTO(rentRepository.update(Converter.convertRentSaveToEntity(rent)));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: update: " + ex);
 		}
@@ -55,27 +55,19 @@ public class RentServiceImpl implements RentService {
 
 	@Override
 	public boolean delete(Long id) throws ServiceException {
-		Order order = orderRepository.findById(rentRepository.findById(id).getOrderId());
+		long orderId = rentRepository.findById(id).getOrderId();
+		boolean isDeleted = false;
 		try {
-			return rentRepository.delete(id);
-		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: update: " + ex);
-		} finally {
-			if (order.getPurchases().size() == 0 && order.getRents().size() == 0) {
-				orderRepository.delete(order.getId());
+			isDeleted = rentRepository.delete(id);
+			if (isDeleted) {
+				if (purchaseRepository.findPurchasesByOrder(orderId).size() == 0 && rentRepository.findRentsByOrder(orderId).size() == 0) {
+					orderRepository.delete(orderId);
+				}
 			}
-		}
-	}
-
-	@Override
-	public List<RentDTO> findRentsByOrder(Long orderId) throws ServiceException {
-		try {
-			return rentRepository.findRentsByOrder(orderId).stream()
-					.map(rent -> Converter.convertRentToDTO(rent))
-					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: findRentsByOrder: " + ex);
+			throw new ServiceException("Error: delete: " + ex);
 		}
+		return isDeleted;
 	}
 
 }

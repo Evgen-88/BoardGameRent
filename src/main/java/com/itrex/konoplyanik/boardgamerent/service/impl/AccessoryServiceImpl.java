@@ -25,7 +25,7 @@ public class AccessoryServiceImpl implements AccessoryService {
 	public List<AccessoryDTO> findAll() throws ServiceException {
 		try {
 			return accessoryRepository.findAll().stream()
-					.map(accessory -> Converter.convertAccessoryToDTO(accessory))
+					.map(Converter::convertAccessoryToDTO)
 					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findAll: " + ex);

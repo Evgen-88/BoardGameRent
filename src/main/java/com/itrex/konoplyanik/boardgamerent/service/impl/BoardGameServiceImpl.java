@@ -25,7 +25,7 @@ public class BoardGameServiceImpl implements BoardGameService {
 	public List<BoardGameDTO> findAll() throws ServiceException {
 		try {
 			return boardGameRepository.findAll().stream()
-					.map(boardGame -> Converter.convertBoardGameToDTO(boardGame))
+					.map(Converter::convertBoardGameToDTO)
 					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findAll: " + ex);

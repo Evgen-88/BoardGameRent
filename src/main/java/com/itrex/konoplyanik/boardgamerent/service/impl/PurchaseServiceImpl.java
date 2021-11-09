@@ -1,16 +1,14 @@
 package com.itrex.konoplyanik.boardgamerent.service.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
 
 import com.itrex.konoplyanik.boardgamerent.dto.PurchaseDTO;
-import com.itrex.konoplyanik.boardgamerent.entity.Order;
+import com.itrex.konoplyanik.boardgamerent.dto.PurchaseSaveDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
+import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 import com.itrex.konoplyanik.boardgamerent.service.PurchaseService;
 import com.itrex.konoplyanik.boardgamerent.util.Converter;
 
@@ -18,11 +16,13 @@ import com.itrex.konoplyanik.boardgamerent.util.Converter;
 public class PurchaseServiceImpl implements PurchaseService {
 
 	private final PurchaseRepository purchaseRepository;
+	private final RentRepository rentRepository;
 	private final OrderRepository orderRepository;
 	
 	public PurchaseServiceImpl(PurchaseRepository purchaseRepository,
-			OrderRepository orderRepository) {
+			RentRepository rentRepository, OrderRepository orderRepository) {
 		this.purchaseRepository = purchaseRepository;
+		this.rentRepository = rentRepository;
 		this.orderRepository = orderRepository;
 	}
 
@@ -36,7 +36,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 	}
 
 	@Override
-	public PurchaseDTO add(PurchaseDTO purchase) throws ServiceException {
+	public PurchaseDTO add(PurchaseSaveDTO purchase) throws ServiceException {
 		try {
 			return Converter.convertPurchaseToDTO(purchaseRepository.add(Converter.convertPurchaseToEntity(purchase)));
 		} catch (RepositoryException ex) {
@@ -45,7 +45,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 	}
 
 	@Override
-	public PurchaseDTO update(PurchaseDTO purchase) throws ServiceException {
+	public PurchaseDTO update(PurchaseSaveDTO purchase) throws ServiceException {
 		try {
 			return Converter.convertPurchaseToDTO(purchaseRepository.update(Converter.convertPurchaseToEntity(purchase)));
 		} catch (RepositoryException ex) {
@@ -55,27 +55,19 @@ public class PurchaseServiceImpl implements PurchaseService {
 
 	@Override
 	public boolean delete(Long id) throws ServiceException {
-		Order order = orderRepository.findById(purchaseRepository.findById(id).getOrderId());
+		long orderId = purchaseRepository.findById(id).getOrderId();
+		boolean isDeleted = false;
 		try {
-			return purchaseRepository.delete(id);
-		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: update: " + ex);
-		} finally {
-			if (order.getPurchases().size() == 0 && order.getRents().size() == 0) {
-				orderRepository.delete(order.getId());
+			isDeleted = purchaseRepository.delete(id);
+			if (isDeleted) {
+				if (purchaseRepository.findPurchasesByOrder(orderId).size() == 0 && rentRepository.findRentsByOrder(orderId).size() == 0) {
+					orderRepository.delete(orderId);
+				}
 			}
-		}
-	}
-
-	@Override
-	public List<PurchaseDTO> findPurchasesByOrder(Long orderId) throws ServiceException {
-		try {
-			return purchaseRepository.findPurchasesByOrder(orderId).stream()
-					.map(purchase -> Converter.convertPurchaseToDTO(purchase))
-					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: findPurchasesByOrder: " + ex);
+			throw new ServiceException("Error: delete: " + ex);
 		}
+		return isDeleted;
 	}
 
 }
