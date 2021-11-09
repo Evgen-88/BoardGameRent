@@ -7,8 +7,6 @@ import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 
 public interface RoleService {
 
-	RoleDTO add(RoleDTO roleDTO) throws ServiceException;
-	boolean delete(Long id) throws ServiceException;
-	List<RoleDTO> findRolesByUser(Long userId) throws ServiceException;
+	List<RoleDTO> findAll() throws ServiceException;
 	
 }
