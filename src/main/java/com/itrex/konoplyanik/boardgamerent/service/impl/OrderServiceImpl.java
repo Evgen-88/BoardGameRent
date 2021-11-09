@@ -7,9 +7,14 @@ import org.springframework.stereotype.Service;
 
 import com.itrex.konoplyanik.boardgamerent.dto.OrderDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.OrderListDTO;
+import com.itrex.konoplyanik.boardgamerent.dto.OrderSaveDTO;
+import com.itrex.konoplyanik.boardgamerent.dto.PurchaseDTO;
+import com.itrex.konoplyanik.boardgamerent.dto.RentDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
+import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
+import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 import com.itrex.konoplyanik.boardgamerent.service.OrderService;
 import com.itrex.konoplyanik.boardgamerent.util.Converter;
 
@@ -17,9 +22,13 @@ import com.itrex.konoplyanik.boardgamerent.util.Converter;
 public class OrderServiceImpl implements OrderService {
 
 	private final OrderRepository orderRepository;
+	private final PurchaseRepository purchaseRepository;
+	private final RentRepository rentRepository;
 	
-	public OrderServiceImpl(OrderRepository orderRepository) {
+	public OrderServiceImpl(OrderRepository orderRepository, PurchaseRepository purchaseRepository, RentRepository rentRepository) {
 		this.orderRepository = orderRepository;
+		this.purchaseRepository = purchaseRepository;
+		this.rentRepository = rentRepository;
 	}
 
 	@Override
@@ -36,14 +45,17 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderDTO findById(Long id) throws ServiceException {
 		try {
-			return Converter.convertOrderToDTO(orderRepository.findById(id));
+			OrderDTO order = Converter.convertOrderToDTO(orderRepository.findById(id));
+			order.setPurchases(Converter.convertPurchasesToDTO(purchaseRepository.findPurchasesByOrder(id)));
+			order.setRents(Converter.convertRentsToDTO(rentRepository.findRentsByOrder(id)));
+			return order;
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findById: " + ex);
 		}
 	}
 
 	@Override
-	public OrderDTO add(OrderDTO order) throws ServiceException {
+	public OrderDTO add(OrderSaveDTO order) throws ServiceException {
 		try {
 			return Converter.convertOrderToDTO(orderRepository.add(Converter.convertOrderToEntity(order)));
 		} catch (RepositoryException ex) {
@@ -52,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public OrderDTO update(OrderDTO order) throws ServiceException {
+	public OrderDTO update(OrderSaveDTO order) throws ServiceException {
 		try {
 			return Converter.convertOrderToDTO(orderRepository.update(Converter.convertOrderToEntity(order)));
 		} catch (RepositoryException ex) {
@@ -68,15 +80,26 @@ public class OrderServiceImpl implements OrderService {
 			throw new ServiceException("Error: update: " + ex);
 		}
 	}
-
+	
 	@Override
-	public List<OrderListDTO> findOrdersByUser(Long userId) throws ServiceException {
+	public List<PurchaseDTO> findPurchasesByOrder(Long orderId) throws ServiceException {
 		try {
-			return orderRepository.findOrdersByUser(userId).stream()
-					.map(order -> Converter.convertOrderToListDTO(order))
+			return purchaseRepository.findPurchasesByOrder(orderId).stream()
+					.map(purchase -> Converter.convertPurchaseToDTO(purchase))
 					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: findOrdersByUser: " + ex);
+			throw new ServiceException("Error: findPurchasesByOrder: " + ex);
+		}
+	}
+	
+	@Override
+	public List<RentDTO> findRentsByOrder(Long orderId) throws ServiceException {
+		try {
+			return rentRepository.findRentsByOrder(orderId).stream()
+					.map(rent -> Converter.convertRentToDTO(rent))
+					.collect(Collectors.toList());
+		} catch (RepositoryException ex) {
+			throw new ServiceException("Error: findRentsByOrder: " + ex);
 		}
 	}
 

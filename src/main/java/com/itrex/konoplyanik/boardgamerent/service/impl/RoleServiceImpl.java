@@ -1,6 +1,7 @@
 package com.itrex.konoplyanik.boardgamerent.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -21,24 +22,14 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public RoleDTO add(RoleDTO roleDTO) throws ServiceException {
+	public List<RoleDTO> findAll() throws ServiceException {
 		try {
-			return Converter.convertRoleToDTO(roleRepository.add(Converter.convertRoleToEntity(roleDTO)));
+			return roleRepository.findAll().stream()
+					.map(Converter::convertRoleToDTO)
+					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: add: " + ex);
+			throw new ServiceException("Error: findAll: " + ex);
 		}
-	}
-
-	@Override
-	public boolean delete(Long id) throws ServiceException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public List<RoleDTO> findRolesByUser(Long userId) throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
