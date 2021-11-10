@@ -5,6 +5,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.itrex.konoplyanik.boardgamerent.converters.OrderConverter;
+import com.itrex.konoplyanik.boardgamerent.converters.PurchaseConverter;
+import com.itrex.konoplyanik.boardgamerent.converters.RentConverter;
 import com.itrex.konoplyanik.boardgamerent.dto.OrderDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.OrderListDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.OrderSaveDTO;
@@ -16,7 +19,6 @@ import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 import com.itrex.konoplyanik.boardgamerent.service.OrderService;
-import com.itrex.konoplyanik.boardgamerent.util.Converter;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -35,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
 	public List<OrderListDTO> findAll() throws ServiceException {
 		try {
 			return orderRepository.findAll().stream()
-					.map(order -> Converter.convertOrderToListDTO(order))
+					.map(OrderConverter::convertOrderToListDTO)
 					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findAll: " + ex);
@@ -45,9 +47,9 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderDTO findById(Long id) throws ServiceException {
 		try {
-			OrderDTO order = Converter.convertOrderToDTO(orderRepository.findById(id));
-			order.setPurchases(Converter.convertPurchasesToDTO(purchaseRepository.findPurchasesByOrder(id)));
-			order.setRents(Converter.convertRentsToDTO(rentRepository.findRentsByOrder(id)));
+			OrderDTO order = OrderConverter.convertOrderToDTO(orderRepository.findById(id));
+			order.setPurchases(PurchaseConverter.convertPurchasesToDTO(purchaseRepository.findPurchasesByOrder(id)));
+			order.setRents(RentConverter.convertRentsToDTO(rentRepository.findRentsByOrder(id)));
 			return order;
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findById: " + ex);
@@ -57,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderDTO add(OrderSaveDTO order) throws ServiceException {
 		try {
-			return Converter.convertOrderToDTO(orderRepository.add(Converter.convertOrderToEntity(order)));
+			return OrderConverter.convertOrderToDTO(orderRepository.add(OrderConverter.convertOrderToEntity(order)));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: add: " + ex);
 		}
@@ -66,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderDTO update(OrderSaveDTO order) throws ServiceException {
 		try {
-			return Converter.convertOrderToDTO(orderRepository.update(Converter.convertOrderToEntity(order)));
+			return OrderConverter.convertOrderToDTO(orderRepository.update(OrderConverter.convertOrderToEntity(order)));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: update: " + ex);
 		}
@@ -85,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
 	public List<PurchaseDTO> findPurchasesByOrder(Long orderId) throws ServiceException {
 		try {
 			return purchaseRepository.findPurchasesByOrder(orderId).stream()
-					.map(purchase -> Converter.convertPurchaseToDTO(purchase))
+					.map(PurchaseConverter::convertPurchaseToDTO)
 					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findPurchasesByOrder: " + ex);
@@ -96,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
 	public List<RentDTO> findRentsByOrder(Long orderId) throws ServiceException {
 		try {
 			return rentRepository.findRentsByOrder(orderId).stream()
-					.map(rent -> Converter.convertRentToDTO(rent))
+					.map(RentConverter::convertRentToDTO)
 					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findRentsByOrder: " + ex);

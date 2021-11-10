@@ -2,6 +2,7 @@ package com.itrex.konoplyanik.boardgamerent.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import com.itrex.konoplyanik.boardgamerent.converters.PurchaseConverter;
 import com.itrex.konoplyanik.boardgamerent.dto.PurchaseDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.PurchaseSaveDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
@@ -10,7 +11,6 @@ import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 import com.itrex.konoplyanik.boardgamerent.service.PurchaseService;
-import com.itrex.konoplyanik.boardgamerent.util.Converter;
 
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
@@ -29,7 +29,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 	@Override
 	public PurchaseDTO findById(Long id) throws ServiceException {
 		try {
-			return Converter.convertPurchaseToDTO(purchaseRepository.findById(id));
+			return PurchaseConverter.convertPurchaseToDTO(purchaseRepository.findById(id));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findById: " + ex);
 		}
@@ -38,7 +38,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 	@Override
 	public PurchaseDTO add(PurchaseSaveDTO purchase) throws ServiceException {
 		try {
-			return Converter.convertPurchaseToDTO(purchaseRepository.add(Converter.convertPurchaseToEntity(purchase)));
+			return PurchaseConverter.convertPurchaseToDTO(purchaseRepository.add(PurchaseConverter.convertPurchaseToEntity(purchase)));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: add: " + ex);
 		}
@@ -47,7 +47,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 	@Override
 	public PurchaseDTO update(PurchaseSaveDTO purchase) throws ServiceException {
 		try {
-			return Converter.convertPurchaseToDTO(purchaseRepository.update(Converter.convertPurchaseToEntity(purchase)));
+			return PurchaseConverter.convertPurchaseToDTO(purchaseRepository.update(PurchaseConverter.convertPurchaseToEntity(purchase)));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: update: " + ex);
 		}

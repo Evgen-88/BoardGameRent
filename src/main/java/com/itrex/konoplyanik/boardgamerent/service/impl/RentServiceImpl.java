@@ -2,6 +2,7 @@ package com.itrex.konoplyanik.boardgamerent.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import com.itrex.konoplyanik.boardgamerent.converters.RentConverter;
 import com.itrex.konoplyanik.boardgamerent.dto.RentDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.RentSaveDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
@@ -10,7 +11,6 @@ import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 import com.itrex.konoplyanik.boardgamerent.service.RentService;
-import com.itrex.konoplyanik.boardgamerent.util.Converter;
 
 @Service
 public class RentServiceImpl implements RentService {
@@ -29,7 +29,7 @@ public class RentServiceImpl implements RentService {
 	@Override
 	public RentDTO findById(Long id) throws ServiceException {
 		try {
-			return Converter.convertRentToDTO(rentRepository.findById(id));
+			return RentConverter.convertRentToDTO(rentRepository.findById(id));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findById: " + ex);
 		}
@@ -38,7 +38,7 @@ public class RentServiceImpl implements RentService {
 	@Override
 	public RentDTO add(RentSaveDTO rent) throws ServiceException {
 		try {
-			return Converter.convertRentToDTO(rentRepository.add(Converter.convertRentSaveToEntity(rent)));
+			return RentConverter.convertRentToDTO(rentRepository.add(RentConverter.convertRentSaveToEntity(rent)));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: update: " + ex);
 		}
@@ -47,7 +47,7 @@ public class RentServiceImpl implements RentService {
 	@Override
 	public RentDTO update(RentSaveDTO rent) throws ServiceException {
 		try {
-			return Converter.convertRentToDTO(rentRepository.update(Converter.convertRentSaveToEntity(rent)));
+			return RentConverter.convertRentToDTO(rentRepository.update(RentConverter.convertRentSaveToEntity(rent)));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: update: " + ex);
 		}

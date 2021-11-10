@@ -5,12 +5,12 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.itrex.konoplyanik.boardgamerent.converters.BoardGameConverter;
 import com.itrex.konoplyanik.boardgamerent.dto.BoardGameDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.BoardGameRepository;
 import com.itrex.konoplyanik.boardgamerent.service.BoardGameService;
-import com.itrex.konoplyanik.boardgamerent.util.Converter;
 
 @Service
 public class BoardGameServiceImpl implements BoardGameService {
@@ -25,7 +25,7 @@ public class BoardGameServiceImpl implements BoardGameService {
 	public List<BoardGameDTO> findAll() throws ServiceException {
 		try {
 			return boardGameRepository.findAll().stream()
-					.map(Converter::convertBoardGameToDTO)
+					.map(BoardGameConverter::convertBoardGameToDTO)
 					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findAll: " + ex);
@@ -35,7 +35,7 @@ public class BoardGameServiceImpl implements BoardGameService {
 	@Override
 	public BoardGameDTO findById(Long id) throws ServiceException {
 		try {
-			return Converter.convertBoardGameToDTO(boardGameRepository.findById(id));
+			return BoardGameConverter.convertBoardGameToDTO(boardGameRepository.findById(id));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findById: " + ex);
 		}
@@ -44,7 +44,7 @@ public class BoardGameServiceImpl implements BoardGameService {
 	@Override
 	public BoardGameDTO add(BoardGameDTO boardGame) throws ServiceException {
 		try {
-			return Converter.convertBoardGameToDTO(boardGameRepository.add(Converter.convertBoardGameToEntity(boardGame)));
+			return BoardGameConverter.convertBoardGameToDTO(boardGameRepository.add(BoardGameConverter.convertBoardGameToEntity(boardGame)));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: add: " + ex);
 		}
@@ -53,7 +53,7 @@ public class BoardGameServiceImpl implements BoardGameService {
 	@Override
 	public BoardGameDTO update(BoardGameDTO boardGame) throws ServiceException {
 		try {
-			return Converter.convertBoardGameToDTO(boardGameRepository.update(Converter.convertBoardGameToEntity(boardGame)));
+			return BoardGameConverter.convertBoardGameToDTO(boardGameRepository.update(BoardGameConverter.convertBoardGameToEntity(boardGame)));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: update: " + ex);
 		}
