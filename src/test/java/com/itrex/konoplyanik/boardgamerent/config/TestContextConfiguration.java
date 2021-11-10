@@ -7,11 +7,9 @@ import static com.itrex.konoplyanik.boardgamerent.properties.TestProperties.MIGR
 
 import org.flywaydb.core.Flyway;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 @Configuration
 @ComponentScan("com.itrex.konoplyanik.boardgamerent.repository")
@@ -22,7 +20,7 @@ public class TestContextConfiguration {
 		return new org.hibernate.cfg.Configuration().configure().buildSessionFactory();
 	}
 	
-	@Bean
+	@Bean(initMethod = "migrate")
 	public Flyway flyway() {
 		Flyway flyway = Flyway.configure().dataSource(H2_URL, H2_USER, H2_PASSWORD).locations(MIGRATION_LOCATION)
 				.load();
