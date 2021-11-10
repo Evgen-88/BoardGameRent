@@ -11,9 +11,11 @@ public class BoardGameRentApplication {
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(ApplicationContextConfiguration.class);
 		Flyway flyway = applicationContext.getBean(Flyway.class);
-		flyway.migrate();
-		
-		flyway.clean();
+		/*
+		System.out.println("==================>");
+		System.out.println(applicationContext.getBean(UserServiceImpl.class).findAll());
+		System.out.println("==================>");
+		*/
 	}
 	
 }
