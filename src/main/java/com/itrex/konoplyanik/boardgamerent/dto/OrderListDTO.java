@@ -20,7 +20,6 @@ import lombok.ToString;
 @Builder
 public class OrderListDTO {
 
-	private Long userId;
 	private Long id;
 	private Integer totalPrice;
 	private LocalDate date;

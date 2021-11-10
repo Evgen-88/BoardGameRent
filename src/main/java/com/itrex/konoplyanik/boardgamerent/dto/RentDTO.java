@@ -20,7 +20,6 @@ import lombok.ToString;
 public class RentDTO {
 
 	private Long id;
-	private Long orderId;
 	private LocalDate rentFrom;
 	private LocalDate rentTo;
 	private Integer price;

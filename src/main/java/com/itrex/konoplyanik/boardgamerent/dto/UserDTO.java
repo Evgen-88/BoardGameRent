@@ -25,6 +25,6 @@ public class UserDTO {
 	private Integer phone;
 	private String email;
 	private List<RoleDTO> roles;
-	private List<OrderListDTO> orders;
+	private List<UserOrdersListDTO> orders;
 	
 }

@@ -1,5 +1,9 @@
 package com.itrex.konoplyanik.boardgamerent.dto;
 
+import java.time.LocalDate;
+
+import com.itrex.konoplyanik.boardgamerent.entity.Status;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -15,12 +19,10 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Builder
-public class PurchaseDTO {
+public class UserOrdersListDTO {
 
 	private Long id;
-	private Integer quantity;
-	private Integer price;
-	private Long accessoryId;
-	private String accessoryName;
-	
+	private Integer totalPrice;
+	private LocalDate date;
+	private Status status;
 }
