@@ -21,7 +21,7 @@ public class ApplicationContextConfiguration {
 	}
 	
 
-	@Bean
+	@Bean(initMethod = "migrate")
 	public Flyway flyway() {
 		Flyway flyway = Flyway.configure().dataSource(H2_URL, H2_USER, H2_PASSWORD).locations(MIGRATION_LOCATION)
 				.load();
