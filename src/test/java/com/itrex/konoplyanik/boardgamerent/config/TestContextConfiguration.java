@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan("com.itrex.konoplyanik.boardgamerent.repository")
+@ComponentScan("com.itrex.konoplyanik.boardgamerent")
 public class TestContextConfiguration {
 
 	@Bean
