@@ -7,6 +7,7 @@ import com.itrex.konoplyanik.boardgamerent.dto.OrderListDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.RoleDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserBaseDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserDTO;
+import com.itrex.konoplyanik.boardgamerent.dto.UserOrdersListDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 
 public interface UserService {
@@ -19,4 +20,5 @@ public interface UserService {
 	
 	List<OrderListDTO> findOrdersByUser(Long userId) throws ServiceException;
 	List<RoleDTO> findRolesByUser(Long userId) throws ServiceException;
+	List<UserOrdersListDTO> findUserOrdersByUser(Long userId) throws ServiceException;
 }
