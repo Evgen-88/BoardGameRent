@@ -15,6 +15,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@Builder
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -23,9 +36,6 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
-	
-	@Column(name = "user_id", insertable = false, updatable = false)
-	private Long userId;
 	
 	@Column(name = "total_price")
 	private Integer totalPrice;
@@ -37,95 +47,18 @@ public class Order {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 	
+	@ToString.Exclude
 	@OneToMany(mappedBy = "order")
 	private Set<Purchase> purchases;
 	
+	@ToString.Exclude
 	@OneToMany(mappedBy = "order")
 	private Set<Rent> rents;
 	
+	@ToString.Exclude
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
-	
-	public Order() {
-	}
-	
-	public Order(Long userId, Integer totalPrice, LocalDate date, Status status) {
-		this.userId = userId;
-		this.totalPrice = totalPrice;
-		this.date = date;
-		this.status = status;
-	}
-	
-	public Order(Long id, Long userId, Integer totalPrice, LocalDate date, Status status) {
-		this.id = id;
-		this.userId = userId;
-		this.totalPrice = totalPrice;
-		this.date = date;
-		this.status = status;
-	}
-	
-	public Order(User user, Integer totalPrice, LocalDate date, Status status) {
-		this.user = user;
-		this.totalPrice = totalPrice;
-		this.date = date;
-		this.status = status;
-	}
-	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public Long getUserId() {
-		return userId;
-	}
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-	public Integer getTotalPrice() {
-		return totalPrice;
-	}
-	public void setTotalPrice(Integer totalPrice) {
-		this.totalPrice = totalPrice;
-	}
-	public LocalDate getDate() {
-		return date;
-	}
-	public void setDate(LocalDate date) {
-		this.date = date;
-	}
-	public Status getStatus() {
-		return status;
-	}
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-	
-	public Set<Purchase> getPurchases() {
-		return purchases;
-	}
-
-	public void setPurchases(Set<Purchase> purchases) {
-		this.purchases = purchases;
-	}
-
-	public Set<Rent> getRents() {
-		return rents;
-	}
-
-	public void setRents(Set<Rent> rents) {
-		this.rents = rents;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
 
 	@Override
 	public int hashCode() {
@@ -135,7 +68,6 @@ public class Order {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + ((totalPrice == null) ? 0 : totalPrice.hashCode());
-		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
 		return result;
 	}
 
@@ -165,18 +97,7 @@ public class Order {
 				return false;
 		} else if (!totalPrice.equals(other.totalPrice))
 			return false;
-		if (userId == null) {
-			if (other.userId != null)
-				return false;
-		} else if (!userId.equals(other.userId))
-			return false;
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "Order [id=" + id + ", userId=" + userId + ", totalPrice=" + totalPrice + ", date=" + date + ", status="
-				+ status + "]";
-	}
-	
 }

@@ -10,6 +10,19 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@Builder
 @Entity
 @Table(name = "user_role")
 public class Role {
@@ -22,41 +35,9 @@ public class Role {
 	@Column(name = "name")
 	private String name;
 	
+	@ToString.Exclude
 	@ManyToMany(mappedBy = "roles")
 	private Set<User> users;
-	
-	public Role() {
-	}
-	
-	public Role(String name) {
-		this.name = name;
-	}
-	
-	public Role(Long id, String name) {
-		this.id = id;
-		this.name = name;
-	}
-	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public Set<User> getUsers() {
-		return users;
-	}
-
-	public void setUsers(Set<User> users) {
-		this.users = users;
-	}
 
 	@Override
 	public int hashCode() {
@@ -88,10 +69,5 @@ public class Role {
 			return false;
 		return true;
 	}
-
-	@Override
-	public String toString() {
-		return "Role [id=" + id + ", name=" + name + "]";
-	}
-		
+	
 }

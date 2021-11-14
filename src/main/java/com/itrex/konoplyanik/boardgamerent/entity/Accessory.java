@@ -10,6 +10,19 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@Builder
 @Entity
 @Table(name = "accessory")
 public class Accessory {
@@ -28,57 +41,9 @@ public class Accessory {
 	@Column(name = "quantity")
 	private Integer quantity;
 	
+	@ToString.Exclude
 	@OneToMany(mappedBy = "accessory")
 	private Set<Purchase> purchases;
-	
-	public Accessory() {
-	}
-	
-	public Accessory(String name, Integer price, Integer quantity) {
-		this.name = name;
-		this.price = price;
-		this.quantity = quantity;
-	}
-	
-	public Accessory(Long id, String name, Integer price, Integer quantity) {
-		this.id = id;
-		this.name = name;
-		this.price = price;
-		this.quantity = quantity;
-	}
-	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public Integer getPrice() {
-		return price;
-	}
-	public void setPrice(Integer price) {
-		this.price = price;
-	}
-	public Integer getQuantity() {
-		return quantity;
-	}
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
-	}
-	
-	public Set<Purchase> getPurchases() {
-		return purchases;
-	}
-
-	public void setPurchases(Set<Purchase> purchases) {
-		this.purchases = purchases;
-	}
 
 	@Override
 	public int hashCode() {
@@ -121,11 +86,6 @@ public class Accessory {
 		} else if (!quantity.equals(other.quantity))
 			return false;
 		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "Accessory [id=" + id + ", name=" + name + ", price=" + price + ", quantity=" + quantity + "]";
 	}
 	
 }

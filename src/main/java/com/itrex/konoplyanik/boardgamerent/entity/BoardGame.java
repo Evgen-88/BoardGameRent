@@ -10,6 +10,19 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@Builder
 @Entity
 @Table(name = "board_game")
 public class BoardGame {
@@ -28,57 +41,9 @@ public class BoardGame {
 	@Column(name = "quantity")
 	private Integer quantity;
 	
+	@ToString.Exclude
 	@OneToMany(mappedBy = "boardGame")
 	private Set<Rent> rents;
-	
-	public BoardGame() {
-	}
-	
-	public BoardGame(String name, Integer rentPrice, Integer quantity) {
-		this.name = name;
-		this.rentPrice = rentPrice;
-		this.quantity = quantity;
-	}
-	
-	public BoardGame(Long id, String name, Integer rentPrice, Integer quantity) {
-		this.id = id;
-		this.name = name;
-		this.rentPrice = rentPrice;
-		this.quantity = quantity;
-	}
-	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public Integer getRentPrice() {
-		return rentPrice;
-	}
-	public void setRentPrice(Integer rentPrice) {
-		this.rentPrice = rentPrice;
-	}
-	public Integer getQuantity() {
-		return quantity;
-	}
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
-	}
-	
-	public Set<Rent> getRents() {
-		return rents;
-	}
-
-	public void setRents(Set<Rent> rents) {
-		this.rents = rents;
-	}
 
 	@Override
 	public int hashCode() {
@@ -123,9 +88,4 @@ public class BoardGame {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "BoardGame [id=" + id + ", name=" + name + ", rentPrice=" + rentPrice + ", quantity=" + quantity + "]";
-	}
-	
 }
