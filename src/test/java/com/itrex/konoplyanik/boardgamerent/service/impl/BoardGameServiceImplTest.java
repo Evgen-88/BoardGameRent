@@ -45,7 +45,7 @@ public class BoardGameServiceImplTest {
         String expected = "Сквозь века";
         // when
         Mockito.when(boardGameRepository.findById(1L))
-                .thenReturn(new BoardGame(1L, "Сквозь века", 45, 3));
+                .thenReturn(BoardGame.builder().id(1L).name("Сквозь века").rentPrice(45).quantity(3).build());
         String actual = boardGameService.findById(1L).getName();
         // then
         Assert.assertEquals(expected, actual);
@@ -55,7 +55,7 @@ public class BoardGameServiceImplTest {
 	@Test
 	public void add_validData_shouldReturnNewAccessoryDTO() throws RepositoryException, ServiceException {
         //given
-		BoardGame accessory = new BoardGame(5L, "Замки Бургундии", 60, 2);
+		BoardGame accessory = BoardGame.builder().id(5L).name("Замки Бургундии").rentPrice(60).quantity(2).build();
 		BoardGameDTO expected = BoardGameDTO.builder().id(5L).name("Замки Бургундии").rentPrice(60).quantity(2).build();
         //when
         Mockito.when(boardGameRepository.add(accessory)).thenReturn(accessory);
@@ -67,7 +67,7 @@ public class BoardGameServiceImplTest {
 	@Test
 	public void update_validData_shouldReturnNewAccessoryDTO() throws RepositoryException, ServiceException {
 		 //given
-		BoardGame accessory = new BoardGame(1L, "updatedName", 45, 3);
+		BoardGame accessory = BoardGame.builder().id(1L).name("updatedName").rentPrice(45).quantity(3).build();
         BoardGameDTO expected = BoardGameDTO.builder().id(1L).name("updatedName").rentPrice(45).quantity(3).build();
         //when
         Mockito.when(boardGameRepository.update(accessory)).thenReturn(accessory);

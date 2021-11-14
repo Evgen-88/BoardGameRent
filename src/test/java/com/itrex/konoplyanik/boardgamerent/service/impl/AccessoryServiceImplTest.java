@@ -45,7 +45,7 @@ public class AccessoryServiceImplTest {
         String expected = "Протекторы для карт 65х87";
         // when
         Mockito.when(accessoryRepository.findById(1L))
-                .thenReturn(new Accessory(1L, "Протекторы для карт 65х87", 12, 24));
+                .thenReturn(Accessory.builder().id(1L).name("Протекторы для карт 65х87").price(12).quantity(24).build());
         String actual = accessoryService.findById(1L).getName();
         // then
         Assert.assertEquals(expected, actual);
@@ -55,8 +55,8 @@ public class AccessoryServiceImplTest {
 	@Test
 	public void add_validData_shouldReturnNewAccessoryDTO() throws RepositoryException, ServiceException {
         //given
-		Accessory accessory = new Accessory(4L, "Dicetray", 24, 8);
-		AccessoryDTO expected = AccessoryDTO.builder().id(4L).name("Dicetray").price(24).quantity(8).build();
+		Accessory accessory = Accessory.builder().id(4L).name("Кубик D6").price(6).quantity(52).build();
+		AccessoryDTO expected = AccessoryDTO.builder().id(4L).name("Кубик D6").price(6).quantity(52).build();
         //when
         Mockito.when(accessoryRepository.add(accessory)).thenReturn(accessory);
         AccessoryDTO actual = accessoryService.add(expected);
@@ -67,7 +67,7 @@ public class AccessoryServiceImplTest {
 	@Test
 	public void update_validData_shouldReturnNewAccessoryDTO() throws RepositoryException, ServiceException {
 		 //given
-        Accessory accessory = new Accessory(1L, "updatedName", 24, 8);
+        Accessory accessory = Accessory.builder().id(1L).name("updatedName").price(24).quantity(8).build();
 		AccessoryDTO expected = AccessoryDTO.builder().id(1L).name("updatedName").price(24).quantity(8).build();
         //when
         Mockito.when(accessoryRepository.update(accessory)).thenReturn(accessory);
