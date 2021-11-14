@@ -2,8 +2,7 @@ package com.itrex.konoplyanik.boardgamerent.dto;
 
 import java.time.LocalDate;
 
-import com.itrex.konoplyanik.boardgamerent.entity.BoardGame;
-import com.itrex.konoplyanik.boardgamerent.entity.Order;
+import com.itrex.konoplyanik.boardgamerent.entity.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,12 +19,10 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Builder
-public class RentSaveDTO {
+public class OrderListForUserDTO {
 
 	private Long id;
-	private BoardGame boardGame;
-	private Order order;
-	private LocalDate rentFrom;
-	private LocalDate rentTo;
-	private Integer price;
+	private Integer totalPrice;
+	private LocalDate date;
+	private Status status;
 }

@@ -25,5 +25,5 @@ public class UserSaveDTO {
 	private String name;
 	private Integer phone;
 	private String email;
-	private List<RoleDTO> roles;
+	private List<Long> roleIds;
 }
