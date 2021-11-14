@@ -23,9 +23,9 @@ public class RoleRepositoryImplTest extends BaseRepositoryTest {
 	@Before
 	public void fill() {
 		roles = new ArrayList<>() {{
-			add(new Role(1L, "admin"));
-			add(new Role(2L, "manager"));
-			add(new Role(3L, "customer"));
+			add(Role.builder().id(1L).name("admin").build());
+			add(Role.builder().id(2L).name("manager").build());
+			add(Role.builder().id(3L).name("customer").build());
 		}};
 	}
 	
@@ -48,27 +48,10 @@ public class RoleRepositoryImplTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void addAll_validData_shouldAddAllRoles() {
-		//given
-		List<Role> expected = new ArrayList<>() {{
-			add(new Role(4L, "secretary"));
-			add(new Role(5L, "courier"));
-		}};
-		//when
-		List<Role> roles = new ArrayList<>() {{
-			add(new Role("secretary"));
-			add(new Role("courier"));
-		}};
-		List<Role> actual = repository.addAll(roles);
-		//then
-		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
 	public void add_validData_shouldAddRole() {
 		//given
-		Role expected = new Role(4L, "secretary");
-		Role role = new Role("secretary");
+		Role expected = Role.builder().id(4L).name("secretary").build();
+		Role role = Role.builder().name("secretary").build();
 		//when
 		Role actual = repository.add(role);
 		//then
@@ -79,10 +62,10 @@ public class RoleRepositoryImplTest extends BaseRepositoryTest {
 	public void update_validData_shouldUpdateRole() {
 		//given
 		Role role = roles.get(0);
-		Role expected = new Role(1L, "boss");
+		Role expected = Role.builder().id(1L).name("boss").build();
+		Assert.assertEquals(expected.getId(), role.getId());
 		//when
-		role.setName("boss");
-		Role actual = repository.update(role);
+		Role actual = repository.update(expected);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -101,8 +84,8 @@ public class RoleRepositoryImplTest extends BaseRepositoryTest {
 	public void findRolesByUser_validData_shouldReturnAllRolesByUser() {
 		//given
 		List<Role>	expected = new ArrayList<>() {{
-			add(new Role(1L, "admin"));
-			add(new Role(3L, "customer"));
+			add(Role.builder().id(1L).name("admin").build());
+			add(Role.builder().id(3L).name("customer").build());
 		}};
 		//when
 		List<Role>	actual = repository.findRolesByUser(1L);

@@ -25,8 +25,8 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 	@Before
 	public void fill() {
 		purchases = new ArrayList<>() {{
-			add(new Purchase(1L, 2L, 3L, 2, 26));
-			add(new Purchase(2L, 1L, 2L, 3, 36));
+			add(Purchase.builder().id(1L).quantity(2).price(26).build());
+			add(Purchase.builder().id(2L).quantity(3).price(36).build());
 		}};
 	}
 	
@@ -49,27 +49,10 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void addAll_validData_shouldAddAllPurchases() {
-		//given
-		List<Purchase> expected = new ArrayList<>() {{
-			add(new Purchase(3L, 3L, 4L, 1, 18));
-			add(new Purchase(4L, 1L, 2L, 2, 24));
-		}};
-		//when
-		List<Purchase> purchases = new ArrayList<>() {{
-			add(new Purchase(3L, 4L, 1, 18));
-			add(new Purchase(1L, 2L, 2, 24));
-		}};
-		List<Purchase> actual = repository.addAll(purchases);
-		//then
-		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
 	public void add_validData_shouldAddPurchase() {
 		//given
-		Purchase expected = new Purchase(3L, 3L, 4L, 1, 18);
-		Purchase purchase = new Purchase(3L, 4L, 1, 18);
+		Purchase expected = Purchase.builder().id(3L).quantity(1).price(18).build();
+		Purchase purchase = Purchase.builder().quantity(1).price(18).build();
 		//when
 		Purchase actual = repository.add(purchase);
 		//then
@@ -80,11 +63,10 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 	public void update_validData_shouldUpdatePurchase() {
 		//given
 		Purchase purchase = purchases.get(0);
-		Purchase expected = new Purchase(1L, 2L, 3L, 5, 100);
+		Purchase expected = Purchase.builder().id(1L).quantity(5).price(100).build();
+		Assert.assertEquals(expected.getId(), purchase.getId());
 		//when
-		purchase.setQuantity(5);
-		purchase.setPrice(100);
-		Purchase actual = repository.update(purchase);
+		Purchase actual = repository.update(Purchase.builder().id(1L).quantity(5).price(100).build());
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -114,7 +96,7 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 	@Test
 	public void deletePurchasesFromOrder_shouldDeletePurchase() {
 		//given
-		Order order = new Order(3L, 2L, 126, LocalDate.of(2021, 10, 23), Status.confirmed);
+		Order order = Order.builder().id(3L).totalPrice(45).date(LocalDate.of(2021, 10, 23)).status(Status.confirmed).build();
 		//when
 		boolean actual = repository.deletePurchasesFromOrder(order.getId());
 		//then

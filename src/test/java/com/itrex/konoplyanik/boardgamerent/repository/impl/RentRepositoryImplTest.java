@@ -25,10 +25,10 @@ public class RentRepositoryImplTest extends BaseRepositoryTest {
 	@Before
 	public void fill() {
 		rents = new ArrayList<>() {{
-			add(new Rent(1L, 1L, 1L, LocalDate.of(2021, 10, 23), LocalDate.of(2021, 10, 24), 45));
-			add(new Rent(2L, 1L, 2L, LocalDate.of(2021, 10, 23), LocalDate.of(2021, 10, 25), 90));
-			add(new Rent(3L, 3L, 3L, LocalDate.of(2021, 10, 22), LocalDate.of(2021, 10, 24), 100));
-			add(new Rent(4L, 2L, 4L, LocalDate.of(2021, 10, 25), LocalDate.of(2021, 10, 28), 120));
+			add(Rent.builder().id(1L).rentFrom(LocalDate.of(2021, 10, 23)).rentTo(LocalDate.of(2021, 10, 24)).price(45).build());
+			add(Rent.builder().id(2L).rentFrom(LocalDate.of(2021, 10, 23)).rentTo(LocalDate.of(2021, 10, 25)).price(90).build());
+			add(Rent.builder().id(3L).rentFrom(LocalDate.of(2021, 10, 22)).rentTo(LocalDate.of(2021, 10, 24)).price(100).build());
+			add(Rent.builder().id(4L).rentFrom(LocalDate.of(2021, 10, 25)).rentTo(LocalDate.of(2021, 10, 28)).price(120).build());
 		}};
 	}
 	
@@ -51,27 +51,10 @@ public class RentRepositoryImplTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void addAll_validData_shouldAddAllRents() {
-		//given
-		List<Rent> expected = new ArrayList<>() {{
-			add(new Rent(5L, 4L, 4L, LocalDate.of(2021, 10, 26), LocalDate.of(2021, 10, 27), 50));
-			add(new Rent(6L, 1L, 4L, LocalDate.of(2021, 10, 27), LocalDate.of(2021, 10, 28), 45));
-		}};
-		//when
-		List<Rent> rents = new ArrayList<>() {{
-			add(new Rent(4L, 4L, LocalDate.of(2021, 10, 26), LocalDate.of(2021, 10, 27), 50));
-			add(new Rent(1L, 4L, LocalDate.of(2021, 10, 27), LocalDate.of(2021, 10, 28), 45));
-		}};
-		List<Rent> actual = repository.addAll(rents);
-		//then
-		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
 	public void add_validData_shouldAddRent() {
 		//given
-		Rent expected = new Rent(5L, 4L, 4L, LocalDate.of(2021, 10, 26), LocalDate.of(2021, 10, 27), 50);
-		Rent rent = new Rent(4L, 4L, LocalDate.of(2021, 10, 26), LocalDate.of(2021, 10, 27), 50);
+		Rent expected = Rent.builder().id(5L).rentFrom(LocalDate.of(2021, 10, 26)).rentTo(LocalDate.of(2021, 10, 27)).price(50).build();
+		Rent rent = Rent.builder().rentFrom(LocalDate.of(2021, 10, 26)).rentTo(LocalDate.of(2021, 10, 27)).price(50).build();
 		//when
 		Rent actual = repository.add(rent);
 		//then
@@ -82,12 +65,10 @@ public class RentRepositoryImplTest extends BaseRepositoryTest {
 	public void update_validData_shouldUpdateRent() {
 		//given
 		Rent rent = rents.get(0);
-		Rent expected = new Rent(1L, 1L, 1L, LocalDate.of(2021, 10, 24), LocalDate.of(2021, 10, 25), 50);
+		Rent expected = Rent.builder().id(1L).rentFrom(LocalDate.of(2021, 10, 24)).rentTo(LocalDate.of(2021, 10, 25)).price(50).build();
+		Assert.assertEquals(expected.getId(), rent.getId());
 		//when
-		rent.setRentFrom(LocalDate.of(2021, 10, 24));
-		rent.setRentTo(LocalDate.of(2021, 10, 25));
-		rent.setPrice(50);
-		Rent actual = repository.update(rent);
+		Rent actual = repository.update(Rent.builder().id(1L).rentFrom(LocalDate.of(2021, 10, 24)).rentTo(LocalDate.of(2021, 10, 25)).price(50).build());
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -117,7 +98,7 @@ public class RentRepositoryImplTest extends BaseRepositoryTest {
 	@Test
 	public void deleteRentsFromOrder_shouldDeleteRent() {
 		//given
-		Order order = new Order(3L, 2L, 126, LocalDate.of(2021, 10, 23), Status.confirmed);
+		Order order = Order.builder().id(3L).totalPrice(45).date(LocalDate.of(2021, 10, 23)).status(Status.confirmed).build();
 		//when
 		boolean actual = repository.deleteRentsFromOrder(order.getId());
 		//then

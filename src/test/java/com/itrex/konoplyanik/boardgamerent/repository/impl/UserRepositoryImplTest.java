@@ -2,7 +2,6 @@ package com.itrex.konoplyanik.boardgamerent.repository.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,11 +21,11 @@ public class UserRepositoryImplTest extends BaseRepositoryTest {
 	@Before
 	public void fill() {
 		users = new ArrayList<>() {{
-			add(new User(1L, "ivan", "ivan", "Иван", 1111111, "ivan@mail"));
-			add(new User(2L, "alex", "alex", "Алекс", 2222222, "alex@mail"));
-			add(new User(3L, "kir", "kir", "Кирилл", 3333333, "kir@mail"));
-			add(new User(4L, "piter", "piter", "Петр", 4444444, "piter@mail"));
-			add(new User(5L, "vova", "vova", "Владимир", 5555555, "vova@mail"));
+			add(User.builder().id(1L).login("ivan").password("ivan").name("Иван").phone(1111111).email("ivan@mail").build());
+			add(User.builder().id(2L).login("alex").password("alex").name("Алекс").phone(2222222).email("alex@mail").build());
+			add(User.builder().id(3L).login("kir").password("kir").name("Кирилл").phone(3333333).email("kir@mail").build());
+			add(User.builder().id(4L).login("piter").password("piter").name("Петр").phone(4444444).email("piter@mail").build());
+			add(User.builder().id(5L).login("vova").password("vova").name("Владимир").phone(5555555).email("vova@mail").build());
 		}};
 	}
 	
@@ -49,29 +48,14 @@ public class UserRepositoryImplTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void addAll_validData_shouldAddAllUsers() {
-		//given
-		List<User> expected = new ArrayList<>() {{
-			add(new User(6L, "dima", "dima", "Дмитрий", 6666666, "dima@mail"));
-			add(new User(7L, "serg", "serg", "Сергей", 7777777, "serg@mail"));
-		}};
-		//when
-		List<User> users = new ArrayList<>() {{
-			add(new User("dima", "dima", "Дмитрий", 6666666, "dima@mail"));
-			add(new User("serg", "serg", "Сергей", 7777777, "serg@mail"));
-		}};
-		List<User> actual = repository.addAll(users, 3L);
-		//then
-		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
 	public void add_validData_shouldAddUser() {
 		//given
-		User expected = new User(6L, "vasya", "vasya", "Василий", 8888888, "vasya@mail");
-		User user = new User("vasya", "vasya", "Василий", 8888888, "vasya@mail");
-		//when
-		User actual = repository.add(user, 3L);
+		User expected = User.builder().id(6L).login("vasya").password("vasya").name("Василий").phone(8888888).email("vasya@mail").build();
+		User user = User.builder().login("vasya").password("vasya").name("Василий").phone(8888888).email("vasya@mail").build();
+		List<Long> roleIds = new ArrayList<>() {{
+			add(3L);
+		}};
+		User actual = repository.add(user, roleIds);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -80,14 +64,10 @@ public class UserRepositoryImplTest extends BaseRepositoryTest {
 	public void update_validData_shouldUpdateUser() {
 		//given
 		User user = users.get(0);
-		User expected = new User(1L, "1ivan", "1ivan", "Ваня", 1111112, "1ivan@mail");
+		User expected = User.builder().id(1L).login("1ivan").password("1ivan").name("Иван").phone(1111112).email("1ivan@mail").build();
+		Assert.assertEquals(expected.getId(), user.getId());
 		//when
-		user.setLogin("1ivan");
-		user.setPassword("1ivan");
-		user.setName("Ваня");
-		user.setPhone(1111112);
-		user.setEmail("1ivan@mail");
-		User actual = repository.update(user);
+		User actual = repository.update(expected);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -106,11 +86,11 @@ public class UserRepositoryImplTest extends BaseRepositoryTest {
 	public void findUsersByRole_validData_shouldReturnAllUsersByRole() {
 		//given
 		List<User>	expected = new ArrayList<>() {{
-			add(new User(4L, "piter", "piter", "Петр", 4444444, "piter@mail"));
-			add(new User(3L, "kir", "kir", "Кирилл", 3333333, "kir@mail"));
-			add(new User(5L, "vova", "vova", "Владимир", 5555555, "vova@mail"));
-			add(new User(2L, "alex", "alex", "Алекс", 2222222, "alex@mail"));
-			add(new User(1L, "ivan", "ivan", "Иван", 1111111, "ivan@mail"));
+			add(User.builder().id(4L).login("piter").password("piter").name("Петр").phone(4444444).email("piter@mail").build());
+			add(User.builder().id(3L).login("kir").password("kir").name("Кирилл").phone(3333333).email("kir@mail").build());
+			add(User.builder().id(5L).login("vova").password("vova").name("Владимир").phone(5555555).email("vova@mail").build());
+			add(User.builder().id(2L).login("alex").password("alex").name("Алекс").phone(2222222).email("alex@mail").build());
+			add(User.builder().id(1L).login("ivan").password("ivan").name("Иван").phone(1111111).email("ivan@mail").build());
 		}};
 		//when
 		List<User>	actual = repository.findUsersByRole(3L);

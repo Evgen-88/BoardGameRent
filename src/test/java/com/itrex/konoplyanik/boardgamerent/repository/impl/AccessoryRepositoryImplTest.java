@@ -23,9 +23,9 @@ public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 	@Before
 	public void fill() {
 		accessories = new ArrayList<>() {{
-			add(new Accessory(1L, "Протекторы для карт 65х87", 12, 24));
-			add(new Accessory(2L, "Протекторы для карт 48х64", 13, 20));
-			add(new Accessory(3L, "Протекторы для карт 102х143", 18, 11));
+			add(Accessory.builder().id(1L).name("Протекторы для карт 65х87").price(12).quantity(24).build());
+			add(Accessory.builder().id(2L).name("Протекторы для карт 48х64").price(13).quantity(20).build());
+			add(Accessory.builder().id(3L).name("Протекторы для карт 102х143").price(18).quantity(11).build());
 		}};
 	}
 	
@@ -40,7 +40,7 @@ public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 	@Test
 	public void findById_validData_shouldReturnAccessoryById() {
 		//given
-		Accessory expected = accessories.get(0);
+		Accessory expected = accessories.get(1);
 		//when
 		Accessory actual = repository.findById(expected.getId());
 		//then
@@ -48,28 +48,10 @@ public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void addAll_validData_shouldAddAllAccessories() {
-		//given
-		List<Accessory> expected = new ArrayList<>() {{
-			add(new Accessory(4L, "Кубик D6", 6, 52));
-			add(new Accessory(5L, "Кубик D20", 8, 34));
-		}};
-		
-		List<Accessory> accessories = new ArrayList<>() {{
-			add(new Accessory("Кубик D6", 6, 52));
-			add(new Accessory("Кубик D20", 8, 34));
-		}};
-		//when
-		List<Accessory> actual = repository.addAll(accessories);
-		//then
-		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
 	public void add_validData_shouldAddAccessory() {
 		//given
-		Accessory expected = new Accessory(4L, "Dicetray", 24, 8);
-		Accessory accessory = new Accessory("Dicetray", 24, 8);
+		Accessory expected = Accessory.builder().id(4L).name("Кубик D6").price(6).quantity(52).build();
+		Accessory accessory = Accessory.builder().name("Кубик D6").price(6).quantity(52).build();
 		//when
 		Accessory actual = repository.add(accessory);
 		//then
@@ -80,12 +62,11 @@ public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 	public void update_validData_shouldUpdateAccessory() {
 		//given
 		Accessory accessory = accessories.get(0);
-		Accessory expected = new Accessory(1L, "Протекторы для карт 68х92", 14, 21);
+		Accessory expected = Accessory.builder().id(1L).name("Протекторы для карт 68х92").price(14).quantity(21).build();
+		Assert.assertEquals(accessory.getId(), expected.getId());
 		//when
-		accessory.setName("Протекторы для карт 68х92");
-		accessory.setPrice(14);
-		accessory.setQuantity(21);
-		Accessory actual = repository.update(accessory);
+		
+		Accessory actual = repository.update(Accessory.builder().id(1L).name("Протекторы для карт 68х92").price(14).quantity(21).build());
 		//then
 		Assert.assertEquals(expected, actual);
 	}

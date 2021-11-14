@@ -22,10 +22,10 @@ public class BoardGameRepositoryImplTest extends BaseRepositoryTest {
 	@Before
 	public void fill() {
 		boardGames = new ArrayList<>() {{
-			add(new BoardGame(1L, "Сквозь века", 45, 3));
-			add(new BoardGame(2L, "Сумеречная борьба", 40, 2));
-			add(new BoardGame(3L, "Звездные Войны. Восстание", 50, 2));
-			add(new BoardGame(4L, "Особняки безумия", 50, 4));
+			add(BoardGame.builder().id(1L).name("Сквозь века").rentPrice(45).quantity(3).build());
+			add(BoardGame.builder().id(2L).name("Сумеречная борьба").rentPrice(40).quantity(2).build());
+			add(BoardGame.builder().id(3L).name("Звездные Войны. Восстание").rentPrice(50).quantity(2).build());
+			add(BoardGame.builder().id(4L).name("Особняки безумия").rentPrice(50).quantity(4).build());
 		}};
 	}
 
@@ -48,27 +48,10 @@ public class BoardGameRepositoryImplTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void addAll_validData_shouldAddAllBoardGames() {
-		//given
-		List<BoardGame> expected = new ArrayList<>() {{
-			add(new BoardGame(5L, "Сезоны", 35, 4));
-			add(new BoardGame(6L, "Остров духов", 45, 3));
-		}};
-		//when
-		List<BoardGame> boardGames = new ArrayList<>() {{
-			add(new BoardGame("Сезоны", 35, 4));
-			add(new BoardGame("Остров духов", 45, 3));
-		}};
-		List<BoardGame> actual = repository.addAll(boardGames);
-		//then
-		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
 	public void add_validData_shouldAddBoardGame() {
 		//given
-		BoardGame expected = new BoardGame(5L, "Замки Бургундии", 60, 2);
-		BoardGame boardGame = new BoardGame("Замки Бургундии", 60, 2);
+		BoardGame expected = BoardGame.builder().id(5L).name("Сезоны").rentPrice(35).quantity(4).build();
+		BoardGame boardGame = BoardGame.builder().name("Сезоны").rentPrice(35).quantity(4).build();
 		//when
 		BoardGame actual = repository.add(boardGame);
 		//then
@@ -79,12 +62,10 @@ public class BoardGameRepositoryImplTest extends BaseRepositoryTest {
 	public void update_validData_shouldUpdateBoardGame() {
 		//given
 		BoardGame boardGame = boardGames.get(0);
-		BoardGame expected = new BoardGame(1L, "Пандемия", 30, 5);
+		BoardGame expected = BoardGame.builder().id(1L).name("Пандемия").rentPrice(30).quantity(5).build();
+		Assert.assertEquals(boardGame.getId(), expected.getId());
 		//when
-		boardGame.setName("Пандемия");
-		boardGame.setRentPrice(30);
-		boardGame.setQuantity(5);
-		BoardGame actual = repository.update(boardGame);
+		BoardGame actual = repository.update(BoardGame.builder().id(1L).name("Пандемия").rentPrice(30).quantity(5).build());
 		//then
 		Assert.assertEquals(expected, actual);
 	}

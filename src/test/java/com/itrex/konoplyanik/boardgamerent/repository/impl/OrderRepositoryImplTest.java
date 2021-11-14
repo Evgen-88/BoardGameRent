@@ -24,10 +24,10 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 	@Before
 	public void fill() {
 		orders = new ArrayList<>() {{
-			add(new Order(1L, 1L, 45, LocalDate.of(2021, 10, 23), Status.confirmed));
-			add(new Order(2L, 4L, 90, LocalDate.of(2021, 10, 23), Status.confirmed));
-			add(new Order(3L, 2L, 126, LocalDate.of(2021, 10, 23), Status.confirmed));
-			add(new Order(4L, 4L, 120, LocalDate.of(2021, 10, 22), Status.booked));
+			add(Order.builder().id(1L).totalPrice(45).date(LocalDate.of(2021, 10, 23)).status(Status.confirmed).build());
+			add(Order.builder().id(2L).totalPrice(90).date(LocalDate.of(2021, 10, 23)).status(Status.confirmed).build());
+			add(Order.builder().id(3L).totalPrice(126).date(LocalDate.of(2021, 10, 23)).status(Status.confirmed).build());
+			add(Order.builder().id(4L).totalPrice(120).date(LocalDate.of(2021, 10, 22)).status(Status.booked).build());
 		}};
 	}
 	
@@ -50,31 +50,10 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 	}
 
 	@Test
-	public void addAll_validData_shouldAddAllOrders() {
-		// given
-		List<Order> expected = new ArrayList<>() {
-			{
-				add(new Order(5L, 2L, 55, LocalDate.of(2021, 10, 24), Status.booked));
-				add(new Order(6L, 5L, 66, LocalDate.of(2021, 10, 25), Status.confirmed));
-			}
-		};
-		// when
-		List<Order> orders = new ArrayList<>() {
-			{
-				add(new Order(2L, 55, LocalDate.of(2021, 10, 24), Status.booked));
-				add(new Order(5L, 66, LocalDate.of(2021, 10, 25), Status.confirmed));
-			}
-		};
-		List<Order> actual = repository.addAll(orders);
-		// then
-		Assert.assertEquals(expected, actual);
-	}
-
-	@Test
 	public void add_validData_shouldAddOrder() {
 		// given
-		Order expected = new Order(5L, 4L, 90, LocalDate.of(2021, 10, 21), Status.rejected);
-		Order order = new Order(4L, 90, LocalDate.of(2021, 10, 21), Status.rejected);
+		Order expected = Order.builder().id(5L).totalPrice(90).date(LocalDate.of(2021, 10, 21)).status(Status.rejected).build();
+		Order order = Order.builder().totalPrice(90).date(LocalDate.of(2021, 10, 21)).status(Status.rejected).build();
 		// when
 		Order actual = repository.add(order);
 		// then
@@ -85,14 +64,10 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 	public void update_validData_shouldUpdateOrder() {
 		// given
 		Order order = orders.get(0);
-		Order expected = new Order(1L, 1L, 88, LocalDate.of(2021, 10, 28), Status.rejected);
+		Order expected = Order.builder().id(1L).totalPrice(88).date(LocalDate.of(2021, 10, 28)).status(Status.rejected).build();
+		Assert.assertEquals(expected.getId(), order.getId());
 		// when
-		order.setId(1L);
-		order.setUserId(1L);
-		order.setTotalPrice(88);
-		order.setDate(LocalDate.of(2021, 10, 28));
-		order.setStatus(Status.rejected);
-		Order actual = repository.update(order);
+		Order actual = repository.update(expected);
 		// then
 		Assert.assertEquals(expected, actual);
 	}
@@ -111,8 +86,8 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 	public void findOrdersByUser_validData_shouldAddAllOrders() {
 		// given
 		List<Order> expected = new ArrayList<>() {{
-			add(new Order(4L, 4L, 120, LocalDate.of(2021, 10, 22), Status.booked));
-			add(new Order(2L, 4L, 90, LocalDate.of(2021, 10, 23), Status.confirmed));
+			add(Order.builder().id(4L).totalPrice(120).date(LocalDate.of(2021, 10, 22)).status(Status.booked).build());
+			add(Order.builder().id(2L).totalPrice(90).date(LocalDate.of(2021, 10, 23)).status(Status.confirmed).build());
 		}};
 		// when
 		List<Order> actual = repository.findOrdersByUser(4L);
@@ -123,9 +98,9 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 	@Test
 	public void deleteOrdersByUser_validData_shouldDeleteOrders() {
 		// given
-				Order order = orders.get(2);
+				Long userId = 1L;
 				// when
-				boolean actual = repository.deleteOrdersByUser(order.getUserId());
+				boolean actual = repository.deleteOrdersByUser(userId);
 				// then
 				Assert.assertTrue(actual);
 	}
