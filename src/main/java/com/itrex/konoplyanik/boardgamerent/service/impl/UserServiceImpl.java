@@ -13,7 +13,7 @@ import com.itrex.konoplyanik.boardgamerent.dto.OrderListDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.RoleDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserBaseDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserDTO;
-import com.itrex.konoplyanik.boardgamerent.dto.UserOrdersListDTO;
+import com.itrex.konoplyanik.boardgamerent.dto.OrderListForUserDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
 			UserDTO user =  UserConverter.convertUserToDTO(userRepository.findById(id));
 			user.setRoles(RoleConverter.convertRolesToDTO(roleRepository.findRolesByUser(id)));
 			user.setOrders(orderRepository.findOrdersByUser(id).stream()
-					.map(OrderConverter::convertOrderToUserListDTO)
+					.map(OrderConverter::convertOrderToListForUserDTO)
 					.collect(Collectors.toList()));
 			return user;
 		} catch (RepositoryException ex) {
@@ -62,7 +62,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO add(UserSaveDTO user) throws ServiceException {
 		try {
-			return UserConverter.convertUserToDTO(userRepository.add(UserConverter.convertUserToEntity(user), (Long[])RoleConverter.convertRoleDTOToId(user.getRoles()).toArray()));
+			UserDTO userDTO = UserConverter.convertUserToDTO(userRepository.add(UserConverter.convertUserToEntity(user), user.getRoleIds()));
+			List<RoleDTO> roles = user.getRoleIds().stream().map(roleId -> RoleDTO.builder().id(roleId).build()).collect(Collectors.toList());
+			userDTO.setRoles(roles);
+			return userDTO;
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: add: " + ex);
 		}
@@ -71,7 +74,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO update(UserSaveDTO user) throws ServiceException {
 		try {
-			return UserConverter.convertUserToDTO(userRepository.update(UserConverter.convertUserToEntity(user)));
+			UserDTO userDTO = UserConverter.convertUserToDTO(userRepository.update(UserConverter.convertUserToEntity(user)));
+			List<RoleDTO> roles = user.getRoleIds().stream().map(roleId -> RoleDTO.builder().id(roleId).build()).collect(Collectors.toList());
+			userDTO.setRoles(roles);
+			return userDTO;
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: update: " + ex);
 		}
@@ -109,10 +115,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserOrdersListDTO> findUserOrdersByUser(Long userId) throws ServiceException {
+	public List<OrderListForUserDTO> findOrderListForUserByUser(Long userId) throws ServiceException {
 		try {
 			return orderRepository.findOrdersByUser(userId).stream()
-					.map(OrderConverter::convertOrderToUserListDTO)
+					.map(OrderConverter::convertOrderToListForUserDTO)
 					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findOrdersByUser: " + ex);

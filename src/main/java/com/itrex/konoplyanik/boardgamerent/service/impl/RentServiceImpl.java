@@ -55,7 +55,7 @@ public class RentServiceImpl implements RentService {
 
 	@Override
 	public boolean delete(Long id) throws ServiceException {
-		long orderId = rentRepository.findById(id).getOrderId();
+		long orderId = rentRepository.findById(id).getOrder().getId();
 		boolean isDeleted = false;
 		try {
 			isDeleted = rentRepository.delete(id);

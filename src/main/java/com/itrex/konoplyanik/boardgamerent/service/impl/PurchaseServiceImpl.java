@@ -55,7 +55,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
 	@Override
 	public boolean delete(Long id) throws ServiceException {
-		long orderId = purchaseRepository.findById(id).getOrderId();
+		long orderId = purchaseRepository.findById(id).getOrder().getId();
 		boolean isDeleted = false;
 		try {
 			isDeleted = purchaseRepository.delete(id);
