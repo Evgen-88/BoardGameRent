@@ -50,23 +50,6 @@ public class BoardGameRepositoryImpl implements BoardGameRepository {
 	}
 
 	@Override
-	public List<BoardGame> addAll(List<BoardGame> boardGames) throws RepositoryException {
-		try (Session session = sessionFactory.openSession()) {
-			try {
-				session.getTransaction().begin();
-				for (BoardGame boardGame : boardGames) {
-					session.save(boardGame);
-				}
-				session.getTransaction().commit();
-				return boardGames;
-			} catch (Exception ex) {
-				session.getTransaction().rollback();
-				throw new RepositoryException("EXCEPTION: addAll: " + ex);
-			}
-		}
-	}
-
-	@Override
 	public BoardGame add(BoardGame boardGame) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
 			try {
@@ -104,10 +87,7 @@ public class BoardGameRepositoryImpl implements BoardGameRepository {
 			try {
 				session.getTransaction().begin();
 				BoardGame boardGame = session.find(BoardGame.class, id);
-				Set<Rent> rents = boardGame.getRents();
-				for (Rent rent : rents) {
-					session.remove(rent);
-				}
+				deleteBoardGameLinks(session, boardGame.getRents());
 				session.remove(boardGame);
 				session.getTransaction().commit();
 				return true;
@@ -115,6 +95,12 @@ public class BoardGameRepositoryImpl implements BoardGameRepository {
 				session.getTransaction().rollback();
 				throw new RepositoryException("EXCEPTION: delete: " + ex);
 			}
+		}
+	}
+	
+	private void deleteBoardGameLinks(Session session, Set<Rent> rents) {
+		for (Rent rent : rents) {
+			session.remove(rent);
 		}
 	}
 

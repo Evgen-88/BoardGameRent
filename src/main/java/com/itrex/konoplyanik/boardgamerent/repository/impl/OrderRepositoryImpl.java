@@ -19,14 +19,14 @@ import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
 @Repository
 public class OrderRepositoryImpl implements OrderRepository {
 	private static final String ID_COLUMN = "id";
-	private static final String USER_ID_COLUMN = "userId";
 	private static final String TOTAL_PRICE_COLUMN = "totalPrice";
 	private static final String DATE_COLUMN = "date";
 	private static final String STATUS_COLUMN = "status";
 
 	private static final String SELECT_ALL_QUERY = "from Order o";
-	private static final String UPDATE_QUERY = "update Order set userId = :userId, "
-			+ "totalPrice = :totalPrice, date = :date, status = :status where id = :id";
+//	private static final String SELECT_BY_ID_QUERY = "from Order o join fetch o.user"
+//			+ " left join fetch o.rents left join fetch o.purchases where o.id = :id";
+	private static final String UPDATE_QUERY = "update Order set totalPrice = :totalPrice, date = :date, status = :status where id = :id";
 
 	private final SessionFactory sessionFactory;
 
@@ -46,29 +46,13 @@ public class OrderRepositoryImpl implements OrderRepository {
 	@Override
 	public Order findById(Long id) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
-			return session.get(Order.class, id);
+			return session.find(Order.class, id);
+//			 return session.createQuery(SELECT_BY_ID_QUERY, Order.class).setParameter(ID_COLUMN, id).getSingleResult();
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
 		}
 	}
-
-	@Override
-	public List<Order> addAll(List<Order> orders) throws RepositoryException {
-		try (Session session = sessionFactory.openSession()) {
-			try {
-				session.getTransaction().begin();
-				for (Order order : orders) {
-					session.save(order);
-				}
-				session.getTransaction().commit();
-				return orders;
-			} catch (Exception ex) {
-				session.getTransaction().rollback();
-				throw new RepositoryException("EXCEPTION: addAll: " + ex);
-			}
-		}
-	}
-
+	
 	@Override
 	public Order add(Order order) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
@@ -106,14 +90,14 @@ public class OrderRepositoryImpl implements OrderRepository {
 		try (Session session = sessionFactory.openSession()) {
 			try {
 				session.getTransaction().begin();
-				Order order = session.find(Order.class, id);
+				Order order = session.get(Order.class, id);
 				for (Rent rent : order.getRents()) {
 					session.remove(rent);
 				}
 				for (Purchase purchase : order.getPurchases()) {
 					session.remove(purchase);
 				}
-				session.find(User.class, order.getUserId()).getOrders().remove(order);
+				session.find(User.class, order.getUser().getId()).getOrders().remove(order);
 				session.remove(order);
 				session.getTransaction().commit();
 				return true;
@@ -155,7 +139,6 @@ public class OrderRepositoryImpl implements OrderRepository {
 	}
 
 	private void insertOrder(Query query, Order order) {
-		query.setParameter(USER_ID_COLUMN, order.getUserId());
 		query.setParameter(TOTAL_PRICE_COLUMN, order.getTotalPrice());
 		query.setParameter(DATE_COLUMN, order.getDate());
 		query.setParameter(STATUS_COLUMN, order.getStatus());

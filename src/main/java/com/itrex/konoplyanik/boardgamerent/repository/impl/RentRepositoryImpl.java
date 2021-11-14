@@ -43,26 +43,9 @@ public class RentRepositoryImpl implements RentRepository {
 	@Override
 	public Rent findById(Long id) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
-			return session.get(Rent.class, id);
+			return session.find(Rent.class, id);
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
-		}
-	}
-
-	@Override
-	public List<Rent> addAll(List<Rent> rents) throws RepositoryException {
-		try (Session session = sessionFactory.openSession()) {
-			try {
-				session.getTransaction().begin();
-				for (Rent rent : rents) {
-					session.save(rent);
-				}
-				session.getTransaction().commit();
-				return rents;
-			} catch (Exception ex) {
-				session.getTransaction().rollback();
-				throw new RepositoryException("EXCEPTION: addAll: " + ex);
-			}
 		}
 	}
 

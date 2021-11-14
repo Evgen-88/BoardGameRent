@@ -48,23 +48,6 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
 	}
 
 	@Override
-	public List<Purchase> addAll(List<Purchase> purchases) throws RepositoryException {
-		try (Session session = sessionFactory.openSession()) {
-			try {
-				session.getTransaction().begin();
-				for (Purchase purchase : purchases) {
-					session.save(purchase);
-				}
-				session.getTransaction().commit();
-				return purchases;
-			} catch (Exception ex) {
-				session.getTransaction().rollback();
-				throw new RepositoryException("EXCEPTION: addAll: " + ex);
-			}
-		}
-	}
-
-	@Override
 	public Purchase add(Purchase purchase) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
 			try {

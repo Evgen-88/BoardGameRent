@@ -49,23 +49,6 @@ public class AccessoryRepositoryImpl implements AccessoryRepository {
 	}
 
 	@Override
-	public List<Accessory> addAll(List<Accessory> accessories) throws RepositoryException {
-		try (Session session = sessionFactory.openSession()) {
-			try {
-				session.getTransaction().begin();
-				for (Accessory accessory : accessories) {
-					session.save(accessory);
-				}
-				session.getTransaction().commit();
-				return accessories;
-			} catch (Exception ex) {
-				session.getTransaction().rollback();
-				throw new RepositoryException("EXCEPTION: addAll: " + ex);
-			}
-		}
-	}
-
-	@Override
 	public Accessory add(Accessory accessory) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
 			try {
@@ -102,11 +85,8 @@ public class AccessoryRepositoryImpl implements AccessoryRepository {
 		try (Session session = sessionFactory.openSession()) {
 			try {
 				session.getTransaction().begin();
-				Accessory accessory = session.find(Accessory.class, id);
-				Set<Purchase> purchases = accessory.getPurchases();
-				for (Purchase purchase : purchases) {
-					session.remove(purchase);
-				}
+				Accessory accessory = session.get(Accessory.class, id);
+				deleteAccessoryLinks(session, accessory.getPurchases());
 				session.remove(accessory);
 				session.getTransaction().commit();
 				return true;
@@ -116,6 +96,12 @@ public class AccessoryRepositoryImpl implements AccessoryRepository {
 			}
 		}
 
+	}
+	
+	private void deleteAccessoryLinks(Session session, Set<Purchase> purchases) {
+		for (Purchase purchase : purchases) {
+			session.remove(purchase);
+		}
 	}
 
 	private void insertAccessory(Query query, Accessory accessory) {

@@ -29,6 +29,7 @@ public class UserRepositoryImpl implements UserRepository {
 	private static final String EMAIL_COLUMN = "email";
 
 	private static final String SELECT_ALL_QUERY = "from User u";
+//	private static final String SELECT_BY_ID_QUERY = "from User u left join fetch u.roles where u.id = :id";
 	private static final String UPDATE_QUERY = "update User set login = :login, "
 			+ "password = :password, name = :name, phone = :phone, email = :email where id = :id";
 
@@ -50,14 +51,19 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public User findById(Long id) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
-			return session.get(User.class, id);
+			return session.find(User.class, id);
+			/*
+			return session.createQuery(SELECT_BY_ID_QUERY, User.class)
+					.setParameter(ID_COLUMN, id)
+					.getSingleResult();
+			*/
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
 		}
 	}
 
 	@Override
-	public List<User> addAll(List<User> users, Long... roleIds) throws RepositoryException {
+	public List<User> addAll(List<User> users, List<Long> roleIds) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
 			try {
 				session.getTransaction().begin();
@@ -79,7 +85,7 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	@Override
-	public User add(User user, Long... roleIds) throws RepositoryException {
+	public User add(User user, List<Long> roleIds) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
 			try {
 				session.getTransaction().begin();

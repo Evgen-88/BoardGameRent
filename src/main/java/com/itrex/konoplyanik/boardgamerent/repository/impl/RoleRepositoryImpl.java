@@ -48,23 +48,6 @@ public class RoleRepositoryImpl implements RoleRepository {
 	}
 
 	@Override
-	public List<Role> addAll(List<Role> roles) throws RepositoryException {
-		try (Session session = sessionFactory.openSession()) {
-			try {
-				session.getTransaction().begin();
-				for (Role role : roles) {
-					session.save(role);
-				}
-				session.getTransaction().commit();
-				return roles;
-			} catch (Exception ex) {
-				session.getTransaction().rollback();
-				throw new RepositoryException("EXCEPTION: addAll: " + ex);
-			}
-		}
-	}
-
-	@Override
 	public Role add(Role role) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
 			try {
