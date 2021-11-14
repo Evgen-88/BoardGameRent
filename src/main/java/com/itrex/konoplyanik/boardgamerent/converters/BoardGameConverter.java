@@ -6,12 +6,12 @@ import com.itrex.konoplyanik.boardgamerent.entity.BoardGame;
 public class BoardGameConverter {
 
 	public static BoardGame convertBoardGameToEntity(BoardGameDTO boardGameDTO) {
-		BoardGame boardGame = new BoardGame();
-		boardGame.setId(boardGameDTO.getId());
-		boardGame.setName(boardGameDTO.getName());
-		boardGame.setRentPrice(boardGameDTO.getRentPrice());
-		boardGame.setQuantity(boardGameDTO.getQuantity());
-		return boardGame;
+		return BoardGame.builder()
+		.id(boardGameDTO.getId())
+		.name(boardGameDTO.getName())
+		.rentPrice(boardGameDTO.getRentPrice())
+		.quantity(boardGameDTO.getQuantity())
+		.build();
 	}
 
 	public static BoardGameDTO convertBoardGameToDTO(BoardGame boardGame) {

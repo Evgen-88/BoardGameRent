@@ -6,12 +6,12 @@ import com.itrex.konoplyanik.boardgamerent.entity.Accessory;
 public class AccessoryConverter {
 
 	public static Accessory convertAccessoryToEntity(AccessoryDTO accessoryDTO) {
-		Accessory accessory = new Accessory();
-		accessory.setId(accessoryDTO.getId());
-		accessory.setName(accessoryDTO.getName());
-		accessory.setPrice(accessoryDTO.getPrice());
-		accessory.setQuantity(accessoryDTO.getQuantity());
-		return accessory;
+		return Accessory.builder()
+				.id(accessoryDTO.getId())
+				.name(accessoryDTO.getName())
+				.price(accessoryDTO.getPrice())
+				.quantity(accessoryDTO.getQuantity())
+				.build();
 	}
 
 	public static AccessoryDTO convertAccessoryToDTO(Accessory accessory) {

@@ -2,6 +2,7 @@ package com.itrex.konoplyanik.boardgamerent.converters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.itrex.konoplyanik.boardgamerent.dto.RentDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.RentSaveDTO;
@@ -18,14 +19,14 @@ public class RentConverter {
 	}
 
 	public static Rent convertRentSaveToEntity(RentSaveDTO rentDTO) {
-		Rent rent = new Rent();
-		rent.setId(rentDTO.getId());
-		rent.setBoardGameId(rentDTO.getBoardGameId());
-		rent.setOrderId(rentDTO.getOrderId());
-		rent.setRentFrom(rentDTO.getRentFrom());
-		rent.setRentTo(rentDTO.getRentTo());
-		rent.setPrice(rentDTO.getPrice());
-		return rent;
+		return Rent.builder()
+				.id(rentDTO.getId())
+				.boardGame(rentDTO.getBoardGame())
+				.order(rentDTO.getOrder())
+				.rentFrom(rentDTO.getRentFrom())
+				.rentTo(rentDTO.getRentTo())
+				.price(rentDTO.getPrice())
+				.build();
 	}
 
 	public static RentDTO convertRentToDTO(Rent rent) {
@@ -38,4 +39,13 @@ public class RentConverter {
 				.boardGameName(rent.getBoardGame().getName())
 				.build();
 	}
+	
+	public static List<RentDTO> convertSetRentsToDTO(Set<Rent> rents) {
+		List<RentDTO> rentsDTO = new ArrayList<>();
+		for (Rent rent : rents) {
+			rentsDTO.add(convertRentToDTO(rent));
+		}
+		return rentsDTO;
+	}
+	
 }

@@ -2,6 +2,7 @@ package com.itrex.konoplyanik.boardgamerent.converters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.itrex.konoplyanik.boardgamerent.dto.PurchaseDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.PurchaseSaveDTO;
@@ -18,13 +19,13 @@ public class PurchaseConverter {
 	}
 	
 	public static Purchase convertPurchaseToEntity(PurchaseSaveDTO purchaseDTO) {
-		Purchase purchase = new Purchase();
-		purchase.setId(purchaseDTO.getId());
-		purchase.setAccessoryId(purchaseDTO.getAccessoryId());
-		purchase.setOrderId(purchaseDTO.getOrderId());
-		purchase.setQuantity(purchaseDTO.getQuantity());
-		purchase.setPrice(purchaseDTO.getPrice());
-		return purchase;
+		return Purchase.builder()
+				.id(purchaseDTO.getId())
+				.accessory(purchaseDTO.getAccessory())
+				.order(purchaseDTO.getOrder())
+				.quantity(purchaseDTO.getQuantity())
+				.price(purchaseDTO.getPrice())
+				.build();
 	}
 
 	public static PurchaseDTO convertPurchaseToDTO(Purchase purchase) {
@@ -32,8 +33,17 @@ public class PurchaseConverter {
 				.id(purchase.getId())
 				.quantity(purchase.getQuantity())
 				.price(purchase.getPrice())
-				.accessoryId(purchase.getAccessoryId())
+				.accessoryId(purchase.getAccessory().getId())
 				.accessoryName(purchase.getAccessory().getName())
 				.build();
 	}
+	
+	public static List<PurchaseDTO> convertSetPurchasesToDTO(Set<Purchase> purchases) {
+		List<PurchaseDTO> purchasesDTO = new ArrayList<>();
+		for (Purchase purchase : purchases) {
+			purchasesDTO.add(convertPurchaseToDTO(purchase));
+		}
+		return purchasesDTO;
+	}
+
 }

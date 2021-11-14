@@ -8,15 +8,15 @@ import com.itrex.konoplyanik.boardgamerent.entity.User;
 public class UserConverter {
 
 	public static User convertUserToEntity(UserSaveDTO userDTO) {
-		User user = new User();
-		user.setId(userDTO.getId());
-		user.setLogin(userDTO.getLogin());
-		user.setPassword(userDTO.getPassword());
-		user.setName(userDTO.getName());
-		user.setPhone(userDTO.getPhone());
-		user.setEmail(userDTO.getEmail());
-		user.setRoles(RoleConverter.convertRolesToEntity(userDTO.getRoles()));
-		return user;
+		return User.builder()
+				.id(userDTO.getId())
+				.login(userDTO.getLogin())
+				.password(userDTO.getPassword())
+				.name(userDTO.getName())
+				.phone(userDTO.getPhone())
+				.email(userDTO.getEmail())
+				.roles(RoleConverter.convertRoleIdsToEntity(userDTO.getRoleIds()))
+				.build();
 	}
 	
 	public static UserDTO convertUserToDTO(User user) {
@@ -26,6 +26,7 @@ public class UserConverter {
 				.name(user.getName())
 				.phone(user.getPhone())
 				.email(user.getEmail())
+//				.roles(RoleConverter.convertFromSetRole(user.getRoles()))
 				.build();
 	}
 	
