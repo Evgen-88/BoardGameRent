@@ -9,7 +9,6 @@ public interface OrderRepository {
 
 	List<Order> findAll() throws RepositoryException;
 	Order findById(Long id) throws RepositoryException;
-	List<Order> addAll(List<Order> orders) throws RepositoryException;
 	Order add(Order order) throws RepositoryException;
 	Order update(Order order) throws RepositoryException;
 	boolean delete(Long id) throws RepositoryException;
