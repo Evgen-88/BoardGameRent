@@ -203,5 +203,42 @@ public class UserServiceImplTest extends BaseServiceTest {
 		// then
 		Assert.assertEquals(expected, actual);
 	}
+	
+	@Test
+	public void deleteRolesFromUser_validData_shouldReturnTrue() throws RepositoryException, ServiceException {
+		//given
+		Role role = getRoles().get(0);
+        List<Long> roleIds = new ArrayList<>() {{
+	       	add(1L);
+        }};
+		// when
+		Mockito.when(roleRepository.deleteRolesFromUser(1L, roleIds)).thenReturn(true);
+		boolean actual = userService.deleteRolesFromUser(1L, roleIds);
+		// then
+		Assert.assertTrue(actual);
+	}
+	
+	@Test
+	public void addRolesToUser_validData_shouldReturnListRoleDTO() throws RepositoryException, ServiceException {
+		//given
+		Role role = getRoles().get(1);
+		 List<Long> roleIds = new ArrayList<>() {{
+		       	add(role.getId());
+	        }};
+        List<Role> roles = new ArrayList<>() {{
+	       	add(role);
+        }};
+        List<RoleDTO> expected = new ArrayList<>() {{
+	       	add(RoleDTO.builder()
+	       			.id(role.getId())
+	       			.name(role.getName())
+		       		.build());
+	    }};
+		// when
+		Mockito.when(roleRepository.addRolesToUser(1L, roleIds)).thenReturn(roles);
+		List<RoleDTO> actual = userService.addRolesToUser(1L, roleIds);
+		// then
+		Assert.assertEquals(expected, actual);
+	}
 
 }
