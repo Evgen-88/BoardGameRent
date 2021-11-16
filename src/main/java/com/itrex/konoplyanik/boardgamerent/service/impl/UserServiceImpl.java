@@ -125,4 +125,22 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	@Override
+	public boolean deleteRolesFromUser(Long userId, List<Long> roleIds) throws ServiceException {
+		try {
+			return roleRepository.deleteRolesFromUser(userId, roleIds);
+		} catch (RepositoryException ex) {
+			throw new ServiceException("Error: deleteRolesFromUser: " + ex);
+		}
+	}
+
+	@Override
+	public List<RoleDTO> addRolesToUser(Long userId, List<Long> roleIds) throws ServiceException {
+		try {
+			return RoleConverter.convertRolesToDTO(roleRepository.addRolesToUser(userId, roleIds));
+		} catch (RepositoryException ex) {
+			throw new ServiceException("Error: addRolesToUser: " + ex);
+		}
+	}
+
 }
