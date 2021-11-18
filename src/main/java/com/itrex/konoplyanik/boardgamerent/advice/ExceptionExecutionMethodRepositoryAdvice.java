@@ -8,10 +8,13 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Aspect
 @Component
 public class ExceptionExecutionMethodRepositoryAdvice {
-	private static final String MESSAGE = "\n\nRepository method: %s  with arguments %s throws %s: %s";
+	private static final String MESSAGE = "\n\nRepository method: {}  with arguments {} throws {}: {}";
 
     @AfterThrowing(pointcut = "execution(* com.itrex.konoplyanik.boardgamerent.repository.*.*(..))", throwing = "ex")
     public void methodLoggingException(JoinPoint joinPoint, Exception ex) {
@@ -21,8 +24,7 @@ public class ExceptionExecutionMethodRepositoryAdvice {
         String exception = ex.getClass().getSimpleName();
         String exceptionMessage = ex.getMessage();
 
-        System.out.println(String.format(MESSAGE, methodName, arguments, exception, exceptionMessage));
-        ex.printStackTrace();
+        log.error(MESSAGE, methodName, arguments, exception, exceptionMessage, ex);
     }
 
 }
