@@ -24,7 +24,7 @@ public class AccessoryRepositoryImpl implements AccessoryRepository {
 	private static final String UPDATE_QUERY = "update Accessory set name = :name, "
 			+ "price = :price, quantity = :quantity where id = :id";
 
-	private SessionFactory sessionFactory;
+	private final SessionFactory sessionFactory;
 
 	public AccessoryRepositoryImpl(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;

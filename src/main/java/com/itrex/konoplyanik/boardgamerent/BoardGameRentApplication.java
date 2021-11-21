@@ -1,26 +1,35 @@
 package com.itrex.konoplyanik.boardgamerent;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.AbstractEnvironment;
 
-import com.itrex.konoplyanik.boardgamerent.config.ApplicationContextConfiguration;
-import com.itrex.konoplyanik.boardgamerent.repository.RoleRepository;
+import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class BoardGameRentApplication {
-	
+@SpringBootApplication
+public class BoardGameRentApplication implements CommandLineRunner {
+
+	@Autowired
+	ApplicationContext applicationContext;
+
 	public static void main(String[] args) {
-		System.setProperty(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME, "info");
-		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(ApplicationContextConfiguration.class);
+		SpringApplication.run(BoardGameRentApplication.class, args);
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
 		
-		RoleRepository roleRepository = applicationContext.getBean(RoleRepository.class);
-		System.out.print(roleRepository.delete(2L));
+		UserRepository userRepository = applicationContext.getBean(UserRepository.class);
+		System.out.println(userRepository.findUsersByRole(3L));
 		
 		log.info("info");
 		log.debug("debug");
+
 	}
 
 }
