@@ -5,23 +5,20 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import com.itrex.konoplyanik.boardgamerent.config.TestContextConfiguration;
 import com.itrex.konoplyanik.boardgamerent.dto.BoardGameDTO;
 import com.itrex.konoplyanik.boardgamerent.entity.BoardGame;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.BoardGameRepository;
+import com.itrex.konoplyanik.boardgamerent.service.BaseServiceTest;
 
-@RunWith(MockitoJUnitRunner.class)
-@ContextConfiguration(classes = TestContextConfiguration.class)
-public class BoardGameServiceImplTest {
+@SpringBootTest
+public class BoardGameServiceImplTest extends BaseServiceTest {
 
 	@InjectMocks
     private BoardGameServiceImpl boardGameService;

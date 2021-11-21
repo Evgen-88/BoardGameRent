@@ -5,23 +5,19 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.test.context.ContextConfiguration;
-
-import com.itrex.konoplyanik.boardgamerent.config.TestContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import com.itrex.konoplyanik.boardgamerent.dto.RoleDTO;
 import com.itrex.konoplyanik.boardgamerent.entity.Role;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.RoleRepository;
+import com.itrex.konoplyanik.boardgamerent.service.BaseServiceTest;
 
-@RunWith(MockitoJUnitRunner.class)
-@ContextConfiguration(classes = TestContextConfiguration.class)
-public class RoleServiceImplTest {
+@SpringBootTest
+public class RoleServiceImplTest extends BaseServiceTest {
 
 	@InjectMocks
     private RoleServiceImpl roleService;

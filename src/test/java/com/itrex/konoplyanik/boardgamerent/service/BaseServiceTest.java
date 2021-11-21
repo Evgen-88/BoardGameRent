@@ -6,9 +6,6 @@ import java.util.List;
 
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.test.context.ContextConfiguration;
-
-import com.itrex.konoplyanik.boardgamerent.config.TestContextConfiguration;
 import com.itrex.konoplyanik.boardgamerent.entity.Accessory;
 import com.itrex.konoplyanik.boardgamerent.entity.BoardGame;
 import com.itrex.konoplyanik.boardgamerent.entity.Order;
@@ -19,7 +16,6 @@ import com.itrex.konoplyanik.boardgamerent.entity.Status;
 import com.itrex.konoplyanik.boardgamerent.entity.User;
 
 @RunWith(MockitoJUnitRunner.class)
-@ContextConfiguration(classes = TestContextConfiguration.class)
 public abstract class BaseServiceTest {
 
 	public List<User> getUsers() {

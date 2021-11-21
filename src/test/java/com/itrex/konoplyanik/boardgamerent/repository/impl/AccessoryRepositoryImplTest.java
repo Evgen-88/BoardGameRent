@@ -7,11 +7,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import com.itrex.konoplyanik.boardgamerent.entity.Accessory;
 import com.itrex.konoplyanik.boardgamerent.repository.AccessoryRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 
+@SpringBootTest
 public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 	
 	@Autowired

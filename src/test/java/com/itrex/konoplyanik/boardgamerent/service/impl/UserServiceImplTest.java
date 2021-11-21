@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import com.itrex.konoplyanik.boardgamerent.converters.OrderConverter;
 import com.itrex.konoplyanik.boardgamerent.converters.RoleConverter;
@@ -31,6 +32,7 @@ import com.itrex.konoplyanik.boardgamerent.repository.RoleRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
 import com.itrex.konoplyanik.boardgamerent.service.BaseServiceTest;
 
+@SpringBootTest
 public class UserServiceImplTest extends BaseServiceTest {
 
 	@InjectMocks
