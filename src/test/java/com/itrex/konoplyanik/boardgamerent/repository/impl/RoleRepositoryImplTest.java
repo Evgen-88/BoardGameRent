@@ -95,29 +95,20 @@ public class RoleRepositoryImplTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void deleteRolesFromUser_validData_shouldDeleteRolesFromUser() {
-		// given
-		List<Long> roleIds = new ArrayList<>() {{
-			add(1L);
-			add(3L);
-		}};
-		// when
-		boolean actual = repository.deleteRolesFromUser(1L, roleIds);
+	public void deleteRoleFromUser_validData_shouldDeleteRoleFromUser() {
+		// given & when
+		boolean actual = repository.deleteRoleFromUser(1L, 1L);
 		// then
 		Assert.assertTrue(actual);
 	}
 	
 	@Test
-	public void addRolesToUser_validData_shouldAddRolesToUser() {
+	public void addRoleToUser_validData_shouldAddRoleToUser() {
 		// given
-		List<Long> roleIds = new ArrayList<>() {{
-			add(2L);
-		}};
-		List<Role> expected = new ArrayList<>() {{
-			add(Role.builder().id(2L).name("manager").build());
-		}};
+		Long roleId = 2L;
+		Role expected = Role.builder().id(2L).name("manager").build();
 		// when
-		List<Role>	actual = repository.addRolesToUser(1L, roleIds);
+		Role	actual = repository.addRoleToUser(1L, roleId);
 		// then
 		Assert.assertEquals(expected, actual);
 	}

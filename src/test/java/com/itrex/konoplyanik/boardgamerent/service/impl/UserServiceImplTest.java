@@ -207,38 +207,28 @@ public class UserServiceImplTest extends BaseServiceTest {
 	}
 	
 	@Test
-	public void deleteRolesFromUser_validData_shouldReturnTrue() throws RepositoryException, ServiceException {
+	public void deleteRoleFromUser_validData_shouldReturnTrue() throws RepositoryException, ServiceException {
 		//given
-		Role role = getRoles().get(0);
-        List<Long> roleIds = new ArrayList<>() {{
-	       	add(1L);
-        }};
+        Long roleId = getRoles().get(0).getId();
 		// when
-		Mockito.when(roleRepository.deleteRolesFromUser(1L, roleIds)).thenReturn(true);
-		boolean actual = userService.deleteRolesFromUser(1L, roleIds);
+		Mockito.when(roleRepository.deleteRoleFromUser(1L, roleId)).thenReturn(true);
+		boolean actual = userService.deleteRoleFromUser(1L, roleId);
 		// then
 		Assert.assertTrue(actual);
 	}
 	
 	@Test
-	public void addRolesToUser_validData_shouldReturnListRoleDTO() throws RepositoryException, ServiceException {
+	public void addRoleToUser_validData_shouldReturnRoleDTO() throws RepositoryException, ServiceException {
 		//given
 		Role role = getRoles().get(1);
-		 List<Long> roleIds = new ArrayList<>() {{
-		       	add(role.getId());
-	        }};
-        List<Role> roles = new ArrayList<>() {{
-	       	add(role);
-        }};
-        List<RoleDTO> expected = new ArrayList<>() {{
-	       	add(RoleDTO.builder()
+		Long roleId = role.getId();
+        RoleDTO expected = RoleDTO.builder()
 	       			.id(role.getId())
 	       			.name(role.getName())
-		       		.build());
-	    }};
+		       		.build();
 		// when
-		Mockito.when(roleRepository.addRolesToUser(1L, roleIds)).thenReturn(roles);
-		List<RoleDTO> actual = userService.addRolesToUser(1L, roleIds);
+		Mockito.when(roleRepository.addRoleToUser(1L, roleId)).thenReturn(role);
+		RoleDTO actual = userService.addRoleToUser(1L, roleId);
 		// then
 		Assert.assertEquals(expected, actual);
 	}
