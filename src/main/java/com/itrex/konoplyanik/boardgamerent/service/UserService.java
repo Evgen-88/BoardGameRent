@@ -21,6 +21,6 @@ public interface UserService {
 	List<OrderListDTO> findOrdersByUser(Long userId) throws ServiceException;
 	List<RoleDTO> findRolesByUser(Long userId) throws ServiceException;
 	List<OrderListForUserDTO> findOrderListForUserByUser(Long userId) throws ServiceException;
-	boolean deleteRolesFromUser(Long userId, List<Long> roleIds) throws ServiceException;
-	List<RoleDTO> addRolesToUser(Long userId, List<Long> roleIds) throws ServiceException;
+	boolean deleteRoleFromUser(Long userId, Long roleId) throws ServiceException;
+	RoleDTO addRoleToUser(Long userId, Long roleId) throws ServiceException;
 }

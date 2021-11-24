@@ -1,7 +1,6 @@
 package com.itrex.konoplyanik.boardgamerent.repository.impl;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -112,18 +111,13 @@ public class RoleRepositoryImpl implements RoleRepository {
 	}
 
 	@Override
-	public boolean deleteRolesFromUser(Long userId, List<Long> roleIds) throws RepositoryException {
+	public boolean deleteRoleFromUser(Long userId, Long roleId) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
 			try {
 				session.getTransaction().begin();
 				User user = session.find(User.class, userId);
-				Set<Role> newRoles = new HashSet<>();
-				for (Long roleId : roleIds) {
-					newRoles.add(session.get(Role.class, roleId));
-				}
 				Set<Role> roles = user.getRoles();
-				roles.removeAll(newRoles);
-				//user.setRoles(roles);
+				roles.remove(session.get(Role.class, roleId));
 				session.getTransaction().commit();
 				return true;
 			} catch (Exception ex) {
@@ -134,20 +128,17 @@ public class RoleRepositoryImpl implements RoleRepository {
 	}
 
 	@Override
-	public List<Role> addRolesToUser(Long userId, List<Long> roleIds) throws RepositoryException {
+	public Role addRoleToUser(Long userId, Long roleId) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
 			try {
 				session.getTransaction().begin();
 				User user = session.get(User.class, userId);
-				Set<Role> newRoles = new HashSet<>();
-				for (Long roleId : roleIds) {
-					newRoles.add(session.get(Role.class, roleId));
-				}
 				Set<Role> roles = user.getRoles();
-				roles.addAll(newRoles);
+				Role role = session.get(Role.class, roleId);
+				roles.add(role);
 				//user.setRoles(roles);
 				session.getTransaction().commit();
-				return new ArrayList<Role>(newRoles);
+				return role;
 			} catch(Exception ex) {
 				session.getTransaction().rollback();
 				throw new RepositoryException("EXCEPTION: findRolesByUser: " + ex);
