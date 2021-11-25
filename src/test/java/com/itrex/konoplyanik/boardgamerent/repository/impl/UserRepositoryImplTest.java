@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.itrex.konoplyanik.boardgamerent.entity.Role;
 import com.itrex.konoplyanik.boardgamerent.entity.User;
 import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
 import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
@@ -96,6 +97,38 @@ public class UserRepositoryImplTest extends BaseRepositoryTest {
 		}};
 		//when
 		List<User>	actual = repository.findUsersByRole(3L);
+		//then
+		Assert.assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void deleteRoleFromUser_validData_shouldDeleteRoleFromUser() {
+		// given & when
+		boolean actual = repository.deleteRoleFromUser(1L, 1L);
+		// then
+		Assert.assertTrue(actual);
+	}
+	
+	@Test
+	public void addRoleToUser_validData_shouldAddRoleToUser() {
+		// given
+		Long roleId = 2L;
+		Role expected = Role.builder().id(2L).name("manager").build();
+		// when
+		Role	actual = repository.addRoleToUser(1L, roleId);
+		// then
+		Assert.assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void findRolesByUser_validData_shouldReturnAllRolesByUser() {
+		//given
+		List<Role>	expected = new ArrayList<>() {{
+			add(Role.builder().id(1L).name("admin").build());
+			add(Role.builder().id(3L).name("customer").build());
+		}};
+		//when
+		List<Role>	actual = repository.findRolesByUser(1L);
 		//then
 		Assert.assertEquals(expected, actual);
 	}

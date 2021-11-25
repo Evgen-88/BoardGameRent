@@ -22,13 +22,13 @@ import com.itrex.konoplyanik.boardgamerent.dto.RoleDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserBaseDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserSaveDTO;
+import com.itrex.konoplyanik.boardgamerent.dto.UserUpdateDTO;
 import com.itrex.konoplyanik.boardgamerent.entity.Order;
 import com.itrex.konoplyanik.boardgamerent.entity.Role;
 import com.itrex.konoplyanik.boardgamerent.entity.User;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
-import com.itrex.konoplyanik.boardgamerent.repository.RoleRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
 import com.itrex.konoplyanik.boardgamerent.service.BaseServiceTest;
 
@@ -41,8 +41,6 @@ public class UserServiceImplTest extends BaseServiceTest {
 	private UserRepository userRepository;
 	@Mock
 	private OrderRepository orderRepository;
-	@Mock
-	private RoleRepository roleRepository;
 
 	@Test
 	public void findAll_validData_shouldReturnUserBaseDTOList() throws RepositoryException, ServiceException {
@@ -60,21 +58,22 @@ public class UserServiceImplTest extends BaseServiceTest {
 	@Test
 	public void findById_validData_shouldReturnUserDTO() throws RepositoryException, ServiceException {
 		// given
-		User user = getUsers().get(1);
+		User user = getUsers().get(0);
 		Set<Role> roles = new HashSet<>() {{
+			add(getRoles().get(0));
 			add(getRoles().get(2));
 		}};
 		Set<Order> orders = new HashSet<>() {{
-			add(getOrders().get(2));
+			add(getOrders().get(0));
 		}};
-		UserDTO expected = UserConverter.convertUserToDTO(getUsers().get(1));
+		user.setRoles(roles);
+		user.setOrders(orders);
+		UserDTO expected = UserConverter.convertUserToDTO(user);
 		expected.setOrders(OrderConverter.convertToOrderListForUserDTO(orders));
 		expected.setRoles(RoleConverter.convertFromSetRole(roles));
 		// when
-		Mockito.when(userRepository.findById(2L)).thenReturn(user);
-		Mockito.when(roleRepository.findRolesByUser(2L)).thenReturn(new ArrayList<>(roles));
-		Mockito.when(orderRepository.findOrdersByUser(2L)).thenReturn(new ArrayList<>(orders));
-		UserDTO actual = userService.findById(2L);
+		Mockito.when(userRepository.findById(1L)).thenReturn(user);
+		UserDTO actual = userService.findById(1L);
 		// then
 		Assert.assertEquals(expected, actual);
 	}
@@ -86,10 +85,13 @@ public class UserServiceImplTest extends BaseServiceTest {
 		Set<Role> roles = new HashSet<>() {{
 			add(Role.builder().id(3L).build());
 		}};
+		Set<Order> orders = new HashSet<>();
+		user.setRoles(roles);
+		user.setOrders(orders);
 		User newUser = User.builder().id(2L).login("alex").password("alex").name("Алекс").phone(2222222).email("alex@mail").build();
 		newUser.setRoles(roles);
-		UserDTO expected = UserConverter.convertUserToDTO(getUsers().get(1));
-		expected.setRoles(RoleConverter.convertFromSetRole(roles));
+		newUser.setOrders(orders);
+		UserDTO expected = UserConverter.convertUserToDTO(user);
 		UserSaveDTO userSaveDTO = UserSaveDTO.builder()
 				.id(user.getId())
 				.login(user.getLogin())
@@ -113,22 +115,24 @@ public class UserServiceImplTest extends BaseServiceTest {
 		Set<Role> roles = new HashSet<>() {{
 			add(Role.builder().id(3L).build());
 		}};
+		Set<Order> orders = new HashSet<>();
+		user.setRoles(roles);
+		user.setOrders(orders);
 		User newUser = User.builder().id(2L).login("alex").password("alex").name("Алекс").phone(2222222).email("alex@mail").build();
 		newUser.setRoles(roles);
-		UserDTO expected = UserConverter.convertUserToDTO(getUsers().get(1));
-		expected.setRoles(RoleConverter.convertFromSetRole(roles));
-		UserSaveDTO userSaveDTO = UserSaveDTO.builder()
+		newUser.setOrders(orders);
+		UserUpdateDTO expected = UserConverter.convertUserToUpdateDTO(user);
+		UserUpdateDTO userUpdateDTO = UserUpdateDTO.builder()
 				.id(user.getId())
 				.login(user.getLogin())
 				.password(user.getPassword())
 				.name(user.getName())
 				.phone(user.getPhone())
 				.email(user.getEmail())
-				.roleIds(RoleConverter.convertRolesToRoleIds(roles))
 				.build();
 		// when
 		Mockito.when(userRepository.update(user)).thenReturn(newUser);
-		UserDTO actual = userService.update(userSaveDTO);
+		UserUpdateDTO actual = userService.update(userUpdateDTO);
 		// then
 		Assert.assertEquals(expected, actual);
 	}
@@ -178,7 +182,7 @@ public class UserServiceImplTest extends BaseServiceTest {
 		       		.build());
 	    }};
 		// when
-		Mockito.when(roleRepository.findRolesByUser(1L)).thenReturn(roles);
+		Mockito.when(userRepository.findRolesByUser(1L)).thenReturn(roles);
 		List<RoleDTO> actual = userService.findRolesByUser(1L);
 		// then
 		Assert.assertEquals(expected, actual);
@@ -211,7 +215,7 @@ public class UserServiceImplTest extends BaseServiceTest {
 		//given
         Long roleId = getRoles().get(0).getId();
 		// when
-		Mockito.when(roleRepository.deleteRoleFromUser(1L, roleId)).thenReturn(true);
+		Mockito.when(userRepository.deleteRoleFromUser(1L, roleId)).thenReturn(true);
 		boolean actual = userService.deleteRoleFromUser(1L, roleId);
 		// then
 		Assert.assertTrue(actual);
@@ -227,7 +231,7 @@ public class UserServiceImplTest extends BaseServiceTest {
 	       			.name(role.getName())
 		       		.build();
 		// when
-		Mockito.when(roleRepository.addRoleToUser(1L, roleId)).thenReturn(role);
+		Mockito.when(userRepository.addRoleToUser(1L, roleId)).thenReturn(role);
 		RoleDTO actual = userService.addRoleToUser(1L, roleId);
 		// then
 		Assert.assertEquals(expected, actual);
