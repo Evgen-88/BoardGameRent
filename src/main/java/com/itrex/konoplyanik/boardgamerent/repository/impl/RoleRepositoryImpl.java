@@ -97,54 +97,6 @@ public class RoleRepositoryImpl implements RoleRepository {
 			}
 		}
 	}
-
-	@Override
-	public List<Role> findRolesByUser(Long userId) throws RepositoryException {
-		try (Session session = sessionFactory.openSession()) {
-			try {
-				User user = session.find(User.class, userId);
-				return new ArrayList<>(user.getRoles());
-			} catch (Exception ex) {
-				throw new RepositoryException("EXCEPTION: findRolesByUser: " + ex);
-			}
-		}
-	}
-
-	@Override
-	public boolean deleteRoleFromUser(Long userId, Long roleId) throws RepositoryException {
-		try (Session session = sessionFactory.openSession()) {
-			try {
-				session.getTransaction().begin();
-				User user = session.find(User.class, userId);
-				Set<Role> roles = user.getRoles();
-				roles.remove(session.get(Role.class, roleId));
-				session.getTransaction().commit();
-				return true;
-			} catch (Exception ex) {
-				session.getTransaction().rollback();
-				throw new RepositoryException("EXCEPTION: findRolesByUser: " + ex);
-			}
-		}
-	}
-
-	@Override
-	public Role addRoleToUser(Long userId, Long roleId) throws RepositoryException {
-		try (Session session = sessionFactory.openSession()) {
-			try {
-				session.getTransaction().begin();
-				User user = session.get(User.class, userId);
-				Set<Role> roles = user.getRoles();
-				Role role = session.get(Role.class, roleId);
-				roles.add(role);
-				//user.setRoles(roles);
-				session.getTransaction().commit();
-				return role;
-			} catch(Exception ex) {
-				session.getTransaction().rollback();
-				throw new RepositoryException("EXCEPTION: findRolesByUser: " + ex);
-			}
-		}
-	}
 	
 	private void insertRole(Query query, Role role) {
 		query.setParameter(NAME_COLUMN, role.getName());

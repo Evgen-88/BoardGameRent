@@ -29,7 +29,7 @@ public class UserRepositoryImpl implements UserRepository {
 	private static final String EMAIL_COLUMN = "email";
 
 	private static final String SELECT_ALL_QUERY = "from User u";
-//	private static final String SELECT_BY_ID_QUERY = "from User u left join fetch u.roles where u.id = :id";
+	private static final String SELECT_BY_ID_QUERY = "from User u left join fetch u.roles left join fetch u.orders where u.id = :id";
 	private static final String UPDATE_QUERY = "update User set login = :login, "
 			+ "password = :password, name = :name, phone = :phone, email = :email where id = :id";
 
@@ -51,12 +51,9 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public User findById(Long id) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
-			return session.find(User.class, id);
-			/*
 			return session.createQuery(SELECT_BY_ID_QUERY, User.class)
 					.setParameter(ID_COLUMN, id)
 					.getSingleResult();
-			*/
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
 		}
@@ -94,6 +91,7 @@ public class UserRepositoryImpl implements UserRepository {
 					roles.add(session.find(Role.class, roleId));
 				}
 				user.setRoles(roles);
+				user.setOrders(new HashSet<>());
 				session.save(user);
 				session.getTransaction().commit();
 				return user;
@@ -148,6 +146,53 @@ public class UserRepositoryImpl implements UserRepository {
 				return new ArrayList<>(role.getUsers());
 			} catch (Exception ex) {
 				throw new RepositoryException("EXCEPTION: findUsersByRole: " + ex);
+			}
+		}
+	}
+	
+	@Override
+	public boolean deleteRoleFromUser(Long userId, Long roleId) throws RepositoryException {
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				User user = session.find(User.class, userId);
+				Set<Role> roles = user.getRoles();
+				roles.remove(session.get(Role.class, roleId));
+				session.getTransaction().commit();
+				return true;
+			} catch (Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: findRolesByUser: " + ex);
+			}
+		}
+	}
+
+	@Override
+	public Role addRoleToUser(Long userId, Long roleId) throws RepositoryException {
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				session.getTransaction().begin();
+				User user = session.get(User.class, userId);
+				Set<Role> roles = user.getRoles();
+				Role role = session.get(Role.class, roleId);
+				roles.add(role);
+				session.getTransaction().commit();
+				return role;
+			} catch(Exception ex) {
+				session.getTransaction().rollback();
+				throw new RepositoryException("EXCEPTION: findRolesByUser: " + ex);
+			}
+		}
+	}
+	
+	@Override
+	public List<Role> findRolesByUser(Long userId) throws RepositoryException {
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				User user = session.find(User.class, userId);
+				return new ArrayList<>(user.getRoles());
+			} catch (Exception ex) {
+				throw new RepositoryException("EXCEPTION: findRolesByUser: " + ex);
 			}
 		}
 	}

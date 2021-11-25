@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.itrex.konoplyanik.boardgamerent.dto.UserSaveDTO;
+import com.itrex.konoplyanik.boardgamerent.dto.UserUpdateDTO;
 import com.itrex.konoplyanik.boardgamerent.converters.OrderConverter;
 import com.itrex.konoplyanik.boardgamerent.converters.RoleConverter;
 import com.itrex.konoplyanik.boardgamerent.converters.UserConverter;
@@ -26,12 +27,10 @@ public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 	private final OrderRepository orderRepository;
-	private final RoleRepository roleRepository;
 	
 	public UserServiceImpl(UserRepository userRepository, OrderRepository orderRepository, RoleRepository roleRepository) {
 		this.userRepository = userRepository;
 		this.orderRepository = orderRepository;
-		this.roleRepository = roleRepository;
 	}
 
 	@Override
@@ -48,12 +47,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO findById(Long id) throws ServiceException {
 		try {
-			UserDTO user =  UserConverter.convertUserToDTO(userRepository.findById(id));
-			user.setRoles(RoleConverter.convertRolesToDTO(roleRepository.findRolesByUser(id)));
-			user.setOrders(orderRepository.findOrdersByUser(id).stream()
-					.map(OrderConverter::convertOrderToListForUserDTO)
-					.collect(Collectors.toList()));
-			return user;
+			return UserConverter.convertUserToDTO(userRepository.findById(id));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: findById: " + ex);
 		}
@@ -62,22 +56,16 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO add(UserSaveDTO user) throws ServiceException {
 		try {
-			UserDTO userDTO = UserConverter.convertUserToDTO(userRepository.add(UserConverter.convertUserToEntity(user), user.getRoleIds()));
-			List<RoleDTO> roles = user.getRoleIds().stream().map(roleId -> RoleDTO.builder().id(roleId).build()).collect(Collectors.toList());
-			userDTO.setRoles(roles);
-			return userDTO;
+			return UserConverter.convertUserToDTO(userRepository.add(UserConverter.convertUserToEntity(user), user.getRoleIds()));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: add: " + ex);
 		}
 	}
 
 	@Override
-	public UserDTO update(UserSaveDTO user) throws ServiceException {
+	public UserUpdateDTO update(UserUpdateDTO user) throws ServiceException {
 		try {
-			UserDTO userDTO = UserConverter.convertUserToDTO(userRepository.update(UserConverter.convertUserToEntity(user)));
-			List<RoleDTO> roles = user.getRoleIds().stream().map(roleId -> RoleDTO.builder().id(roleId).build()).collect(Collectors.toList());
-			userDTO.setRoles(roles);
-			return userDTO;
+			return UserConverter.convertUserToUpdateDTO(userRepository.update(UserConverter.convertUserUpdateToEntity(user)));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: update: " + ex);
 		}
@@ -106,7 +94,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<RoleDTO> findRolesByUser(Long userId) throws ServiceException {
 		try {
-			return roleRepository.findRolesByUser(userId).stream()
+			return userRepository.findRolesByUser(userId).stream()
 					.map(RoleConverter::convertRoleToDTO)
 					.collect(Collectors.toList());
 		} catch (RepositoryException ex) {
@@ -128,7 +116,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean deleteRoleFromUser(Long userId, Long roleId) throws ServiceException {
 		try {
-			return roleRepository.deleteRoleFromUser(userId, roleId);
+			return userRepository.deleteRoleFromUser(userId, roleId);
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: deleteRolesFromUser: " + ex);
 		}
@@ -137,7 +125,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public RoleDTO addRoleToUser(Long userId, Long roleId) throws ServiceException {
 		try {
-			return RoleConverter.convertRoleToDTO(roleRepository.addRoleToUser(userId, roleId));
+			return RoleConverter.convertRoleToDTO(userRepository.addRoleToUser(userId, roleId));
 		} catch (RepositoryException ex) {
 			throw new ServiceException("Error: addRolesToUser: " + ex);
 		}
