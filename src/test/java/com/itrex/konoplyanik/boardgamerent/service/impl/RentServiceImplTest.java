@@ -2,6 +2,7 @@ package com.itrex.konoplyanik.boardgamerent.service.impl;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -100,5 +101,22 @@ public class RentServiceImplTest extends BaseServiceTest {
 		Mockito.when(purchaseRepository.findPurchasesByOrder(rent.getOrder().getId())).thenReturn(new ArrayList<>());
         //then
         Assert.assertTrue(rentService.delete(1L));
+	}
+	
+	@Test
+	public void findRentsByOrder_validData_shouldReturnListRentDTO() throws RepositoryException, ServiceException {
+		//given
+		Rent rent = getRents().get(0);
+		List<Rent> rents = new ArrayList<>() {{
+        	add(rent);
+        }};
+        List<RentDTO> expected = new ArrayList<>() {{
+        	add(RentConverter.convertRentToDTO(rent));
+        }};
+        // when
+        Mockito.when(rentRepository.findRentsByOrder(1L)).thenReturn(rents);
+        List<RentDTO> actual = rentService.findRentsByOrder(1L);
+        // then
+        Assert.assertEquals(expected, actual);
 	}
 }

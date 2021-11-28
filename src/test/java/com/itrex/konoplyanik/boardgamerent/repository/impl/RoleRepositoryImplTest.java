@@ -80,5 +80,18 @@ public class RoleRepositoryImplTest extends BaseRepositoryTest {
 		//then
 		Assert.assertTrue(actual);
 	}
+	
+	 @Test
+		public void findRolesByUser_validData_shouldReturnAllRolesByUser() {
+			//given
+			List<Role>	expected = new ArrayList<>() {{
+				add(Role.builder().id(1L).name("admin").build());
+				add(Role.builder().id(3L).name("customer").build());
+			}};
+			//when
+			List<Role>	actual = repository.findRolesByUser(1L);
+			//then
+			Assert.assertEquals(expected, actual);
+		}
 
 }

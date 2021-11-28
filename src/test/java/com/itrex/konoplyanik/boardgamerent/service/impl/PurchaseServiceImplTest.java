@@ -1,6 +1,7 @@
 package com.itrex.konoplyanik.boardgamerent.service.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -96,5 +97,22 @@ public class PurchaseServiceImplTest extends BaseServiceTest{
 		Mockito.when(purchaseRepository.findPurchasesByOrder(purchase.getOrder().getId())).thenReturn(new ArrayList<>());
         //then
         Assert.assertTrue(purchaseService.delete(1L));
+	}
+	
+	@Test
+	public void findPurchasesByOrder_validData_shouldReturnListPurchaseDTO() throws RepositoryException, ServiceException {
+		//given
+        Purchase purchase = getPurchases().get(0);
+        List<Purchase> purchases = new ArrayList<>() {{
+        	add(purchase);
+        }};
+        List<PurchaseDTO> expected = new ArrayList<>() {{
+        	add(PurchaseConverter.convertPurchaseToDTO(purchase));
+        }};
+        // when
+        Mockito.when(purchaseRepository.findPurchasesByOrder(3L)).thenReturn(purchases);
+        List<PurchaseDTO> actual = purchaseService.findPurchasesByOrder(3L);
+        // then
+        Assert.assertEquals(expected, actual);
 	}
 }
