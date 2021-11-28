@@ -184,18 +184,6 @@ public class UserRepositoryImpl implements UserRepository {
 			}
 		}
 	}
-	
-	@Override
-	public List<Role> findRolesByUser(Long userId) throws RepositoryException {
-		try (Session session = sessionFactory.openSession()) {
-			try {
-				User user = session.find(User.class, userId);
-				return new ArrayList<>(user.getRoles());
-			} catch (Exception ex) {
-				throw new RepositoryException("EXCEPTION: findRolesByUser: " + ex);
-			}
-		}
-	}
 
 	private void insertUser(Query query, User user) {
 		query.setParameter(LOGIN_COLUMN, user.getLogin());

@@ -2,8 +2,6 @@ package com.itrex.konoplyanik.boardgamerent.dto;
 
 import java.time.LocalDate;
 import com.itrex.konoplyanik.boardgamerent.entity.Status;
-import com.itrex.konoplyanik.boardgamerent.entity.User;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -21,7 +19,7 @@ import lombok.ToString;
 @Builder
 public class OrderSaveDTO {
 
-	private User user;
+	private Long userId;
 	private Long id;
 	private Integer totalPrice;
 	private LocalDate date;

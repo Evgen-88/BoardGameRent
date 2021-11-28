@@ -31,5 +31,16 @@ public class RoleServiceImpl implements RoleService {
 			throw new ServiceException("Error: findAll: " + ex);
 		}
 	}
+	
+	@Override
+	public List<RoleDTO> findRolesByUser(Long userId) throws ServiceException {
+		try {
+			return roleRepository.findRolesByUser(userId).stream()
+					.map(RoleConverter::convertRoleToDTO)
+					.collect(Collectors.toList());
+		} catch (RepositoryException ex) {
+			throw new ServiceException("Error: findOrdersByUser: " + ex);
+		}
+	}
 
 }

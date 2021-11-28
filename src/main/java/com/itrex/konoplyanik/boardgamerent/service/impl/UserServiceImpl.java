@@ -7,18 +7,13 @@ import org.springframework.stereotype.Service;
 
 import com.itrex.konoplyanik.boardgamerent.dto.UserSaveDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserUpdateDTO;
-import com.itrex.konoplyanik.boardgamerent.converters.OrderConverter;
 import com.itrex.konoplyanik.boardgamerent.converters.RoleConverter;
 import com.itrex.konoplyanik.boardgamerent.converters.UserConverter;
-import com.itrex.konoplyanik.boardgamerent.dto.OrderListDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.RoleDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserBaseDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserDTO;
-import com.itrex.konoplyanik.boardgamerent.dto.OrderListForUserDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
-import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
-import com.itrex.konoplyanik.boardgamerent.repository.RoleRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
 import com.itrex.konoplyanik.boardgamerent.service.UserService;
 
@@ -26,11 +21,9 @@ import com.itrex.konoplyanik.boardgamerent.service.UserService;
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
-	private final OrderRepository orderRepository;
 	
-	public UserServiceImpl(UserRepository userRepository, OrderRepository orderRepository, RoleRepository roleRepository) {
+	public UserServiceImpl(UserRepository userRepository) {
 		this.userRepository = userRepository;
-		this.orderRepository = orderRepository;
 	}
 
 	@Override
@@ -80,39 +73,6 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 	
-	@Override
-	public List<OrderListDTO> findOrdersByUser(Long userId) throws ServiceException {
-		try {
-			return orderRepository.findOrdersByUser(userId).stream()
-					.map(OrderConverter::convertOrderToListDTO)
-					.collect(Collectors.toList());
-		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: findOrdersByUser: " + ex);
-		}
-	}
-	
-	@Override
-	public List<RoleDTO> findRolesByUser(Long userId) throws ServiceException {
-		try {
-			return userRepository.findRolesByUser(userId).stream()
-					.map(RoleConverter::convertRoleToDTO)
-					.collect(Collectors.toList());
-		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: findOrdersByUser: " + ex);
-		}
-	}
-
-	@Override
-	public List<OrderListForUserDTO> findOrderListForUserByUser(Long userId) throws ServiceException {
-		try {
-			return orderRepository.findOrdersByUser(userId).stream()
-					.map(OrderConverter::convertOrderToListForUserDTO)
-					.collect(Collectors.toList());
-		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: findOrdersByUser: " + ex);
-		}
-	}
-
 	@Override
 	public boolean deleteRoleFromUser(Long userId, Long roleId) throws ServiceException {
 		try {

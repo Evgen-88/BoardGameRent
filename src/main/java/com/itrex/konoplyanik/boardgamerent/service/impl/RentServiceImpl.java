@@ -1,5 +1,8 @@
 package com.itrex.konoplyanik.boardgamerent.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.itrex.konoplyanik.boardgamerent.converters.RentConverter;
@@ -68,6 +71,17 @@ public class RentServiceImpl implements RentService {
 			throw new ServiceException("Error: delete: " + ex);
 		}
 		return isDeleted;
+	}
+	
+	@Override
+	public List<RentDTO> findRentsByOrder(Long orderId) throws ServiceException {
+		try {
+			return rentRepository.findRentsByOrder(orderId).stream()
+					.map(RentConverter::convertRentToDTO)
+					.collect(Collectors.toList());
+		} catch (RepositoryException ex) {
+			throw new ServiceException("Error: findRentsByOrder: " + ex);
+		}
 	}
 
 }

@@ -24,8 +24,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 	private static final String STATUS_COLUMN = "status";
 
 	private static final String SELECT_ALL_QUERY = "from Order o";
-//	private static final String SELECT_BY_ID_QUERY = "from Order o join fetch o.user"
-//			+ " left join fetch o.rents left join fetch o.purchases where o.id = :id";
+	private static final String SELECT_BY_ID_QUERY = "from Order o join fetch o.user"
+			+ " left join fetch o.rents left join fetch o.purchases where o.id = :id";
 	private static final String UPDATE_QUERY = "update Order set totalPrice = :totalPrice, date = :date, status = :status where id = :id";
 
 	private final SessionFactory sessionFactory;
@@ -46,8 +46,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 	@Override
 	public Order findById(Long id) throws RepositoryException {
 		try (Session session = sessionFactory.openSession()) {
-			return session.find(Order.class, id);
-//			 return session.createQuery(SELECT_BY_ID_QUERY, Order.class).setParameter(ID_COLUMN, id).getSingleResult();
+			return session.createQuery(SELECT_BY_ID_QUERY, Order.class).setParameter(ID_COLUMN, id).getSingleResult();
 		} catch (Exception ex) {
 			throw new RepositoryException("EXCEPTION: findById: " + ex);
 		}

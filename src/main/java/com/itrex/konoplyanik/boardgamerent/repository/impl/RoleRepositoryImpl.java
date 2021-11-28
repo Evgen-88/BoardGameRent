@@ -2,8 +2,6 @@ package com.itrex.konoplyanik.boardgamerent.repository.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Query;
 
 import org.hibernate.Session;
@@ -101,6 +99,18 @@ public class RoleRepositoryImpl implements RoleRepository {
 	private void insertRole(Query query, Role role) {
 		query.setParameter(NAME_COLUMN, role.getName());
 		query.setParameter(ID_COLUMN, role.getId());
+	}
+	
+	@Override
+	public List<Role> findRolesByUser(Long userId) throws RepositoryException {
+		try (Session session = sessionFactory.openSession()) {
+			try {
+				User user = session.find(User.class, userId);
+				return new ArrayList<>(user.getRoles());
+			} catch (Exception ex) {
+				throw new RepositoryException("EXCEPTION: findRolesByUser: " + ex);
+			}
+		}
 	}
 
 }

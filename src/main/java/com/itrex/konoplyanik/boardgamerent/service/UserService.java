@@ -4,11 +4,9 @@ import java.util.List;
 
 import com.itrex.konoplyanik.boardgamerent.dto.UserSaveDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserUpdateDTO;
-import com.itrex.konoplyanik.boardgamerent.dto.OrderListDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.RoleDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserBaseDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserDTO;
-import com.itrex.konoplyanik.boardgamerent.dto.OrderListForUserDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 
 public interface UserService {
@@ -19,9 +17,6 @@ public interface UserService {
 	UserUpdateDTO update(UserUpdateDTO user) throws ServiceException;
 	boolean delete(Long id) throws ServiceException;
 	
-	List<OrderListDTO> findOrdersByUser(Long userId) throws ServiceException;
-	List<RoleDTO> findRolesByUser(Long userId) throws ServiceException;
-	List<OrderListForUserDTO> findOrderListForUserByUser(Long userId) throws ServiceException;
 	boolean deleteRoleFromUser(Long userId, Long roleId) throws ServiceException;
 	RoleDTO addRoleToUser(Long userId, Long roleId) throws ServiceException;
 }

@@ -20,6 +20,8 @@ import com.itrex.konoplyanik.boardgamerent.dto.PurchaseDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.RentDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.service.OrderService;
+import com.itrex.konoplyanik.boardgamerent.service.PurchaseService;
+import com.itrex.konoplyanik.boardgamerent.service.RentService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +31,8 @@ import lombok.RequiredArgsConstructor;
 public class OrderController {
 
 	private final OrderService orderService;
+	private final PurchaseService purchaseService;
+	private final RentService rentService;
 
 	@GetMapping
 	public ResponseEntity<List<OrderListDTO>> findAll() {
@@ -54,8 +58,8 @@ public class OrderController {
 	}
 
 	@PostMapping
-	public ResponseEntity<OrderDTO> add(@RequestBody OrderSaveDTO order) {
-		OrderDTO orderDTO = null;
+	public ResponseEntity<OrderSaveDTO> add(@RequestBody OrderSaveDTO order) {
+		OrderSaveDTO orderDTO = null;
 		try {
 			orderDTO = orderService.add(order);
 		} catch (ServiceException ex) {
@@ -65,8 +69,8 @@ public class OrderController {
 	}
 
 	@PutMapping
-	public ResponseEntity<OrderDTO> update(@RequestBody OrderSaveDTO order) {
-		OrderDTO orderDTO = null;
+	public ResponseEntity<OrderSaveDTO> update(@RequestBody OrderSaveDTO order) {
+		OrderSaveDTO orderDTO = null;
 		try {
 			orderDTO = orderService.update(order);
 		} catch (ServiceException ex) {
@@ -90,7 +94,7 @@ public class OrderController {
 	public ResponseEntity<List<PurchaseDTO>> findPurchasesByOrder(@PathVariable Long id) {
 		List<PurchaseDTO> purchases = null;
 		try {
-			purchases = orderService.findPurchasesByOrder(id);
+			purchases = purchaseService.findPurchasesByOrder(id);
 		} catch (ServiceException ex) {
 			new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
@@ -102,7 +106,7 @@ public class OrderController {
 	public ResponseEntity<List<RentDTO>> findRentsByOrder(@PathVariable Long id) {
 		List<RentDTO> rents = null;
 		try {
-			rents = orderService.findRentsByOrder(id);
+			rents = rentService.findRentsByOrder(id);
 		} catch (ServiceException ex) {
 			new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}

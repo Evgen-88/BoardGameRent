@@ -1,5 +1,8 @@
 package com.itrex.konoplyanik.boardgamerent.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.itrex.konoplyanik.boardgamerent.converters.PurchaseConverter;
@@ -68,6 +71,17 @@ public class PurchaseServiceImpl implements PurchaseService {
 			throw new ServiceException("Error: delete: " + ex);
 		}
 		return isDeleted;
+	}
+	
+	@Override
+	public List<PurchaseDTO> findPurchasesByOrder(Long orderId) throws ServiceException {
+		try {
+			return purchaseRepository.findPurchasesByOrder(orderId).stream()
+					.map(PurchaseConverter::convertPurchaseToDTO)
+					.collect(Collectors.toList());
+		} catch (RepositoryException ex) {
+			throw new ServiceException("Error: findPurchasesByOrder: " + ex);
+		}
 	}
 
 }

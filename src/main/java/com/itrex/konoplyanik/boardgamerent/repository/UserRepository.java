@@ -18,6 +18,5 @@ public interface UserRepository {
 	List<User> findUsersByRole(Long id) throws RepositoryException;
 	boolean deleteRoleFromUser(Long userId, Long roleId) throws RepositoryException;
 	Role addRoleToUser(Long userId, Long roleId) throws RepositoryException;
-	List<Role> findRolesByUser(Long userId) throws RepositoryException;
 	
 }
