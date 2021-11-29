@@ -46,7 +46,7 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 		// given
 		Order expected = orders.get(0);
 		// when
-		Order actual = repository.findById(expected.getId());
+		Order actual = repository.findById(expected.getId()).get();
 		// then
 		Assert.assertEquals(expected, actual);
 	}
@@ -57,7 +57,7 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 		Order expected = Order.builder().id(5L).totalPrice(90).date(LocalDate.of(2021, 10, 21)).status(Status.rejected).build();
 		Order order = Order.builder().totalPrice(90).date(LocalDate.of(2021, 10, 21)).status(Status.rejected).build();
 		// when
-		Order actual = repository.add(order);
+		Order actual = repository.save(order);
 		// then
 		Assert.assertEquals(expected, actual);
 	}
@@ -69,19 +69,9 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 		Order expected = Order.builder().id(1L).totalPrice(88).date(LocalDate.of(2021, 10, 28)).status(Status.rejected).build();
 		Assert.assertEquals(expected.getId(), order.getId());
 		// when
-		Order actual = repository.update(expected);
+		Order actual = repository.save(expected);
 		// then
 		Assert.assertEquals(expected, actual);
-	}
-
-	@Test
-	public void delete_validData_shouldDeleteOrder() {
-		// given
-		Order order = orders.get(1);
-		// when
-		boolean actual = repository.delete(order.getId());
-		// then
-		Assert.assertTrue(actual);
 	}
 
 	@Test
@@ -92,19 +82,9 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 			add(Order.builder().id(2L).totalPrice(90).date(LocalDate.of(2021, 10, 23)).status(Status.confirmed).build());
 		}};
 		// when
-		List<Order> actual = repository.findOrdersByUser(4L);
+		List<Order> actual = repository.findOrdersByUser_id(4L);
 		// then
 		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void deleteOrdersByUser_validData_shouldDeleteOrders() {
-		// given
-				Long userId = 1L;
-				// when
-				boolean actual = repository.deleteOrdersByUser(userId);
-				// then
-				Assert.assertTrue(actual);
 	}
 
 }

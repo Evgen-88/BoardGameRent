@@ -47,7 +47,7 @@ public class RentRepositoryImplTest extends BaseRepositoryTest {
 		// given
 		Rent expected = rents.get(0);
 		// when
-		Rent actual = repository.findById(expected.getId());
+		Rent actual = repository.findById(expected.getId()).get();
 		// then
 		Assert.assertEquals(expected, actual);
 	}
@@ -58,7 +58,7 @@ public class RentRepositoryImplTest extends BaseRepositoryTest {
 		Rent expected = Rent.builder().id(5L).rentFrom(LocalDate.of(2021, 10, 26)).rentTo(LocalDate.of(2021, 10, 27)).price(50).build();
 		Rent rent = Rent.builder().rentFrom(LocalDate.of(2021, 10, 26)).rentTo(LocalDate.of(2021, 10, 27)).price(50).build();
 		//when
-		Rent actual = repository.add(rent);
+		Rent actual = repository.save(rent);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -70,19 +70,9 @@ public class RentRepositoryImplTest extends BaseRepositoryTest {
 		Rent expected = Rent.builder().id(1L).rentFrom(LocalDate.of(2021, 10, 24)).rentTo(LocalDate.of(2021, 10, 25)).price(50).build();
 		Assert.assertEquals(expected.getId(), rent.getId());
 		//when
-		Rent actual = repository.update(Rent.builder().id(1L).rentFrom(LocalDate.of(2021, 10, 24)).rentTo(LocalDate.of(2021, 10, 25)).price(50).build());
+		Rent actual = repository.save(Rent.builder().id(1L).rentFrom(LocalDate.of(2021, 10, 24)).rentTo(LocalDate.of(2021, 10, 25)).price(50).build());
 		//then
 		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void delete_validData_shouldDeleteRent() {
-		//given
-		Rent rent = rents.get(1);
-		//when
-		boolean actual = repository.delete(rent.getId());
-		//then
-		Assert.assertTrue(actual);
 	}
 	
 	@Test
@@ -92,20 +82,9 @@ public class RentRepositoryImplTest extends BaseRepositoryTest {
 			add(rents.get(0));
 		}};
 		//when
-		List<Rent> actual = repository.findRentsByOrder(1L);
+		List<Rent> actual = repository.findRentsByOrder_id(1L);
 		//then
 		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void deleteRentsFromOrder_shouldDeleteRent() {
-		//given
-		Order order = Order.builder().id(3L).totalPrice(45).date(LocalDate.of(2021, 10, 23)).status(Status.confirmed).build();
-		//when
-		boolean actual = repository.deleteRentsFromOrder(order.getId());
-		//then
-		Assert.assertTrue(actual);
-		Assert.assertEquals(new ArrayList<>(), repository.findRentsByOrder(order.getId()));
 	}
 
 }

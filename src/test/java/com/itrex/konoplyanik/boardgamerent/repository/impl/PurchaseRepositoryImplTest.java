@@ -45,7 +45,7 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 		//given
 		Purchase expected = purchases.get(0);
 		//when
-		Purchase actual = repository.findById(expected.getId());
+		Purchase actual = repository.findById(expected.getId()).get();
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -56,7 +56,7 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 		Purchase expected = Purchase.builder().id(3L).quantity(1).price(18).build();
 		Purchase purchase = Purchase.builder().quantity(1).price(18).build();
 		//when
-		Purchase actual = repository.add(purchase);
+		Purchase actual = repository.save(purchase);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -68,19 +68,9 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 		Purchase expected = Purchase.builder().id(1L).quantity(5).price(100).build();
 		Assert.assertEquals(expected.getId(), purchase.getId());
 		//when
-		Purchase actual = repository.update(Purchase.builder().id(1L).quantity(5).price(100).build());
+		Purchase actual = repository.save(Purchase.builder().id(1L).quantity(5).price(100).build());
 		//then
 		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void delete_validData_shouldDeletePurchase() {
-		//given
-		Purchase purchase = purchases.get(1);
-		//when
-		boolean actual = repository.delete(purchase.getId());
-		//then
-		Assert.assertTrue(actual);
 	}
 	
 	@Test
@@ -90,20 +80,9 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 			add(purchases.get(0));
 		}};
 		//when
-		List<Purchase> actual = repository.findPurchasesByOrder(3L);
+		List<Purchase> actual = repository.findPurchasesByOrder_id(3L);
 		//then
 		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void deletePurchasesFromOrder_shouldDeletePurchase() {
-		//given
-		Order order = Order.builder().id(3L).totalPrice(45).date(LocalDate.of(2021, 10, 23)).status(Status.confirmed).build();
-		//when
-		boolean actual = repository.deletePurchasesFromOrder(order.getId());
-		//then
-		Assert.assertTrue(actual);
-		Assert.assertEquals(new ArrayList<>(), repository.findPurchasesByOrder(order.getId()));
 	}
 
 }

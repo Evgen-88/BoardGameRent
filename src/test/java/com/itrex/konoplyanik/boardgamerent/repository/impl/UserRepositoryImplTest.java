@@ -45,7 +45,7 @@ public class UserRepositoryImplTest extends BaseRepositoryTest {
 		//given
 		User expected = users.get(0);
 		//when
-		User actual = repository.findById(expected.getId());
+		User actual = repository.findById(expected.getId()).get();
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -55,10 +55,10 @@ public class UserRepositoryImplTest extends BaseRepositoryTest {
 		//given
 		User expected = User.builder().id(6L).login("vasya").password("vasya").name("Василий").phone(8888888).email("vasya@mail").build();
 		User user = User.builder().login("vasya").password("vasya").name("Василий").phone(8888888).email("vasya@mail").build();
-		List<Long> roleIds = new ArrayList<>() {{
-			add(3L);
-		}};
-		User actual = repository.add(user, roleIds);
+//		List<Long> roleIds = new ArrayList<>() {{
+//			add(3L);
+//		}};
+		User actual = repository.save(user);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -70,53 +70,8 @@ public class UserRepositoryImplTest extends BaseRepositoryTest {
 		User expected = User.builder().id(1L).login("1ivan").password("1ivan").name("Иван").phone(1111112).email("1ivan@mail").build();
 		Assert.assertEquals(expected.getId(), user.getId());
 		//when
-		User actual = repository.update(expected);
+		User actual = repository.save(expected);
 		//then
-		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void delete_validData_shouldDeleteUser() {
-		//given
-		User user = users.get(1);
-		//when
-		boolean actual = repository.delete(user.getId());
-		//then
-		Assert.assertTrue(actual);
-	}
-	
-	@Test
-	public void findUsersByRole_validData_shouldReturnAllUsersByRole() {
-		//given
-		List<User>	expected = new ArrayList<>() {{
-			add(User.builder().id(4L).login("piter").password("piter").name("Петр").phone(4444444).email("piter@mail").build());
-			add(User.builder().id(3L).login("kir").password("kir").name("Кирилл").phone(3333333).email("kir@mail").build());
-			add(User.builder().id(5L).login("vova").password("vova").name("Владимир").phone(5555555).email("vova@mail").build());
-			add(User.builder().id(2L).login("alex").password("alex").name("Алекс").phone(2222222).email("alex@mail").build());
-			add(User.builder().id(1L).login("ivan").password("ivan").name("Иван").phone(1111111).email("ivan@mail").build());
-		}};
-		//when
-		List<User>	actual = repository.findUsersByRole(3L);
-		//then
-		Assert.assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void deleteRoleFromUser_validData_shouldDeleteRoleFromUser() {
-		// given & when
-		boolean actual = repository.deleteRoleFromUser(1L, 1L);
-		// then
-		Assert.assertTrue(actual);
-	}
-	
-	@Test
-	public void addRoleToUser_validData_shouldAddRoleToUser() {
-		// given
-		Long roleId = 2L;
-		Role expected = Role.builder().id(2L).name("manager").build();
-		// when
-		Role	actual = repository.addRoleToUser(1L, roleId);
-		// then
 		Assert.assertEquals(expected, actual);
 	}
 	

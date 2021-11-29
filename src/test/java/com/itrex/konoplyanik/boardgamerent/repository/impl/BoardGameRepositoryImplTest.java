@@ -44,7 +44,7 @@ public class BoardGameRepositoryImplTest extends BaseRepositoryTest {
 		//given
 		BoardGame expected = boardGames.get(0);
 		//when
-		BoardGame actual = repository.findById(expected.getId());
+		BoardGame actual = repository.findById(expected.getId()).get();
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -55,7 +55,7 @@ public class BoardGameRepositoryImplTest extends BaseRepositoryTest {
 		BoardGame expected = BoardGame.builder().id(5L).name("Сезоны").rentPrice(35).quantity(4).build();
 		BoardGame boardGame = BoardGame.builder().name("Сезоны").rentPrice(35).quantity(4).build();
 		//when
-		BoardGame actual = repository.add(boardGame);
+		BoardGame actual = repository.save(boardGame);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -67,18 +67,9 @@ public class BoardGameRepositoryImplTest extends BaseRepositoryTest {
 		BoardGame expected = BoardGame.builder().id(1L).name("Пандемия").rentPrice(30).quantity(5).build();
 		Assert.assertEquals(boardGame.getId(), expected.getId());
 		//when
-		BoardGame actual = repository.update(BoardGame.builder().id(1L).name("Пандемия").rentPrice(30).quantity(5).build());
+		BoardGame actual = repository.save(BoardGame.builder().id(1L).name("Пандемия").rentPrice(30).quantity(5).build());
 		//then
 		Assert.assertEquals(expected, actual);
 	}
 	
-	@Test
-	public void delete_validData_shouldDeleteBoardGame() {
-		//given
-		BoardGame boardGame = boardGames.get(1);
-		//when
-		boolean actual = repository.delete(boardGame.getId());
-		//then
-		Assert.assertTrue(actual);
-	}
 }

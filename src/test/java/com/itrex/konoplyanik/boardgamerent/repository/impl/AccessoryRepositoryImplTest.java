@@ -44,7 +44,7 @@ public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 		//given
 		Accessory expected = accessories.get(1);
 		//when
-		Accessory actual = repository.findById(expected.getId());
+		Accessory actual = repository.findById(expected.getId()).get();
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -55,7 +55,7 @@ public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 		Accessory expected = Accessory.builder().id(4L).name("Кубик D6").price(6).quantity(52).build();
 		Accessory accessory = Accessory.builder().name("Кубик D6").price(6).quantity(52).build();
 		//when
-		Accessory actual = repository.add(accessory);
+		Accessory actual = repository.save(accessory);
 		//then
 		Assert.assertEquals(expected, actual);
 	}
@@ -68,19 +68,10 @@ public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 		Assert.assertEquals(accessory.getId(), expected.getId());
 		//when
 		
-		Accessory actual = repository.update(Accessory.builder().id(1L).name("Протекторы для карт 68х92").price(14).quantity(21).build());
+		Accessory actual = repository.save(Accessory.builder().id(1L).name("Протекторы для карт 68х92").price(14).quantity(21).build());
 		//then
 		Assert.assertEquals(expected, actual);
 	}
 	
-	@Test
-	public void delete_validData_shouldDeleteAccessory() {
-		//given
-		Accessory accessory = accessories.get(0);
-		//when
-		boolean actual = repository.delete(accessory.getId());
-		//then
-		Assert.assertTrue(actual);
-	}
 	
 }
