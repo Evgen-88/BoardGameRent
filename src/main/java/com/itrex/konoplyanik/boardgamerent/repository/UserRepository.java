@@ -13,6 +13,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("from User u left join fetch u.roles left join fetch u.orders where u.id = :id")
 	Optional<User> findUserById(@Param("id") Long id);
 	
-	boolean deleteRoleFromUser(Long userId, Long roleId);
-	boolean addRoleToUser(Long userId, Long roleId);
 }

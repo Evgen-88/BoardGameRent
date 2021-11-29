@@ -6,11 +6,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
-import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
-
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @SpringBootApplication
 public class BoardGameRentApplication implements CommandLineRunner {
 
@@ -23,12 +18,6 @@ public class BoardGameRentApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		
-		UserRepository userRepository = applicationContext.getBean(UserRepository.class);
-		System.out.println(userRepository.findUsersByRole(3L));
-		
-		log.info("info");
-		log.debug("debug");
 
 	}
 
