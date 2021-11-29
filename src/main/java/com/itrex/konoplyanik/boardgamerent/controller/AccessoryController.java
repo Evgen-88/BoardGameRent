@@ -74,7 +74,7 @@ public class AccessoryController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Boolean> delete(@PathVariable long id) {
+	public ResponseEntity<Boolean> delete(@PathVariable(name = "id") long id) {
 		try {
 			accessoryService.delete(id);
 		} catch (ServiceException ex) {

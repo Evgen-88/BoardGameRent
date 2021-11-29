@@ -2,6 +2,10 @@ package com.itrex.konoplyanik.boardgamerent.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,13 +41,9 @@ public class UserController {
 	private final OrderService orderService;
 
 	@GetMapping
-	public ResponseEntity<List<UserBaseDTO>> findAll() {
-		List<UserBaseDTO> users = null;
-		try {
-			users = userService.findAll();
-		} catch (ServiceException ex) {
-			new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+	public ResponseEntity<Page<UserBaseDTO>> findAll(Pageable pageable) {
+		Pageable page = PageRequest.of(0, 3, Sort.by("login").ascending());
+		Page<UserBaseDTO> users = userService.findAll(page);
 		return users != null && !users.isEmpty() ? new ResponseEntity<>(users, HttpStatus.OK)
 				: new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
@@ -78,7 +78,8 @@ public class UserController {
 		} catch (ServiceException ex) {
 			new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return userDTO != null ? new ResponseEntity<>(userDTO, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+		return userDTO != null ? new ResponseEntity<>(userDTO, HttpStatus.OK)
+				: new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
 	}
 
 	@DeleteMapping("/{id}")

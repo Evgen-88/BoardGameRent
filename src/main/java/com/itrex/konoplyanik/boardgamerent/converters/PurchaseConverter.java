@@ -21,8 +21,8 @@ public class PurchaseConverter {
 	public static Purchase convertPurchaseToEntity(PurchaseSaveDTO purchaseDTO) {
 		return Purchase.builder()
 				.id(purchaseDTO.getId())
-				.accessory(purchaseDTO.getAccessory())
-				.order(purchaseDTO.getOrder())
+//				.accessory(purchaseDTO.getAccessory())
+//				.order(purchaseDTO.getOrder())
 				.quantity(purchaseDTO.getQuantity())
 				.price(purchaseDTO.getPrice())
 				.build();

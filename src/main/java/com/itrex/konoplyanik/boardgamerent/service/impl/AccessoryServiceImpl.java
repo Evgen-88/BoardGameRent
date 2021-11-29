@@ -4,68 +4,71 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.itrex.konoplyanik.boardgamerent.converters.AccessoryConverter;
 import com.itrex.konoplyanik.boardgamerent.dto.AccessoryDTO;
-import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
+import com.itrex.konoplyanik.boardgamerent.entity.Accessory;
+import com.itrex.konoplyanik.boardgamerent.entity.Purchase;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.AccessoryRepository;
+import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
 import com.itrex.konoplyanik.boardgamerent.service.AccessoryService;
 
 @Service
 public class AccessoryServiceImpl implements AccessoryService {
 
 	private final AccessoryRepository accessoryRepository;
+	private final PurchaseRepository purchaseRepository;
 
-	public AccessoryServiceImpl(AccessoryRepository accessoryRepository) {
+	public AccessoryServiceImpl(AccessoryRepository accessoryRepository, PurchaseRepository purchaseRepository) {
 		this.accessoryRepository = accessoryRepository;
+		this.purchaseRepository = purchaseRepository;
 	}
 
 	@Override
-	public List<AccessoryDTO> findAll() throws ServiceException {
-		try {
-			return accessoryRepository.findAll().stream()
-					.map(AccessoryConverter::convertAccessoryToDTO)
-					.collect(Collectors.toList());
-		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: findAll: " + ex);
-		}
+	@Transactional(readOnly = true)
+	public List<AccessoryDTO> findAll() {
+		return accessoryRepository.findAll().stream().map(AccessoryConverter::convertAccessoryToDTO)
+				.collect(Collectors.toList());
 	}
 
 	@Override
-	public AccessoryDTO findById(Long id) throws ServiceException {
-		try {
-			return AccessoryConverter.convertAccessoryToDTO(accessoryRepository.findById(id));
-		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: findById: " + ex);
-		}
+	@Transactional(readOnly = true)
+	public AccessoryDTO findById(Long id) {
+		return accessoryRepository.findById(id).map(AccessoryConverter::convertAccessoryToDTO)
+				.orElseThrow(() -> new ServiceException("Accessory not found"));
 	}
 
 	@Override
-	public AccessoryDTO add(AccessoryDTO accessory) throws ServiceException {
-		try {
-			return AccessoryConverter.convertAccessoryToDTO(accessoryRepository.add(AccessoryConverter.convertAccessoryToEntity(accessory)));
-		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: add: " + ex);
-		}
+	@Transactional
+	public AccessoryDTO add(AccessoryDTO accessory) {
+		return AccessoryConverter.convertAccessoryToDTO(
+				accessoryRepository.save(AccessoryConverter.convertAccessoryToEntity(accessory)));
 	}
 
 	@Override
-	public AccessoryDTO update(AccessoryDTO accessory) throws ServiceException {
-		try {
-			return AccessoryConverter.convertAccessoryToDTO(accessoryRepository.update(AccessoryConverter.convertAccessoryToEntity(accessory)));
-		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: update: " + ex);
-		}
+	@Transactional
+	public AccessoryDTO update(AccessoryDTO accessoryDTO) throws ServiceException {
+		Accessory accessory = accessoryRepository.findById(accessoryDTO.getId())
+				.orElseThrow(() -> new ServiceException("Accessory not found"));
+		accessory.setName(accessoryDTO.getName());
+		accessory.setPrice(accessoryDTO.getPrice());
+		accessory.setQuantity(accessoryDTO.getQuantity());
+		accessoryRepository.flush();
+		return AccessoryConverter.convertAccessoryToDTO(accessoryRepository.findById(accessoryDTO.getId()).get());
 	}
 
 	@Override
+	@Transactional
 	public boolean delete(Long id) throws ServiceException {
-		try {
-			return accessoryRepository.delete(id);
-		} catch (RepositoryException ex) {
-			throw new ServiceException("Error: update: " + ex);
+		Accessory accessory = accessoryRepository.findAccessoryById(id)
+				.orElseThrow(() -> new ServiceException("Accessory not found"));
+		for (Purchase purchase : accessory.getPurchases()) {
+			purchaseRepository.delete(purchase);
 		}
+		accessoryRepository.delete(accessory);
+		return true;
 	}
 
 }

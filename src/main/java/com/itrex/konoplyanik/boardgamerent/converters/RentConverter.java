@@ -21,8 +21,8 @@ public class RentConverter {
 	public static Rent convertRentSaveToEntity(RentSaveDTO rentDTO) {
 		return Rent.builder()
 				.id(rentDTO.getId())
-				.boardGame(rentDTO.getBoardGame())
-				.order(rentDTO.getOrder())
+//				.boardGame(rentDTO.getBoardGame())
+//				.order(rentDTO.getOrder())
 				.rentFrom(rentDTO.getRentFrom())
 				.rentTo(rentDTO.getRentTo())
 				.price(rentDTO.getPrice())

@@ -1,8 +1,5 @@
 package com.itrex.konoplyanik.boardgamerent.dto;
 
-import com.itrex.konoplyanik.boardgamerent.entity.Accessory;
-import com.itrex.konoplyanik.boardgamerent.entity.Order;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -21,8 +18,8 @@ import lombok.ToString;
 public class PurchaseSaveDTO {
 
 	private Long id;
-	private Accessory accessory;
-	private Order order;
+	private Long accessoryId;
+	private Long orderId;
 	private Integer quantity;
 	private Integer price;
 }
