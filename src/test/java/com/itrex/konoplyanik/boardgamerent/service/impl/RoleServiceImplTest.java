@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+
 import com.itrex.konoplyanik.boardgamerent.dto.RoleDTO;
 import com.itrex.konoplyanik.boardgamerent.entity.Role;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
@@ -50,7 +51,7 @@ public class RoleServiceImplTest extends BaseServiceTest {
 		       		.build());
 	    }};
 		// when
-		Mockito.when(roleRepository.findRolesByUser(1L)).thenReturn(roles);
+		Mockito.when(roleRepository.findRolesByUsers_id(1L)).thenReturn(roles);
 		List<RoleDTO> actual = roleService.findRolesByUser(1L);
 		// then
 		Assert.assertEquals(expected, actual);

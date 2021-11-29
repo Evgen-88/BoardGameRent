@@ -2,6 +2,7 @@ package com.itrex.konoplyanik.boardgamerent.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import com.itrex.konoplyanik.boardgamerent.dto.PurchaseSaveDTO;
 import com.itrex.konoplyanik.boardgamerent.entity.Purchase;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
+import com.itrex.konoplyanik.boardgamerent.repository.AccessoryRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
@@ -32,6 +34,8 @@ public class PurchaseServiceImplTest extends BaseServiceTest{
 	private RentRepository rentRepository;
 	@Mock
 	private OrderRepository orderRepository;
+	@Mock
+	private AccessoryRepository accessoryRepository;
 	
 	@Test
 	public void findById_validData_shouldReturnPurchase() throws RepositoryException, ServiceException {
@@ -40,7 +44,7 @@ public class PurchaseServiceImplTest extends BaseServiceTest{
         PurchaseDTO expected = PurchaseConverter.convertPurchaseToDTO(purchase);
         // when
         Mockito.when(purchaseRepository.findById(1L))
-                .thenReturn(purchase);
+                .thenReturn(Optional.of(purchase));
         PurchaseDTO actual = purchaseService.findById(1L);
         // then
         Assert.assertEquals(expected, actual);
@@ -53,13 +57,15 @@ public class PurchaseServiceImplTest extends BaseServiceTest{
 		PurchaseDTO expected = PurchaseConverter.convertPurchaseToDTO(purchase);
 		PurchaseSaveDTO purchaseSaveDTO = PurchaseSaveDTO.builder()
 				.id(purchase.getId())
-				.accessory(purchase.getAccessory())
-				.order(purchase.getOrder())
+				.accessoryId(purchase.getAccessory().getId())
+				.orderId(purchase.getOrder().getId())
 				.quantity(purchase.getQuantity())
 				.price(purchase.getPrice())
 				.build();
         //when
-        Mockito.when(purchaseRepository.add(purchase)).thenReturn(purchase);
+		Mockito.when(orderRepository.findById(purchaseSaveDTO.getOrderId())).thenReturn(Optional.of(getOrders().get(0)));
+		Mockito.when(accessoryRepository.findById(purchaseSaveDTO.getAccessoryId())).thenReturn(Optional.of(getAccessories().get(0)));
+        Mockito.when(purchaseRepository.save(purchase)).thenReturn(purchase);
         PurchaseDTO actual = purchaseService.add(purchaseSaveDTO);
         //then
         Assert.assertEquals(expected, actual);
@@ -73,14 +79,14 @@ public class PurchaseServiceImplTest extends BaseServiceTest{
         purchase.setPrice(36);
         PurchaseSaveDTO purchaseSaveDTO = PurchaseSaveDTO.builder()
         		.id(purchase.getId())
-        		.accessory(purchase.getAccessory())
-        		.order(purchase.getOrder())
+        		.accessoryId(purchase.getAccessory().getId())
+        		.orderId(purchase.getOrder().getId())
         		.quantity(purchase.getQuantity())
         		.price(purchase.getPrice())
         		.build();
 		PurchaseDTO expected = PurchaseDTO.builder().id(1L).accessoryId(2L).accessoryName("Протекторы для карт 48х64").quantity(3).price(36).build();
         //when
-        Mockito.when(purchaseRepository.update(purchase)).thenReturn(purchase);
+		Mockito.when(purchaseRepository.findById(purchase.getId())).thenReturn(Optional.of(getPurchases().get(0)));
         PurchaseDTO actual = purchaseService.update(purchaseSaveDTO);
         // then
         Assert.assertEquals(expected, actual);
@@ -91,10 +97,9 @@ public class PurchaseServiceImplTest extends BaseServiceTest{
 		//given
 		Purchase purchase = getPurchases().get(0);
 		//when
-		Mockito.when(purchaseRepository.delete(purchase.getId())).thenReturn(true);
-		Mockito.when(purchaseRepository.findById(purchase.getId())).thenReturn(purchase);
-		Mockito.when(rentRepository.findRentsByOrder(purchase.getOrder().getId())).thenReturn(new ArrayList<>());
-		Mockito.when(purchaseRepository.findPurchasesByOrder(purchase.getOrder().getId())).thenReturn(new ArrayList<>());
+		Mockito.when(purchaseRepository.findById(purchase.getId())).thenReturn(Optional.of(purchase));
+		Mockito.when(rentRepository.findRentsByOrder_id(purchase.getOrder().getId())).thenReturn(new ArrayList<>());
+		Mockito.when(purchaseRepository.findPurchasesByOrder_id(purchase.getOrder().getId())).thenReturn(new ArrayList<>());
         //then
         Assert.assertTrue(purchaseService.delete(1L));
 	}
@@ -110,7 +115,7 @@ public class PurchaseServiceImplTest extends BaseServiceTest{
         	add(PurchaseConverter.convertPurchaseToDTO(purchase));
         }};
         // when
-        Mockito.when(purchaseRepository.findPurchasesByOrder(3L)).thenReturn(purchases);
+        Mockito.when(purchaseRepository.findPurchasesByOrder_id(3L)).thenReturn(purchases);
         List<PurchaseDTO> actual = purchaseService.findPurchasesByOrder(3L);
         // then
         Assert.assertEquals(expected, actual);
