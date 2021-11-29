@@ -78,11 +78,10 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 	public void findOrdersByUser_validData_shouldAddAllOrders() {
 		// given
 		List<Order> expected = new ArrayList<>() {{
-			add(Order.builder().id(4L).totalPrice(120).date(LocalDate.of(2021, 10, 22)).status(Status.booked).build());
-			add(Order.builder().id(2L).totalPrice(90).date(LocalDate.of(2021, 10, 23)).status(Status.confirmed).build());
+			add(orders.get(0));
 		}};
 		// when
-		List<Order> actual = repository.findOrdersByUser_id(4L);
+		List<Order> actual = repository.findOrdersByUser_id(1L);
 		// then
 		Assert.assertEquals(expected, actual);
 	}
