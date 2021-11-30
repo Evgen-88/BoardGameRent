@@ -55,9 +55,6 @@ public class UserRepositoryImplTest extends BaseRepositoryTest {
 		//given
 		User expected = User.builder().id(6L).login("vasya").password("vasya").name("Василий").phone(8888888).email("vasya@mail").build();
 		User user = User.builder().login("vasya").password("vasya").name("Василий").phone(8888888).email("vasya@mail").build();
-//		List<Long> roleIds = new ArrayList<>() {{
-//			add(3L);
-//		}};
 		User actual = repository.save(user);
 		//then
 		Assert.assertEquals(expected, actual);
