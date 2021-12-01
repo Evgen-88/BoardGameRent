@@ -1,9 +1,9 @@
 INSERT INTO users(login, password, name, phone, email)
-VALUES  ('ivan', 'ivan', 'Иван', 1111111, 'ivan@mail'),
-		('alex', 'alex', 'Алекс', 2222222, 'alex@mail'),
-		('kir', 'kir', 'Кирилл', 3333333, 'kir@mail'),
-		('piter', 'piter', 'Петр', 4444444, 'piter@mail'),
-		('vova', 'vova', 'Владимир', 5555555, 'vova@mail');
+VALUES  ('ivan', '$2a$12$Zz1osbGrGZrFpB0OuozlZuqtcjKdr0iAN0OM0/BdVlZhPxaMx01jW', 'Иван', 1111111, 'ivan@mail'),
+		('alex', '$2a$12$QmvrBgy8.RAuCj9cZ3yQDek1ZOKY/nRF7vb7kyIOWo7M9aWxsngi6', 'Алекс', 2222222, 'alex@mail'),
+		('kir', '$2a$12$yaZL8PGRDB4MiwrwPajavOEWgL5d1FyldWWWEMWSzm2v/xqzHuU0C', 'Кирилл', 3333333, 'kir@mail'),
+		('piter', '$2a$12$AhLOgtPWDytNQtixRXef8.KLeZNPUDNgzjJ/VB/yZJnivQ0rSSkFC', 'Петр', 4444444, 'piter@mail'),
+		('vova', '$2a$12$eIV9PyAhpi9SvGTG.c/DU.CuP54stjgX/uiMNMQHCeqre/2/6mPZm', 'Владимир', 5555555, 'vova@mail');
 		
 INSERT INTO user_role(name)
 VALUES  ('admin'),
