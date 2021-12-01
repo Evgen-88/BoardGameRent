@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.itrex.konoplyanik.boardgamerent.converters.UserConverter;
+import com.itrex.konoplyanik.boardgamerent.dto.UserAuthenticationDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserBaseDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserSaveDTO;
@@ -59,6 +60,13 @@ public class UserServiceImpl implements UserService {
 	@Transactional(readOnly = true)
 	public UserDTO findById(Long id) throws ServiceException {
 		return userRepository.findUserById(id).map(UserConverter::convertUserToDTO)
+				.orElseThrow(() -> new ServiceException("User not found"));
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public UserAuthenticationDTO findByLogin(String login) throws ServiceException {
+		return userRepository.findByLogin(login).map(UserConverter::convertUserToAuthenticationDTO)
 				.orElseThrow(() -> new ServiceException("User not found"));
 	}
 

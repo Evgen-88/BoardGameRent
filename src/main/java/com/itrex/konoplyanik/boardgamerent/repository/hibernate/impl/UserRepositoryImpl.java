@@ -34,7 +34,11 @@ public class UserRepositoryImpl implements UserRepository {
 	private static final String UPDATE_QUERY = "update User set login = :login, "
 			+ "password = :password, name = :name, phone = :phone, email = :email where id = :id";
 
-	private final SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
+	
+	public UserRepositoryImpl() {
+		
+	}
 
 	public UserRepositoryImpl(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;

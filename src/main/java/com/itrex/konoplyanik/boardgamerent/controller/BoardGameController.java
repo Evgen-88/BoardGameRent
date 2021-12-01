@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +52,7 @@ public class BoardGameController {
 	}
 
 	@PostMapping
+	@Secured("manager")
 	public ResponseEntity<BoardGameDTO> add(@RequestBody BoardGameDTO boardGame) {
 		BoardGameDTO boardGameDTO = null;
 		try {
@@ -62,6 +64,7 @@ public class BoardGameController {
 	}
 
 	@PutMapping
+	@Secured("manager")
 	public ResponseEntity<BoardGameDTO> update(@RequestBody BoardGameDTO boardGame) {
 		BoardGameDTO boardGameDTO = null;
 		try {
@@ -74,6 +77,7 @@ public class BoardGameController {
 	}
 
 	@DeleteMapping("/{id}")
+	@Secured("manager")
 	public ResponseEntity<Boolean> delete(@PathVariable long id) {
 		try {
 			boardGameService.delete(id);

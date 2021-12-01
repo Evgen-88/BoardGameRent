@@ -2,6 +2,7 @@ package com.itrex.konoplyanik.boardgamerent.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/rents")
 @RequiredArgsConstructor
+@Secured("customer")
 public class RentController {
 
 	private final RentService rentService;

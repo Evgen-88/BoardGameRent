@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
+@Secured({"manager", "customer"})
 public class OrderController {
 
 	private final OrderService orderService;
@@ -58,6 +60,7 @@ public class OrderController {
 	}
 
 	@PostMapping
+	@Secured("customer")
 	public ResponseEntity<OrderSaveDTO> add(@RequestBody OrderSaveDTO order) {
 		OrderSaveDTO orderDTO = null;
 		try {
@@ -81,6 +84,7 @@ public class OrderController {
 	}
 
 	@DeleteMapping("/{id}")
+	@Secured("manager")
 	public ResponseEntity<Boolean> delete(@PathVariable long id) {
 		try {
 			orderService.delete(id);
