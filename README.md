@@ -6,7 +6,7 @@
 and/or accessories for purchase. The manager checks the order and refreshes its status.<br/>
 Also a manager updates the database and expands the range of the offered board games and accessories.<br/>
 2. **Roles**: customer, manager, admin. One user can have several roles.<br/>
-3. **Client functions**: create/update order.<br/>
+3. **Customer functions**: create/update order.<br/>
 4. **Manager functions**: view the list of orders, update/delete order,<br/>
 create/update/delete board games and accessories.<br/>
 5. **Administrator functions**: view the list of roles, delete users,<br/>
