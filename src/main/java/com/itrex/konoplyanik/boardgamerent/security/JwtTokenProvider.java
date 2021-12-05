@@ -28,10 +28,10 @@ public class JwtTokenProvider {
 	
 	private final String TOKEN_PREFIX = "Bearer ";
 
-//	@PostConstruct
-//	protected void init() {
-//		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-//	}
+	@PostConstruct
+	protected void init() {
+		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+	}
 
 	public String createToken(UserAuthenticationDTO user) {
 		return TOKEN_PREFIX + Jwts.builder()
