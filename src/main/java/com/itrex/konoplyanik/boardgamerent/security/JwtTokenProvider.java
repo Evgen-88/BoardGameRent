@@ -1,6 +1,9 @@
 package com.itrex.konoplyanik.boardgamerent.security;
 
+import java.util.Base64;
 import java.util.Date;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -10,7 +13,6 @@ import com.itrex.konoplyanik.boardgamerent.dto.UserAuthenticationDTO;
 import com.itrex.konoplyanik.boardgamerent.exception.JwtAuthenticationException;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +46,7 @@ public class JwtTokenProvider {
 	}
 
 	public String removePrefixFromToken(String token) {
-		return token.split(" ")[1];
+		return token.split(" ")[1].trim();
 	}
 
 	public boolean validateToken(String token) throws JwtAuthenticationException {
