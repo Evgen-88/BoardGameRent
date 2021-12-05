@@ -15,16 +15,14 @@ import com.itrex.konoplyanik.boardgamerent.repository.AccessoryRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
 import com.itrex.konoplyanik.boardgamerent.service.AccessoryService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class AccessoryServiceImpl implements AccessoryService {
 
 	private final AccessoryRepository accessoryRepository;
 	private final PurchaseRepository purchaseRepository;
-
-	public AccessoryServiceImpl(AccessoryRepository accessoryRepository, PurchaseRepository purchaseRepository) {
-		this.accessoryRepository = accessoryRepository;
-		this.purchaseRepository = purchaseRepository;
-	}
 
 	@Override
 	@Transactional(readOnly = true)

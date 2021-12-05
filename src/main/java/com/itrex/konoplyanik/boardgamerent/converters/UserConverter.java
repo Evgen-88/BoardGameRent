@@ -1,13 +1,10 @@
 package com.itrex.konoplyanik.boardgamerent.converters;
 
-import java.util.stream.Collectors;
-
 import com.itrex.konoplyanik.boardgamerent.dto.UserAuthenticationDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserBaseDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserSaveDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserUpdateDTO;
-import com.itrex.konoplyanik.boardgamerent.entity.Role;
 import com.itrex.konoplyanik.boardgamerent.entity.User;
 
 public class UserConverter {
@@ -70,8 +67,9 @@ public class UserConverter {
 	public static UserAuthenticationDTO convertUserToAuthenticationDTO(User user) {
 		return UserAuthenticationDTO.builder()
 				.id(user.getId())
-				.login(user.getLogin())
-				.roleNames(user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
+				.username(user.getLogin())
+				.password(user.getPassword())
+				.roles(user.getRoles())
 				.build();
 	}
 	

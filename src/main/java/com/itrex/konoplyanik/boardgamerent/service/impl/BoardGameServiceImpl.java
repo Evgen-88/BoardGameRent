@@ -15,16 +15,14 @@ import com.itrex.konoplyanik.boardgamerent.repository.BoardGameRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 import com.itrex.konoplyanik.boardgamerent.service.BoardGameService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class BoardGameServiceImpl implements BoardGameService {
 
 	private final BoardGameRepository boardGameRepository;
 	private final RentRepository rentRepository;
-
-	public BoardGameServiceImpl(BoardGameRepository boardGameRepository, RentRepository rentRepository) {
-		this.boardGameRepository = boardGameRepository;
-		this.rentRepository = rentRepository;
-	}
 
 	@Override
 	@Transactional(readOnly = true)

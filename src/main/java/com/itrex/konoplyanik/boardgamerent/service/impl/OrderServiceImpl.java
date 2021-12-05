@@ -21,21 +21,16 @@ import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
 import com.itrex.konoplyanik.boardgamerent.service.OrderService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
 	private final OrderRepository orderRepository;
 	private final UserRepository userRepository;
 	private final PurchaseRepository purchaseRepository;
 	private final RentRepository rentRepository;
-
-	public OrderServiceImpl(OrderRepository orderRepository, UserRepository userRepository,
-			PurchaseRepository purchaseRepository, RentRepository rentRepository) {
-		this.orderRepository = orderRepository;
-		this.userRepository = userRepository;
-		this.purchaseRepository = purchaseRepository;
-		this.rentRepository = rentRepository;
-	}
 
 	@Override
 	@Transactional(readOnly = true)

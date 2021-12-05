@@ -12,14 +12,13 @@ import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.RoleRepository;
 import com.itrex.konoplyanik.boardgamerent.service.RoleService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
 
 	private final RoleRepository roleRepository;
-
-	public RoleServiceImpl(RoleRepository roleRepository) {
-		this.roleRepository = roleRepository;
-	}
 
 	@Override
 	@Transactional(readOnly = true)

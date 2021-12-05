@@ -19,21 +19,16 @@ import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 import com.itrex.konoplyanik.boardgamerent.service.RentService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class RentServiceImpl implements RentService {
 
 	private final RentRepository rentRepository;
 	private final PurchaseRepository purchaseRepository;
 	private final OrderRepository orderRepository;
 	private final BoardGameRepository boardGameRepository;
-
-	public RentServiceImpl(RentRepository rentRepository, PurchaseRepository purchaseRepository,
-			OrderRepository orderRepository, BoardGameRepository boardGameRepository) {
-		this.rentRepository = rentRepository;
-		this.purchaseRepository = purchaseRepository;
-		this.orderRepository = orderRepository;
-		this.boardGameRepository = boardGameRepository;
-	}
 
 	@Override
 	@Transactional(readOnly = true)

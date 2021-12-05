@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +31,10 @@ import com.itrex.konoplyanik.boardgamerent.repository.RoleRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
 import com.itrex.konoplyanik.boardgamerent.service.UserService;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
@@ -38,15 +42,7 @@ public class UserServiceImpl implements UserService {
 	private final OrderRepository orderRepository;
 	private final PurchaseRepository purchaseRepository;
 	private final RentRepository rentRepository;
-
-	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
-			OrderRepository orderRepository, PurchaseRepository purchaseRepository, RentRepository rentRepository) {
-		this.userRepository = userRepository;
-		this.roleRepository = roleRepository;
-		this.orderRepository = orderRepository;
-		this.purchaseRepository = purchaseRepository;
-		this.rentRepository = rentRepository;
-	}
+	private final PasswordEncoder passwordEncoder;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -66,8 +62,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional(readOnly = true)
 	public UserAuthenticationDTO findByLogin(String login) throws ServiceException {
-		return userRepository.findByLogin(login).map(UserConverter::convertUserToAuthenticationDTO)
-				.orElseThrow(() -> new ServiceException("User not found"));
+		return userRepository.findUserByLogin(login).map(UserConverter::convertUserToAuthenticationDTO).orElseThrow(() -> new ServiceException("User not found"));
 	}
 
 	@Override
@@ -79,6 +74,7 @@ public class UserServiceImpl implements UserService {
 		}
 		User user = User.builder().login(userDTO.getLogin()).password(userDTO.getPassword()).name(userDTO.getName())
 				.email(userDTO.getEmail()).phone(userDTO.getPhone()).roles(roles).orders(new HashSet<>()).build();
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return UserConverter.convertUserToDTO(userRepository.save(user));
 	}
 
