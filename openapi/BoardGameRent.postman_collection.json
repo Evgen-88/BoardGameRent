@@ -30,16 +30,6 @@
 				{
 					"name": "findById(1)",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -63,18 +53,14 @@
 						"disabledSystemHeaders": {}
 					},
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"name\": \"Кубик D6\",\r\n    \"price\": 6,\r\n    \"quantity\": 52\r\n}",
@@ -103,7 +89,13 @@
 					"name": "update(2)",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"id\": 2,\r\n    \"name\": \"Кубик D9\",\r\n    \"price\": 9,\r\n    \"quantity\": 99\r\n}",
@@ -208,7 +200,13 @@
 					"name": "add",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"name\": \"Сезоны\",\r\n    \"rentPrice\": 35,\r\n    \"quantity\": 4\r\n}",
@@ -236,7 +234,13 @@
 					"name": "update(2)",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"id\": 2,\r\n    \"name\": \"Корни\",\r\n    \"rentPrice\": 35,\r\n    \"quantity\": 4\r\n}",
@@ -264,7 +268,13 @@
 					"name": "delete(1)",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "http://localhost:8080/boardgames/1",
 							"protocol": "http",

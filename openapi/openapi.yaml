@@ -6,6 +6,33 @@ servers:
 - url: http://localhost:8080
 
 paths:
+  /roles:
+    get:
+      tags:
+      - role-controller
+      operationId: findAll_1
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          format: token
+          example: token
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoleDTO'
+        "404":
+          description: NOT_FOUND
+        "401":
+          description: UNAUTORIZED
+
   /users:
     get:
       tags:
@@ -1051,20 +1078,7 @@ paths:
                     example: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzLGtpciIsImlzcyI6Iml0cmV4IiwiaWF0IjoxNjM4NzA5NzI5LCJleHAiOjE2Mzg3MTY5Mjl9.wgfn0P9V_clU2Bzffx4uVAP1Ut4eCAkx2bAIZbI0LBhQJWEfjLENSlzKCrenavFQWAcORShUnLc0MB6Tv9XcBw
         "406":
           description: FORBIDDEN
-  /roles:
-    get:
-      tags:
-      - role-controller
-      operationId: findAll_1
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RoleDTO'
+
 components:
   schemas:
     UserUpdateDTO:
