@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -25,11 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @AllArgsConstructor
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-        prePostEnabled = true,
-//        TODO fix this bug
-//        securedEnabled = true,
-        jsr250Enabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	private final JwtTokenFilter jwtTokenFilter;
@@ -59,6 +56,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/accessories/**").permitAll()
                 .antMatchers("/authentication/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers(HttpMethod.GET, "/users").permitAll()
                 .anyRequest()
                 .authenticated();
                 
@@ -74,6 +72,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public SecurityContextLogoutHandler securityContextLogoutHandler(){
         return new SecurityContextLogoutHandler();
+    }
+    
+    @Bean
+    GrantedAuthorityDefaults grantedAuthorityDefaults() {
+    	return new GrantedAuthorityDefaults("");
     }
     
 }
