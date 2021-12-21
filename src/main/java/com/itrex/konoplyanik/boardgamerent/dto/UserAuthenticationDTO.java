@@ -1,9 +1,11 @@
 package com.itrex.konoplyanik.boardgamerent.dto;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.itrex.konoplyanik.boardgamerent.entity.Authority;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,12 +22,14 @@ public class UserAuthenticationDTO implements UserDetails {
 	private String username;
     private String password;
     private Set<Role> roles;
-    
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return roles.stream()
-                .map(role -> (GrantedAuthority) role::getName)
-                .collect(Collectors.toSet());
+		Set<Authority> authorities = new HashSet<>();
+		roles.stream().forEach(role -> authorities.addAll(role.getAuthorities()));
+		return authorities.stream()
+				.map(authority -> (GrantedAuthority) authority::getName)
+				.collect(Collectors.toSet());
 	}
 	@Override
 	public String getUsername() {

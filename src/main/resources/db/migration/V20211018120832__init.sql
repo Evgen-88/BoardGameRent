@@ -15,7 +15,15 @@ CREATE TABLE IF NOT EXISTS user_role
 	id		BIGINT		NOT NULL AUTO_INCREMENT,
 	name	VARCHAR(32)	NOT NULL,
 	PRIMARY KEY (id),
-	CONSTRAINT UNIQUE_USER_NAME UNIQUE (name)
+	CONSTRAINT UNIQUE_ROLE_NAME UNIQUE (name)
+);
+
+CREATE TABLE IF NOT EXISTS authorities
+(
+    id		BIGINT		NOT NULL AUTO_INCREMENT,
+    name	VARCHAR(32)	NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT UNIQUE_AUTHORITY_NAME UNIQUE (name)
 );
 
 CREATE TABLE IF NOT EXISTS users_user_role_link
@@ -29,6 +37,19 @@ CREATE TABLE IF NOT EXISTS users_user_role_link
     CONSTRAINT users_user_role_link_user_role_fk
         FOREIGN KEY (role_id)
             REFERENCES user_role (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_role_authorities_link
+(
+    role_id         BIGINT	 NOT NULL,
+    authority_id    BIGINT	 NOT NULL,
+    PRIMARY KEY (role_id, authority_id),
+    CONSTRAINT user_role_authorities_link_user_role_fk
+        FOREIGN KEY (role_id)
+            REFERENCES user_role (id),
+    CONSTRAINT user_role_authorities_link_authorities_fk
+        FOREIGN KEY (authority_id)
+            REFERENCES authorities (id)
 );
 
 CREATE TABLE IF NOT EXISTS orders

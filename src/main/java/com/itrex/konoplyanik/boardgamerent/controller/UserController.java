@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,7 +51,7 @@ public class UserController {
 	}
 
 	@GetMapping("/{id}")
-	@Secured("admin")
+	@PreAuthorize("hasAuthority('USER_READ')")
 	public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
 		UserDTO user = null;
 		try {
@@ -85,7 +86,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Secured("admin")
+	@PreAuthorize("hasAuthority('USER_DELETE')")
 	public ResponseEntity<Boolean> delete(@PathVariable long id) {
 		try {
 			userService.delete(id);
@@ -96,7 +97,7 @@ public class UserController {
 	}
 
 	@GetMapping("/{id}/orders")
-	@Secured("manager")
+	@PreAuthorize("hasAuthority('USER_READ')")
 	public ResponseEntity<List<OrderListDTO>> findOrdersByUser(@PathVariable Long id) {
 		List<OrderListDTO> orders = null;
 		try {
@@ -109,7 +110,7 @@ public class UserController {
 	}
 
 	@GetMapping("/{id}/roles")
-	@Secured("admin")
+	@PreAuthorize("hasAuthority('ROLE_READ')")
 	public ResponseEntity<List<RoleDTO>> findRolesByUser(@PathVariable Long id) {
 		List<RoleDTO> roles = null;
 		try {
@@ -122,7 +123,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/{id}/roles")
-	@Secured("admin")
+	@PreAuthorize("hasAuthority('ROLE_READ')")
 	public ResponseEntity<Boolean> deleteRoleFromUser(@PathVariable Long id, @RequestParam long roleId) {
 		try {
 			userService.deleteRoleFromUser(id, roleId);
@@ -133,7 +134,7 @@ public class UserController {
 	}
 
 	@PutMapping("/{id}/roles")
-	@Secured("admin")
+	@PreAuthorize("hasAuthority('ROLE_READ')")
 	public ResponseEntity<Boolean> addRoleToUser(@PathVariable Long id, @RequestParam long roleId) {
 		try {
 			userService.addRoleToUser(id, roleId);
