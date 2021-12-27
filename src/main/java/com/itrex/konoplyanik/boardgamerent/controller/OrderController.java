@@ -1,35 +1,22 @@
 package com.itrex.konoplyanik.boardgamerent.controller;
 
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.itrex.konoplyanik.boardgamerent.dto.OrderDTO;
-import com.itrex.konoplyanik.boardgamerent.dto.OrderListDTO;
-import com.itrex.konoplyanik.boardgamerent.dto.OrderSaveDTO;
-import com.itrex.konoplyanik.boardgamerent.dto.PurchaseDTO;
-import com.itrex.konoplyanik.boardgamerent.dto.RentDTO;
+import com.itrex.konoplyanik.boardgamerent.dto.*;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.service.OrderService;
 import com.itrex.konoplyanik.boardgamerent.service.PurchaseService;
 import com.itrex.konoplyanik.boardgamerent.service.RentService;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
-@Secured({"manager", "customer"})
+@PreAuthorize("hasAuthority('ORDER_READ_WRITE') or hasAuthority('ORDER_DELETE')")
 public class OrderController {
 
 	private final OrderService orderService;
@@ -60,7 +47,6 @@ public class OrderController {
 	}
 
 	@PostMapping
-	@Secured("customer")
 	public ResponseEntity<OrderSaveDTO> add(@RequestBody OrderSaveDTO order) {
 		OrderSaveDTO orderDTO = null;
 		try {
@@ -84,7 +70,7 @@ public class OrderController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Secured("manager")
+	@PreAuthorize("hasAuthority('ORDER_DELETE')")
 	public ResponseEntity<Boolean> delete(@PathVariable long id) {
 		try {
 			orderService.delete(id);

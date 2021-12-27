@@ -1,24 +1,22 @@
 package com.itrex.konoplyanik.boardgamerent.controller;
 
-import java.util.List;
-
+import com.itrex.konoplyanik.boardgamerent.dto.RoleDTO;
+import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
+import com.itrex.konoplyanik.boardgamerent.service.RoleService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.itrex.konoplyanik.boardgamerent.dto.RoleDTO;
-import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
-import com.itrex.konoplyanik.boardgamerent.service.RoleService;
-
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @RestController
 @RequestMapping("/roles")
 @RequiredArgsConstructor
-@Secured("admin")
+@PreAuthorize("hasAuthority('ROLE_READ')")
 public class RoleController {
 
 	private final RoleService roleService;

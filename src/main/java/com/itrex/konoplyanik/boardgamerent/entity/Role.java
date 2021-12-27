@@ -2,13 +2,7 @@ package com.itrex.konoplyanik.boardgamerent.entity;
 
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,6 +32,13 @@ public class Role {
 	@ToString.Exclude
 	@ManyToMany(mappedBy = "roles")
 	private Set<User> users;
+
+	@ToString.Exclude
+	@ManyToMany
+	@JoinTable(name = "user_role_authorities_link",
+			joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
+	private Set<Authority> authorities;
 
 	@Override
 	public int hashCode() {

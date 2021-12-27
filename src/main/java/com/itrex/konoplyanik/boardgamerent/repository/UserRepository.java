@@ -13,6 +13,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("from User u left join fetch u.roles left join fetch u.orders where u.id = :id")
 	Optional<User> findUserById(@Param("id") Long id);
 	
-	@Query("from User u left join fetch u.roles where u.login = :login")
+	@Query("from User u left join fetch u.roles r left join fetch r.authorities where u.login = :login")
 	Optional<User> findUserByLogin(String login);
 }
