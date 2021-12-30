@@ -1,0 +1,12 @@
+version: "2.1"
+
+services:
+  mysql:
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=boardgamerent
+      - MYSQL_USER=evgen
+      - MYSQL_PASSWORD=evgen
+      - MYSQL_ROOT_PASSWORD=evgen
