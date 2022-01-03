@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -33,7 +33,7 @@ public class AccessoryServiceImplTest extends BaseServiceTest {
         Mockito.when(accessoryRepository.findAll()).thenReturn(Arrays.asList(new Accessory(), new Accessory(), new Accessory()));
         List<AccessoryDTO> actual = accessoryService.findAll();
         //then
-        Assert.assertEquals(expected, actual.size());
+        Assertions.assertEquals(expected, actual.size());
 	}
 	
 	@Test
@@ -46,8 +46,8 @@ public class AccessoryServiceImplTest extends BaseServiceTest {
                 .thenReturn(Optional.of(accessory));
         AccessoryDTO actual = accessoryService.findById(accessory.getId());
         // then
-        Assert.assertEquals(expected, actual);
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
     }
 	
 	@Test
@@ -59,7 +59,7 @@ public class AccessoryServiceImplTest extends BaseServiceTest {
         Mockito.when(accessoryRepository.save(accessory)).thenReturn(accessory);
         AccessoryDTO actual = accessoryService.add(expected);
         //then
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
     }
 	
 	@Test
@@ -71,7 +71,7 @@ public class AccessoryServiceImplTest extends BaseServiceTest {
         Mockito.when(accessoryRepository.findById(accessory.getId())).thenReturn(Optional.of(accessory));
         AccessoryDTO actual = accessoryService.update(expected);
         // then
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -82,7 +82,7 @@ public class AccessoryServiceImplTest extends BaseServiceTest {
 		//when
         Mockito.when(accessoryRepository.findAccessoryById(1L)).thenReturn(Optional.of(accessory));
         //then
-        Assert.assertTrue(accessoryService.delete(1L));
+		Assertions.assertTrue(accessoryService.delete(1L));
 	}
 	
 }

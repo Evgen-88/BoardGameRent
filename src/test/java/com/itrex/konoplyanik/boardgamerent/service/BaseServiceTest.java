@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import com.itrex.konoplyanik.boardgamerent.entity.Accessory;
 import com.itrex.konoplyanik.boardgamerent.entity.BoardGame;
 import com.itrex.konoplyanik.boardgamerent.entity.Order;
@@ -14,8 +12,9 @@ import com.itrex.konoplyanik.boardgamerent.entity.Rent;
 import com.itrex.konoplyanik.boardgamerent.entity.Role;
 import com.itrex.konoplyanik.boardgamerent.entity.Status;
 import com.itrex.konoplyanik.boardgamerent.entity.User;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
 public abstract class BaseServiceTest {
 
 	public List<User> getUsers() {

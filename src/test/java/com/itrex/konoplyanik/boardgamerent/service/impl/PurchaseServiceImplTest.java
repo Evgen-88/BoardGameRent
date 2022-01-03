@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -47,7 +47,7 @@ public class PurchaseServiceImplTest extends BaseServiceTest{
                 .thenReturn(Optional.of(purchase));
         PurchaseDTO actual = purchaseService.findById(1L);
         // then
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 	
 	@Test
@@ -68,7 +68,7 @@ public class PurchaseServiceImplTest extends BaseServiceTest{
         Mockito.when(purchaseRepository.save(purchase)).thenReturn(purchase);
         PurchaseDTO actual = purchaseService.add(purchaseSaveDTO);
         //then
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
     }
 	
 	@Test
@@ -89,7 +89,7 @@ public class PurchaseServiceImplTest extends BaseServiceTest{
 		Mockito.when(purchaseRepository.findById(purchase.getId())).thenReturn(Optional.of(getPurchases().get(0)));
         PurchaseDTO actual = purchaseService.update(purchaseSaveDTO);
         // then
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -101,7 +101,7 @@ public class PurchaseServiceImplTest extends BaseServiceTest{
 		Mockito.when(rentRepository.findRentsByOrder_id(purchase.getOrder().getId())).thenReturn(new ArrayList<>());
 		Mockito.when(purchaseRepository.findPurchasesByOrder_id(purchase.getOrder().getId())).thenReturn(new ArrayList<>());
         //then
-        Assert.assertTrue(purchaseService.delete(1L));
+		Assertions.assertTrue(purchaseService.delete(1L));
 	}
 	
 	@Test
@@ -118,6 +118,6 @@ public class PurchaseServiceImplTest extends BaseServiceTest{
         Mockito.when(purchaseRepository.findPurchasesByOrder_id(3L)).thenReturn(purchases);
         List<PurchaseDTO> actual = purchaseService.findPurchasesByOrder(3L);
         // then
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 }

@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -35,7 +35,7 @@ public class BoardGameServiceImplTest extends BaseServiceTest {
         Mockito.when(boardGameRepository.findAll()).thenReturn(Arrays.asList(new BoardGame(), new BoardGame(), new BoardGame(), new BoardGame()));
         List<BoardGameDTO> actual = boardGameService.findAll();
         //then
-        Assert.assertEquals(expected, actual.size());
+        Assertions.assertEquals(expected, actual.size());
 	}
 	
 	@Test
@@ -47,8 +47,8 @@ public class BoardGameServiceImplTest extends BaseServiceTest {
                 .thenReturn(Optional.of(BoardGame.builder().id(1L).name("Сквозь века").rentPrice(45).quantity(3).build()));
         String actual = boardGameService.findById(1L).getName();
         // then
-        Assert.assertEquals(expected, actual);
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 	
 	@Test
@@ -60,7 +60,7 @@ public class BoardGameServiceImplTest extends BaseServiceTest {
         Mockito.when(boardGameRepository.save(boardGame)).thenReturn(boardGame);
         BoardGameDTO actual = boardGameService.add(expected);
         //then
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 	
 	@Test
@@ -72,7 +72,7 @@ public class BoardGameServiceImplTest extends BaseServiceTest {
         Mockito.when(boardGameRepository.findById(boardGame.getId())).thenReturn(Optional.of(boardGame));
         BoardGameDTO actual = boardGameService.update(expected);
         // then
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -82,7 +82,7 @@ public class BoardGameServiceImplTest extends BaseServiceTest {
 		//when
         Mockito.when(boardGameRepository.findBoardGameById(boardGame.getId())).thenReturn(Optional.of(boardGame));
         //then
-        Assert.assertTrue(boardGameService.delete(1L));
+        Assertions.assertTrue(boardGameService.delete(1L));
 	}
 	
 }

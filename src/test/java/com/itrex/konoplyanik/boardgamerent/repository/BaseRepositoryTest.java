@@ -1,24 +1,23 @@
 package com.itrex.konoplyanik.boardgamerent.repository;
 
 import org.flywaydb.core.Flyway;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
 public abstract class BaseRepositoryTest {
 	
 	@Autowired
 	private Flyway flyway;
 	
-	@Before
+	@BeforeEach
     public void initDB() {
         flyway.migrate();
     }
 
-	@After
+	@AfterEach
     public void cleanDB() {
         flyway.clean();
     }

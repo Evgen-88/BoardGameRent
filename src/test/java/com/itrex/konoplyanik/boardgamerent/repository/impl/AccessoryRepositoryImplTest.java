@@ -3,9 +3,9 @@ package com.itrex.konoplyanik.boardgamerent.repository.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -19,11 +19,10 @@ public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 	@Autowired
 	private AccessoryRepository repository;
 	
-	private List<Accessory> accessories;
-	
-	
-	@Before
-	public void fill() {
+	private static List<Accessory> accessories;
+
+	@BeforeAll
+	public static void fill() {
 		accessories = new ArrayList<>() {{
 			add(Accessory.builder().id(1L).name("Протекторы для карт 65х87").price(12).quantity(24).build());
 			add(Accessory.builder().id(2L).name("Протекторы для карт 48х64").price(13).quantity(20).build());
@@ -36,7 +35,7 @@ public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 		//given && when
 		List<Accessory>	actual = repository.findAll();
 		//then
-		Assert.assertEquals(accessories, actual);
+		Assertions.assertEquals(accessories, actual);
 	}
 	
 	@Test
@@ -46,7 +45,7 @@ public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 		//when
 		Accessory actual = repository.findById(expected.getId()).get();
 		//then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -57,7 +56,7 @@ public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 		//when
 		Accessory actual = repository.save(accessory);
 		//then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -65,12 +64,12 @@ public class AccessoryRepositoryImplTest extends BaseRepositoryTest {
 		//given
 		Accessory accessory = accessories.get(0);
 		Accessory expected = Accessory.builder().id(1L).name("Протекторы для карт 68х92").price(14).quantity(21).build();
-		Assert.assertEquals(accessory.getId(), expected.getId());
+		Assertions.assertEquals(accessory.getId(), expected.getId());
 		//when
 		
 		Accessory actual = repository.save(Accessory.builder().id(1L).name("Протекторы для карт 68х92").price(14).quantity(21).build());
 		//then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 	

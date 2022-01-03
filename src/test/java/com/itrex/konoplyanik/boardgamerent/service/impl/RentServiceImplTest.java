@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -48,7 +48,7 @@ public class RentServiceImplTest extends BaseServiceTest {
                 .thenReturn(Optional.of(rent));
         RentDTO actual = rentService.findById(rent.getId());
         // then
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 	
 	@Test
@@ -70,7 +70,7 @@ public class RentServiceImplTest extends BaseServiceTest {
         Mockito.when(rentRepository.save(rent)).thenReturn(rent);
         RentDTO actual = rentService.add(rentSaveDTO);
         //then
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
     }
 	
 	@Test
@@ -93,7 +93,7 @@ public class RentServiceImplTest extends BaseServiceTest {
         Mockito.when(rentRepository.findById(rentSaveDTO.getId())).thenReturn(Optional.of(getRents().get(0)));
         RentDTO actual = rentService.update(rentSaveDTO);
         // then
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -105,7 +105,7 @@ public class RentServiceImplTest extends BaseServiceTest {
 		Mockito.when(rentRepository.findRentsByOrder_id(rent.getOrder().getId())).thenReturn(new ArrayList<>());
 		Mockito.when(purchaseRepository.findPurchasesByOrder_id(rent.getOrder().getId())).thenReturn(new ArrayList<>());
         //then
-        Assert.assertTrue(rentService.delete(1L));
+		Assertions.assertTrue(rentService.delete(1L));
 	}
 	
 	@Test
@@ -122,6 +122,6 @@ public class RentServiceImplTest extends BaseServiceTest {
         Mockito.when(rentRepository.findRentsByOrder_id(1L)).thenReturn(rents);
         List<RentDTO> actual = rentService.findRentsByOrder(1L);
         // then
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 }

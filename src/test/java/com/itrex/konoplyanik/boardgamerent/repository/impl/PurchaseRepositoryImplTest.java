@@ -1,20 +1,16 @@
 package com.itrex.konoplyanik.boardgamerent.repository.impl;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import com.itrex.konoplyanik.boardgamerent.entity.Purchase;
+import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
+import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.itrex.konoplyanik.boardgamerent.entity.Order;
-import com.itrex.konoplyanik.boardgamerent.entity.Purchase;
-import com.itrex.konoplyanik.boardgamerent.entity.Status;
-import com.itrex.konoplyanik.boardgamerent.repository.BaseRepositoryTest;
-import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest
 public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
@@ -22,10 +18,10 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 	@Autowired
 	private PurchaseRepository repository;
 	
-	private List<Purchase> purchases;
+	private static List<Purchase> purchases;
 
-	@Before
-	public void fill() {
+	@BeforeAll
+	public static void fill() {
 		purchases = new ArrayList<>() {{
 			add(Purchase.builder().id(1L).quantity(2).price(26).build());
 			add(Purchase.builder().id(2L).quantity(3).price(36).build());
@@ -37,7 +33,7 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 		//given && when
 		List<Purchase>	actual = repository.findAll();
 		//then
-		Assert.assertEquals(purchases, actual);
+		Assertions.assertEquals(purchases, actual);
 	}
 	
 	@Test
@@ -47,7 +43,7 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 		//when
 		Purchase actual = repository.findById(expected.getId()).get();
 		//then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -58,7 +54,7 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 		//when
 		Purchase actual = repository.save(purchase);
 		//then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -66,11 +62,11 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 		//given
 		Purchase purchase = purchases.get(0);
 		Purchase expected = Purchase.builder().id(1L).quantity(5).price(100).build();
-		Assert.assertEquals(expected.getId(), purchase.getId());
+		Assertions.assertEquals(expected.getId(), purchase.getId());
 		//when
 		Purchase actual = repository.save(Purchase.builder().id(1L).quantity(5).price(100).build());
 		//then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -82,7 +78,7 @@ public class PurchaseRepositoryImplTest extends BaseRepositoryTest {
 		//when
 		List<Purchase> actual = repository.findPurchasesByOrder_id(3L);
 		//then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 }

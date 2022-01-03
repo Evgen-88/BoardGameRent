@@ -8,8 +8,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Test;
+import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
+import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -27,8 +29,6 @@ import com.itrex.konoplyanik.boardgamerent.entity.Status;
 import com.itrex.konoplyanik.boardgamerent.entity.User;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
-import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
-import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
 import com.itrex.konoplyanik.boardgamerent.service.BaseServiceTest;
 
@@ -42,21 +42,21 @@ public class OrderServiceImplTest extends BaseServiceTest {
 	@Mock
 	private UserRepository userRepository;
 	@Mock
-	private PurchaseRepository purchaseRepository;
-	@Mock
 	private RentRepository rentRepository;
+	@Mock
+	private PurchaseRepository purchaseRepository;
 	
 	@Test
 	public void findAll_validData_shouldReturnOrderList() throws ServiceException {
 		 //given
         List<Order> orders = getOrders();
-        List<OrderListDTO> expected = getOrders().stream().map(order -> OrderConverter.convertOrderToListDTO(order)).collect(Collectors.toList());
+        List<OrderListDTO> expected = getOrders().stream().map(OrderConverter::convertOrderToListDTO).collect(Collectors.toList());
         // when
         Mockito.when(orderRepository.findAll())
                 .thenReturn(orders);
         List<OrderListDTO> actual = orderService.findAll();
         // then
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -76,7 +76,7 @@ public class OrderServiceImplTest extends BaseServiceTest {
         Mockito.when(orderRepository.findById(2L)).thenReturn(Optional.of(order));
         OrderDTO actual = orderService.findById(2L);
         // then
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
     }
 	
 	@Test
@@ -97,7 +97,7 @@ public class OrderServiceImplTest extends BaseServiceTest {
         Mockito.when(orderRepository.save(order)).thenReturn(newOrder);
         OrderSaveDTO actual = orderService.add(orderSaveDTO);
         //then
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
     }
 	
 	@Test
@@ -116,7 +116,7 @@ public class OrderServiceImplTest extends BaseServiceTest {
 		Mockito.when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
         OrderSaveDTO actual = orderService.update(orderSaveDTO);
         // then
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -131,11 +131,10 @@ public class OrderServiceImplTest extends BaseServiceTest {
 	        }};
 	        order.setPurchases(purchases);
 	        order.setRents(rents);
-	        OrderDTO expected = OrderConverter.convertOrderToDTO(order);
 		//when
         Mockito.when(orderRepository.findOrderById(order.getId())).thenReturn(Optional.of(order));
         //then
-        Assert.assertTrue(orderService.delete(order.getId()));
+		Assertions.assertDoesNotThrow(() -> orderService.delete(2L));
 	}
 	
 	@Test
@@ -158,7 +157,7 @@ public class OrderServiceImplTest extends BaseServiceTest {
         Mockito.when(orderRepository.findOrdersByUser_id(1L)).thenReturn(orders);
         List<OrderListDTO> actual = orderService.findOrdersByUser(1L);
         // then
-        Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 }

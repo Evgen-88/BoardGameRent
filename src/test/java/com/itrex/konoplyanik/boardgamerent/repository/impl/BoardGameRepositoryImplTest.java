@@ -3,9 +3,9 @@ package com.itrex.konoplyanik.boardgamerent.repository.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -19,10 +19,10 @@ public class BoardGameRepositoryImplTest extends BaseRepositoryTest {
 	@Autowired
 	private BoardGameRepository repository;
 	
-	private List<BoardGame> boardGames;
+	private static List<BoardGame> boardGames;
 
-	@Before
-	public void fill() {
+	@BeforeAll
+	public static void fill() {
 		boardGames = new ArrayList<>() {{
 			add(BoardGame.builder().id(1L).name("Сквозь века").rentPrice(45).quantity(3).build());
 			add(BoardGame.builder().id(2L).name("Сумеречная борьба").rentPrice(40).quantity(2).build());
@@ -36,7 +36,7 @@ public class BoardGameRepositoryImplTest extends BaseRepositoryTest {
 		//given && when
 		List<BoardGame>	actual = repository.findAll();
 		//then
-		Assert.assertEquals(boardGames, actual);
+		Assertions.assertEquals(boardGames, actual);
 	}
 	
 	@Test
@@ -46,7 +46,7 @@ public class BoardGameRepositoryImplTest extends BaseRepositoryTest {
 		//when
 		BoardGame actual = repository.findById(expected.getId()).get();
 		//then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -57,7 +57,7 @@ public class BoardGameRepositoryImplTest extends BaseRepositoryTest {
 		//when
 		BoardGame actual = repository.save(boardGame);
 		//then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 	@Test
@@ -65,11 +65,11 @@ public class BoardGameRepositoryImplTest extends BaseRepositoryTest {
 		//given
 		BoardGame boardGame = boardGames.get(0);
 		BoardGame expected = BoardGame.builder().id(1L).name("Пандемия").rentPrice(30).quantity(5).build();
-		Assert.assertEquals(boardGame.getId(), expected.getId());
+		Assertions.assertEquals(boardGame.getId(), expected.getId());
 		//when
 		BoardGame actual = repository.save(BoardGame.builder().id(1L).name("Пандемия").rentPrice(30).quantity(5).build());
 		//then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 	
 }

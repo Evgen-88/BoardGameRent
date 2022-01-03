@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -21,10 +21,10 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 	@Autowired
 	private OrderRepository repository;
 	
-	private List<Order> orders;
+	private static List<Order> orders;
 
-	@Before
-	public void fill() {
+	@BeforeAll
+	public static void fill() {
 		orders = new ArrayList<>() {{
 			add(Order.builder().id(1L).totalPrice(45).date(LocalDate.of(2021, 10, 23)).status(Status.confirmed).build());
 			add(Order.builder().id(2L).totalPrice(90).date(LocalDate.of(2021, 10, 23)).status(Status.confirmed).build());
@@ -38,7 +38,7 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 		// given && when
 		List<Order> actual = repository.findAll();
 		// then
-		Assert.assertEquals(orders, actual);
+		Assertions.assertEquals(orders, actual);
 	}
 
 	@Test
@@ -48,7 +48,7 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 		// when
 		Order actual = repository.findById(expected.getId()).get();
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test
@@ -59,7 +59,7 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 		// when
 		Order actual = repository.save(order);
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test
@@ -67,11 +67,11 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 		// given
 		Order order = orders.get(0);
 		Order expected = Order.builder().id(1L).totalPrice(88).date(LocalDate.of(2021, 10, 28)).status(Status.rejected).build();
-		Assert.assertEquals(expected.getId(), order.getId());
+		Assertions.assertEquals(expected.getId(), order.getId());
 		// when
 		Order actual = repository.save(expected);
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test
@@ -83,7 +83,7 @@ public class OrderRepositoryImplTest extends BaseRepositoryTest {
 		// when
 		List<Order> actual = repository.findOrdersByUser_id(1L);
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 }

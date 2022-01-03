@@ -1,15 +1,14 @@
 package com.itrex.konoplyanik.boardgamerent.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Test;
+import com.itrex.konoplyanik.boardgamerent.repository.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.Sort;
 import com.itrex.konoplyanik.boardgamerent.converters.OrderConverter;
 import com.itrex.konoplyanik.boardgamerent.converters.RoleConverter;
 import com.itrex.konoplyanik.boardgamerent.converters.UserConverter;
-import com.itrex.konoplyanik.boardgamerent.dto.UserBaseDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserSaveDTO;
 import com.itrex.konoplyanik.boardgamerent.dto.UserUpdateDTO;
@@ -31,12 +29,8 @@ import com.itrex.konoplyanik.boardgamerent.entity.Order;
 import com.itrex.konoplyanik.boardgamerent.entity.Role;
 import com.itrex.konoplyanik.boardgamerent.entity.User;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
-import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
-import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
-import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
-import com.itrex.konoplyanik.boardgamerent.repository.RoleRepository;
-import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
 import com.itrex.konoplyanik.boardgamerent.service.BaseServiceTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootTest
 public class UserServiceImplTest extends BaseServiceTest {
@@ -46,13 +40,15 @@ public class UserServiceImplTest extends BaseServiceTest {
 	@Mock
 	private UserRepository userRepository;
 	@Mock
-	private OrderRepository orderRepository;
-	@Mock
 	private RoleRepository roleRepository;
 	@Mock
 	private PurchaseRepository purchaseRepository;
 	@Mock
 	private RentRepository rentRepository;
+	@Mock
+	private PasswordEncoder passwordEncoder;
+	@Mock
+	private OrderRepository orderRepository;
 
 	@Test
 	public void findAll_validData_shouldReturnUserBaseDTOList() throws ServiceException {
@@ -65,7 +61,7 @@ public class UserServiceImplTest extends BaseServiceTest {
 		Mockito.when(userRepository.findAll(pageable)).thenReturn(userPages);
 		int actual = userService.findAll(pageable).getSize();
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test
@@ -88,7 +84,7 @@ public class UserServiceImplTest extends BaseServiceTest {
 		Mockito.when(userRepository.findUserById(user.getId())).thenReturn(Optional.of(user));
 		UserDTO actual = userService.findById(1L);
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test
@@ -117,9 +113,10 @@ public class UserServiceImplTest extends BaseServiceTest {
 		// when
 		Mockito.when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
 		Mockito.when(userRepository.save(user)).thenReturn(newUser);
+		Mockito.when(passwordEncoder.encode("alex")).thenReturn("alex");
 		UserDTO actual = userService.add(userSaveDTO);
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test
@@ -140,7 +137,7 @@ public class UserServiceImplTest extends BaseServiceTest {
 		Mockito.when(userRepository.findById(userUpdateDTO.getId())).thenReturn(Optional.of(newUser));
 		UserUpdateDTO actual = userService.update(userUpdateDTO);
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test
@@ -164,7 +161,8 @@ public class UserServiceImplTest extends BaseServiceTest {
 		Mockito.when(rentRepository.findRentsByOrder_id(order.getId())).thenReturn(new ArrayList<>());
         Mockito.when(userRepository.findUserById(1L)).thenReturn(Optional.of(user));
         //then
-        Assert.assertTrue(userService.delete(1L));
+		Assertions.assertDoesNotThrow(() -> userService.delete(1L));
+//		Assertions.assertTrue(userService.delete(1L));
 	}
 	
 	@Test
@@ -185,7 +183,7 @@ public class UserServiceImplTest extends BaseServiceTest {
 		Mockito.when(roleRepository.findById(getRoles().get(0).getId())).thenReturn(Optional.of(getRoles().get(0)));
 		boolean actual = userService.deleteRoleFromUser(1L, getRoles().get(0).getId());
 		// then
-		Assert.assertTrue(actual);
+		Assertions.assertTrue(actual);
 	}
 	
 	@Test
@@ -206,7 +204,7 @@ public class UserServiceImplTest extends BaseServiceTest {
 		Mockito.when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
 		boolean actual = userService.addRoleToUser(user.getId(), role.getId());
 		// then
-		Assert.assertTrue(actual);
+		Assertions.assertTrue(actual);
 	}
 
 }

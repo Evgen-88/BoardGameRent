@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -34,7 +34,7 @@ public class RoleServiceImplTest extends BaseServiceTest {
         Mockito.when(roleRepository.findAll()).thenReturn(Arrays.asList(new Role(), new Role(), new Role()));
         List<RoleDTO> actual = roleService.findAll();
         //then
-        Assert.assertEquals(expected, actual.size());
+        Assertions.assertEquals(expected, actual.size());
     }
     
     @Test
@@ -54,7 +54,7 @@ public class RoleServiceImplTest extends BaseServiceTest {
 		Mockito.when(roleRepository.findRolesByUsers_id(1L)).thenReturn(roles);
 		List<RoleDTO> actual = roleService.findRolesByUser(1L);
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 }

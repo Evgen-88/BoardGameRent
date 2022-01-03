@@ -3,9 +3,9 @@ package com.itrex.konoplyanik.boardgamerent.repository.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -19,10 +19,10 @@ public class RoleRepositoryImplTest extends BaseRepositoryTest {
 	@Autowired
 	private RoleRepository repository;
 
-	private List<Role> roles;
+	private static List<Role> roles;
 
-	@Before
-	public void fill() {
+	@BeforeAll
+	public static void fill() {
 		roles = new ArrayList<>() {{
 			add(Role.builder().id(1L).name("admin").build());
 			add(Role.builder().id(2L).name("manager").build());
@@ -35,7 +35,7 @@ public class RoleRepositoryImplTest extends BaseRepositoryTest {
 		// given && when
 		List<Role> actual = repository.findAll();
 		// then
-		Assert.assertEquals(roles, actual);
+		Assertions.assertEquals(roles, actual);
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class RoleRepositoryImplTest extends BaseRepositoryTest {
 		// when
 		Role actual = repository.findById(expected.getId()).get();
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class RoleRepositoryImplTest extends BaseRepositoryTest {
 		// when
 		Role actual = repository.save(role);
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test
@@ -64,11 +64,11 @@ public class RoleRepositoryImplTest extends BaseRepositoryTest {
 		// given
 		Role role = roles.get(0);
 		Role expected = Role.builder().id(1L).name("boss").build();
-		Assert.assertEquals(expected.getId(), role.getId());
+		Assertions.assertEquals(expected.getId(), role.getId());
 		// when
 		Role actual = repository.save(expected);
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test
@@ -81,7 +81,7 @@ public class RoleRepositoryImplTest extends BaseRepositoryTest {
 		// when
 		List<Role> actual = repository.findRolesByUsers_id(1L);
 		// then
-		Assert.assertEquals(expected, actual);
+		Assertions.assertEquals(expected, actual);
 	}
 
 }
