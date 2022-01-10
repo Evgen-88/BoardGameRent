@@ -31,16 +31,12 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody UserAuthenticationDTO request) {
-        try {
-        	Authentication authenticate = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            UserAuthenticationDTO user = (UserAuthenticationDTO) authenticate.getPrincipal();
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.AUTHORIZATION, jwtTokenProvider.createToken(user))
-                    .body(true);
-        } catch (BadCredentialsException ex) {
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
-        }
+        Authentication authenticate = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        UserAuthenticationDTO user = (UserAuthenticationDTO) authenticate.getPrincipal();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, jwtTokenProvider.createToken(user))
+                .body(true);
     }
 
     @PostMapping("/logout")
