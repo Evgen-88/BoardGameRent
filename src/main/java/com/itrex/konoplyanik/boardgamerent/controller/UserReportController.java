@@ -34,20 +34,20 @@ public class UserReportController {
     public List<UserReportDTO> getUserReport(
             @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
             @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date end,
-            @RequestParam(name = "pageNumber", required = false) Integer page,
-            @RequestParam(name = "pageSize", required = false) Integer size,
-            @RequestParam(name = "parameter", required = false) String sortBy,
-            @RequestParam(name = "direction", required = false) String sortDirection
+            @RequestParam(name = "pageNumber", defaultValue  = "1") Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue  = "10") Integer pageSize,
+            @RequestParam(name = "parameter", required = false) String parameter,
+            @RequestParam(name = "direction", required = false) String direction
     ) throws ServiceException {
         LocalDate startFrom = LocalDate.ofInstant(start.toInstant(), ZoneId.systemDefault());
         LocalDate endTo = LocalDate.ofInstant(end.toInstant(), ZoneId.systemDefault());
-        return reportService.getUserReport(startFrom, endTo, setPageParameters(page, size, sortBy, sortDirection));
+        return reportService.getUserReport(startFrom, endTo, setPageParameters(pageNumber, pageSize, parameter, direction));
     }
 
     private PageParameters setPageParameters(Integer pageNumber, Integer pageSize, String parameter, String direction) {
         return PageParameters.builder()
-                .pageNumber(pageNumber == null || pageNumber < 1 ? 0 : (pageNumber - 1) * pageSize)
-                .pageSize(pageSize == null || pageSize < 0 ? DEFAULT_PAGE_SIZE : pageSize)
+                .pageSize(pageSize < 0 ? DEFAULT_PAGE_SIZE : pageSize)
+                .pageNumber(pageNumber < 1 ? 0 : (pageNumber - 1) * pageSize)
                 .parameter(parameter == null ? DEFAULT_PARAMETER : parameter)
                 .direction(direction == null ? DEFAULT_DIRECTION : Sort.Direction.valueOf(direction.toUpperCase(Locale.ROOT)))
                 .build();
