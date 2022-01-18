@@ -1,6 +1,6 @@
 package com.itrex.konoplyanik.boardgamerent.converters;
 
-import com.itrex.konoplyanik.boardgamerent.dto.UserReportDTO;
+import com.itrex.konoplyanik.boardgamerent.dto.report.UserReportDTO;
 import com.itrex.konoplyanik.boardgamerent.entity.report.UserReport;
 
 import java.util.List;

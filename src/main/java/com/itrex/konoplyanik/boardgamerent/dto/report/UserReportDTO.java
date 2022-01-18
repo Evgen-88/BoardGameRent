@@ -1,4 +1,4 @@
-package com.itrex.konoplyanik.boardgamerent.dto;
+package com.itrex.konoplyanik.boardgamerent.dto.report;
 
 import lombok.Builder;
 import lombok.Data;

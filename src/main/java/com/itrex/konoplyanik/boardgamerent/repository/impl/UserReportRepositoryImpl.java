@@ -1,6 +1,6 @@
 package com.itrex.konoplyanik.boardgamerent.repository.impl;
 
-import com.itrex.konoplyanik.boardgamerent.entity.report.PageParameters;
+import com.itrex.konoplyanik.boardgamerent.entity.report.RequestParameters;
 import com.itrex.konoplyanik.boardgamerent.entity.report.UserReport;
 import com.itrex.konoplyanik.boardgamerent.exception.RepositoryException;
 import com.itrex.konoplyanik.boardgamerent.repository.UserReportRepository;
@@ -9,23 +9,31 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManagerFactory;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
 public class UserReportRepositoryImpl implements UserReportRepository {
 
-    private static final String USER_REPORT_QUERY = "" +
-            "SELECT u.id, u.login, count(o.id) AS quantity, sum(o.total_price) AS sum," +
-            "       count(r.id), sum(r.price), count(p.id), sum(p.price)" +
-            "   FROM users u JOIN orders o ON u.id = o.user_id" +
-            "       LEFT JOIN rent r ON o.id = r.order_id" +
-            "       LEFT JOIN purchase p ON o.id = p.order_id " +
-            "WHERE o.status = 'confirmed' AND o.order_date BETWEEN :start AND :end " +
-            "GROUP BY u.id, o.id " +
-            "ORDER BY %s %s, u.login ASC " +
-            "LIMIT :pageNumber, :pageSize";
+    private static final String USER_REPORT_QUERY = ""
+            + "SELECT    u.id, "
+            + "          u.login, "
+            + "          Count(o.id)        AS quantity, "
+            + "          Sum(o.total_price) AS sum, "
+            + "          Count(r.id)        AS rent_quantity, "
+            + "          Sum(r.price)       AS rent_sum, "
+            + "          Count(p.id)        AS purchase_quantity, "
+            + "          Sum(p.price)       AS purchase_sum "
+            + "FROM      users u "
+            + "JOIN      orders o           ON u.id = o.user_id "
+            + "LEFT JOIN rent r             ON o.id = r.order_id "
+            + "LEFT JOIN purchase p         ON o.id = p.order_id "
+            + "WHERE     o.status = 'confirmed' "
+            + "AND       o.order_date BETWEEN :start AND :end "
+            + "GROUP BY  u.id, "
+            + "          o.id "
+            + "ORDER BY  %s %s, u.login ASC "
+            + "LIMIT     :pageNumber, :pageSize";
 
     private final SessionFactory sessionFactory;
 
@@ -34,15 +42,15 @@ public class UserReportRepositoryImpl implements UserReportRepository {
     }
 
     @Override
-    public List<UserReport> getUserReport(LocalDate start, LocalDate end, PageParameters pageParameters) throws RepositoryException {
+    public List<UserReport> getUserReport(RequestParameters requestParameters) throws RepositoryException {
         String query = USER_REPORT_QUERY;
-        query = String.format(query, pageParameters.getParameter(), pageParameters.getDirection());
+        query = String.format(query, requestParameters.getParameter(), requestParameters.getDirection());
         try(Session session = sessionFactory.openSession()) {
             List<Object[]> rows = session.createSQLQuery(query)
-                    .setParameter("start", start)
-                    .setParameter("end", end)
-                    .setParameter("pageNumber", pageParameters.getPageNumber())
-                    .setParameter("pageSize", pageParameters.getPageSize())
+                    .setParameter("start", requestParameters.getStart())
+                    .setParameter("end", requestParameters.getEnd())
+                    .setParameter("pageNumber", requestParameters.getPageNumber())
+                    .setParameter("pageSize", requestParameters.getPageSize())
                     .list();
             return parseReport(rows);
         } catch (Exception ex) {
