@@ -12,8 +12,8 @@ public class RequestParameters {
 
     private LocalDate start;
     private LocalDate end;
-    private int pageNumber;
-    private int pageSize;
+    private long pageNumber;
+    private long pageSize;
     private String parameter;
     private Sort.Direction direction;
 
