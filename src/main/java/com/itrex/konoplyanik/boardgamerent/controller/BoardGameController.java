@@ -1,13 +1,17 @@
 package com.itrex.konoplyanik.boardgamerent.controller;
 
 import com.itrex.konoplyanik.boardgamerent.dto.BoardGameDTO;
-import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.service.BoardGameService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -19,63 +23,31 @@ public class BoardGameController {
 	private final BoardGameService boardGameService;
 
 	@GetMapping
-	public ResponseEntity<List<BoardGameDTO>> findAll() {
-		List<BoardGameDTO> boardGames = null;
-		try {
-			boardGames = boardGameService.findAll();
-		} catch (ServiceException ex) {
-			new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		return boardGames != null && !boardGames.isEmpty() ? new ResponseEntity<>(boardGames, HttpStatus.OK)
-				: new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	public List<BoardGameDTO> findAll() {
+		return boardGameService.findAll();
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<BoardGameDTO> findById(@PathVariable Long id) {
-		BoardGameDTO boardGame = null;
-		try {
-			boardGame = boardGameService.findById(id);
-		} catch (ServiceException ex) {
-			new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		return boardGame != null ? new ResponseEntity<>(boardGame, HttpStatus.OK)
-				: new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	public BoardGameDTO findById(@PathVariable Long id) {
+		return boardGameService.findById(id);
 	}
 
 	@PostMapping
 	@PreAuthorize("hasAuthority('BOARD_GAME_WRITE_DELETE')")
-	public ResponseEntity<BoardGameDTO> add(@RequestBody BoardGameDTO boardGame) {
-		BoardGameDTO boardGameDTO = null;
-		try {
-			boardGameDTO = boardGameService.add(boardGame);
-		} catch (ServiceException ex) {
-			new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<>(boardGameDTO, HttpStatus.CREATED);
+	public BoardGameDTO add(@RequestBody BoardGameDTO boardGame) {
+		return boardGameService.add(boardGame);
 	}
 
 	@PutMapping
 	@PreAuthorize("hasAuthority('BOARD_GAME_WRITE_DELETE')")
-	public ResponseEntity<BoardGameDTO> update(@RequestBody BoardGameDTO boardGame) {
-		BoardGameDTO boardGameDTO = null;
-		try {
-			boardGameDTO = boardGameService.update(boardGame);
-		} catch (ServiceException ex) {
-			new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		return boardGameDTO != null ? new ResponseEntity<>(boardGameDTO, HttpStatus.OK)
-				: new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+	public BoardGameDTO update(@RequestBody BoardGameDTO boardGame) {
+		return boardGameService.update(boardGame);
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasAuthority('BOARD_GAME_WRITE_DELETE')")
-	public ResponseEntity<Boolean> delete(@PathVariable long id) {
-		try {
-			boardGameService.delete(id);
-		} catch (ServiceException ex) {
-			new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<>(true, HttpStatus.OK);
+	public boolean delete(@PathVariable long id) {
+		return boardGameService.delete(id);
 	}
 
 }

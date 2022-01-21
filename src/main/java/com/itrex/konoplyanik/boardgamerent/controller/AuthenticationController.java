@@ -4,10 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -31,16 +29,12 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody UserAuthenticationDTO request) {
-        try {
-        	Authentication authenticate = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            UserAuthenticationDTO user = (UserAuthenticationDTO) authenticate.getPrincipal();
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.AUTHORIZATION, jwtTokenProvider.createToken(user))
-                    .body(true);
-        } catch (BadCredentialsException ex) {
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
-        }
+        Authentication authenticate = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        UserAuthenticationDTO user = (UserAuthenticationDTO) authenticate.getPrincipal();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, jwtTokenProvider.createToken(user))
+                .body(true);
     }
 
     @PostMapping("/logout")

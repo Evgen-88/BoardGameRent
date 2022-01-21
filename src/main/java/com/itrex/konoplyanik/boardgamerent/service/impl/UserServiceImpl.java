@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -31,10 +32,8 @@ import com.itrex.konoplyanik.boardgamerent.repository.RoleRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
 import com.itrex.konoplyanik.boardgamerent.service.UserService;
 
-import lombok.AllArgsConstructor;
-
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
