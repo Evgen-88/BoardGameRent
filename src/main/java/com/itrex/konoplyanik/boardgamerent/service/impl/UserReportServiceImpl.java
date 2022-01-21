@@ -9,13 +9,13 @@ import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.UserReportRepository;
 import com.itrex.konoplyanik.boardgamerent.service.UserReportService;
 import com.itrex.konoplyanik.boardgamerent.service.validator.Validator;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserReportServiceImpl implements UserReportService {
 
     private final UserReportRepository reportRepository;
