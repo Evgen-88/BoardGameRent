@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: board-game-rent-test
+  config:
+    import: configserver:http://localhost:8888
+  cloud:
+    config:
+      username: evgen
+      password: evgen
