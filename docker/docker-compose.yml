@@ -1,4 +1,4 @@
-version: "2.1"
+version: "3.5"
 
 services:
   mysql:
@@ -10,3 +10,7 @@ services:
       - MYSQL_USER=evgen
       - MYSQL_PASSWORD=evgen
       - MYSQL_ROOT_PASSWORD=evgen
+  config:
+    image: config
+    ports:
+      - 8888:8888
