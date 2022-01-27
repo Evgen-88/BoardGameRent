@@ -11,6 +11,6 @@ services:
       - MYSQL_PASSWORD=evgen
       - MYSQL_ROOT_PASSWORD=evgen
   config:
-    image: config
+    image: config-server
     ports:
       - 8888:8888
