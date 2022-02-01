@@ -3,9 +3,12 @@ spring:
     name: board-game-rent-application
   profiles:
     active: info
+    default: debug
   config:
     import: configserver:http://localhost:8888
   cloud:
     config:
       username: evgen
       password: evgen
+encrypt:
+  key: 0ver5ecretpa55w0rd
