@@ -5,5 +5,7 @@ spring:
     import: configserver:http://localhost:8888
   cloud:
     config:
-      username: evgen
-      password: evgen
+      username: ${USER_NAME}
+      password: ${PASSWORD}
+encrypt:
+  key: ${SECRET}
