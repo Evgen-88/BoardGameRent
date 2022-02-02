@@ -6,11 +6,17 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_DATABASE=boardgamerent
-      - MYSQL_USER=evgen
-      - MYSQL_PASSWORD=evgen
-      - MYSQL_ROOT_PASSWORD=evgen
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+      - MYSQL_USER=$MYSQL_USER
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
   config:
     image: config-server
     ports:
       - 8888:8888
+    environment:
+      - PROPERTY_PATH=$PROPERTY_PATH
+      - USER_NAME=$USER_NAME
+      - PASSWORD=$PASSWORD
+      - SECRET=$SECRET
+
