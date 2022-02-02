@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import com.itrex.konoplyanik.boardgamerent.converters.RentConverter;
 import com.itrex.konoplyanik.boardgamerent.dto.RentDTO;
@@ -24,7 +23,6 @@ import com.itrex.konoplyanik.boardgamerent.repository.PurchaseRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.RentRepository;
 import com.itrex.konoplyanik.boardgamerent.service.BaseServiceTest;
 
-@SpringBootTest
 public class RentServiceImplTest extends BaseServiceTest {
 
 	@InjectMocks

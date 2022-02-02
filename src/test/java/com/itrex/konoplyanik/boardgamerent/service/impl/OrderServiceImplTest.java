@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import com.itrex.konoplyanik.boardgamerent.converters.OrderConverter;
 import com.itrex.konoplyanik.boardgamerent.converters.UserConverter;
@@ -32,7 +31,6 @@ import com.itrex.konoplyanik.boardgamerent.repository.OrderRepository;
 import com.itrex.konoplyanik.boardgamerent.repository.UserRepository;
 import com.itrex.konoplyanik.boardgamerent.service.BaseServiceTest;
 
-@SpringBootTest
 public class OrderServiceImplTest extends BaseServiceTest {
 
 	@InjectMocks

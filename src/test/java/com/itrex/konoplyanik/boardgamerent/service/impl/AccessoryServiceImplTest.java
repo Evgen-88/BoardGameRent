@@ -10,14 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 import com.itrex.konoplyanik.boardgamerent.dto.AccessoryDTO;
 import com.itrex.konoplyanik.boardgamerent.entity.Accessory;
 import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.AccessoryRepository;
 import com.itrex.konoplyanik.boardgamerent.service.BaseServiceTest;
 
-@SpringBootTest
 public class AccessoryServiceImplTest extends BaseServiceTest {
 
 	@InjectMocks
