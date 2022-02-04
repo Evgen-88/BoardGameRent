@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import com.itrex.konoplyanik.boardgamerent.dto.RoleDTO;
 import com.itrex.konoplyanik.boardgamerent.entity.Role;
@@ -18,7 +17,6 @@ import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.RoleRepository;
 import com.itrex.konoplyanik.boardgamerent.service.BaseServiceTest;
 
-@SpringBootTest
 public class RoleServiceImplTest extends BaseServiceTest {
 
 	@InjectMocks

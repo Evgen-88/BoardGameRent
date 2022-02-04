@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: board-game-rent-application
+  profiles:
+    active: info
+    default: debug
+  config:
+    import: configserver:http://localhost:8888
+  cloud:
+    config:
+      username: ${USER_NAME}
+      password: ${PASSWORD}
+encrypt:
+  key: ${SECRET}

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import com.itrex.konoplyanik.boardgamerent.dto.BoardGameDTO;
 import com.itrex.konoplyanik.boardgamerent.entity.BoardGame;
@@ -19,7 +18,6 @@ import com.itrex.konoplyanik.boardgamerent.exception.ServiceException;
 import com.itrex.konoplyanik.boardgamerent.repository.BoardGameRepository;
 import com.itrex.konoplyanik.boardgamerent.service.BaseServiceTest;
 
-@SpringBootTest
 public class BoardGameServiceImplTest extends BaseServiceTest {
 
 	@InjectMocks
